@@ -3,11 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { PiggyBank, Loader2 } from 'lucide-react';
+import { PiggyBank, Loader2, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/client';
 
 export default function SignupPage() {
@@ -57,38 +56,48 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <PiggyBank className="h-12 w-12 text-primary mx-auto mb-4" />
-            <CardTitle>Check your email</CardTitle>
-            <CardDescription>
-              We've sent a confirmation link to <strong>{email}</strong>. 
+      <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-radial pointer-events-none" />
+        <div className="relative z-10 w-full max-w-md">
+          <div className="glass-card rounded-2xl p-8 text-center">
+            <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-8 h-8 text-green-400" />
+            </div>
+            <h1 className="text-2xl font-bold mb-2">Check your email</h1>
+            <p className="text-muted-foreground mb-6">
+              We've sent a confirmation link to <strong className="text-foreground">{email}</strong>. 
               Click the link to activate your account.
-            </CardDescription>
-          </CardHeader>
-          <CardFooter className="justify-center">
-            <Button variant="outline" asChild>
+            </p>
+            <Button variant="outline" className="border-border hover:bg-secondary" asChild>
               <Link href="/login">Back to login</Link>
             </Button>
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <Link href="/" className="flex items-center justify-center gap-2 mb-4">
-            <PiggyBank className="h-8 w-8 text-primary" />
-            <span className="font-bold text-xl">BudgetApp</span>
-          </Link>
-          <CardTitle>Create your account</CardTitle>
-          <CardDescription>Start your 14-day free trial today</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-radial pointer-events-none" />
+      
+      <div className="relative z-10 w-full max-w-md">
+        {/* Logo */}
+        <Link href="/" className="flex items-center justify-center gap-2 mb-8">
+          <div className="w-10 h-10 rounded-xl gradient-btn flex items-center justify-center">
+            <PiggyBank className="w-5 h-5 text-white" />
+          </div>
+          <span className="text-xl font-bold">BudgetWise</span>
+        </Link>
+
+        {/* Card */}
+        <div className="glass-card rounded-2xl p-8">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold mb-2">Create your account</h1>
+            <p className="text-muted-foreground">Start your free trial today</p>
+          </div>
+
           <form onSubmit={handleSignup} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full name</Label>
@@ -98,6 +107,7 @@ export default function SignupPage() {
                 placeholder="John Doe"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                className="bg-secondary/50 border-border"
                 required
               />
             </div>
@@ -109,6 +119,7 @@ export default function SignupPage() {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="bg-secondary/50 border-border"
                 required
               />
             </div>
@@ -120,6 +131,7 @@ export default function SignupPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="bg-secondary/50 border-border"
                 minLength={8}
                 required
               />
@@ -128,9 +140,9 @@ export default function SignupPage() {
               </p>
             </div>
             {error && (
-              <p className="text-sm text-red-500">{error}</p>
+              <p className="text-sm text-red-400">{error}</p>
             )}
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full gradient-btn border-0 text-white h-11" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -144,16 +156,16 @@ export default function SignupPage() {
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+              <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-transparent px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
 
           <Button 
             variant="outline" 
-            className="w-full" 
+            className="w-full h-11 border-border hover:bg-secondary" 
             onClick={handleGoogleSignup}
             type="button"
           >
@@ -180,20 +192,19 @@ export default function SignupPage() {
 
           <p className="text-xs text-muted-foreground text-center mt-4">
             By creating an account, you agree to our{' '}
-            <Link href="/terms" className="underline">Terms of Service</Link>
+            <Link href="/terms" className="text-purple-400 hover:underline">Terms</Link>
             {' '}and{' '}
-            <Link href="/privacy" className="underline">Privacy Policy</Link>
+            <Link href="/privacy" className="text-purple-400 hover:underline">Privacy Policy</Link>
           </p>
-        </CardContent>
-        <CardFooter className="justify-center">
-          <p className="text-sm text-muted-foreground">
+
+          <p className="text-center text-sm text-muted-foreground mt-6">
             Already have an account?{' '}
-            <Link href="/login" className="text-primary hover:underline">
+            <Link href="/login" className="text-purple-400 hover:text-purple-300 hover:underline">
               Sign in
             </Link>
           </p>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

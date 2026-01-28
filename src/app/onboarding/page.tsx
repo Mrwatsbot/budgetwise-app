@@ -23,8 +23,11 @@ export default async function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-      <div className="w-full max-w-lg">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-radial pointer-events-none" />
+      
+      <div className="relative z-10 w-full max-w-lg">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">Welcome to BudgetWise!</h1>
           <p className="text-muted-foreground">

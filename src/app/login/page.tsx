@@ -7,7 +7,6 @@ import { PiggyBank, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/client';
 
 export default function LoginPage() {
@@ -48,17 +47,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <Link href="/" className="flex items-center justify-center gap-2 mb-4">
-            <PiggyBank className="h-8 w-8 text-primary" />
-            <span className="font-bold text-xl">BudgetApp</span>
-          </Link>
-          <CardTitle>Welcome back</CardTitle>
-          <CardDescription>Sign in to your account to continue</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-radial pointer-events-none" />
+      
+      <div className="relative z-10 w-full max-w-md">
+        {/* Logo */}
+        <Link href="/" className="flex items-center justify-center gap-2 mb-8">
+          <div className="w-10 h-10 rounded-xl gradient-btn flex items-center justify-center">
+            <PiggyBank className="w-5 h-5 text-white" />
+          </div>
+          <span className="text-xl font-bold">BudgetWise</span>
+        </Link>
+
+        {/* Card */}
+        <div className="glass-card rounded-2xl p-8">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold mb-2">Welcome back</h1>
+            <p className="text-muted-foreground">Sign in to your account to continue</p>
+          </div>
+
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -68,6 +76,7 @@ export default function LoginPage() {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="bg-secondary/50 border-border"
                 required
               />
             </div>
@@ -79,13 +88,14 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="bg-secondary/50 border-border"
                 required
               />
             </div>
             {error && (
-              <p className="text-sm text-red-500">{error}</p>
+              <p className="text-sm text-red-400">{error}</p>
             )}
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full gradient-btn border-0 text-white h-11" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -99,16 +109,16 @@ export default function LoginPage() {
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+              <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-transparent px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
 
           <Button 
             variant="outline" 
-            className="w-full" 
+            className="w-full h-11 border-border hover:bg-secondary" 
             onClick={handleGoogleLogin}
             type="button"
           >
@@ -132,16 +142,15 @@ export default function LoginPage() {
             </svg>
             Google
           </Button>
-        </CardContent>
-        <CardFooter className="justify-center">
-          <p className="text-sm text-muted-foreground">
+
+          <p className="text-center text-sm text-muted-foreground mt-6">
             Don't have an account?{' '}
-            <Link href="/signup" className="text-primary hover:underline">
+            <Link href="/signup" className="text-purple-400 hover:text-purple-300 hover:underline">
               Sign up
             </Link>
           </p>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
