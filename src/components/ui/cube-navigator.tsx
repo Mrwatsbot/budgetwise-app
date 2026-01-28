@@ -16,7 +16,6 @@ interface CubeNavigatorProps {
 
 export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
   const [currentFace, setCurrentFace] = useState(initialFace);
-  const [layoutFace, setLayoutFace] = useState(initialFace); // Which face determines height
   const [rotation, setRotation] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   
@@ -26,6 +25,9 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
 
   const totalFaces = faces.length;
   const faceAngle = 360 / totalFaces; // 90° for 4 faces
+  
+  // Budgets page (index 1) is tallest - always use it for layout during animation
+  const TALLEST_FACE = 1;
 
   const goToFace = (index: number) => {
     if (isAnimating || index === currentFace) return;
@@ -42,12 +44,13 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
     setRotation(newRotation);
     setCurrentFace(index);
     
-    // Delay layout change until animation completes
     setTimeout(() => {
-      setLayoutFace(index);
       setIsAnimating(false);
     }, 550);
   };
+  
+  // During animation, use tallest face for layout to prevent jarring height changes
+  const layoutFace = isAnimating ? TALLEST_FACE : currentFace;
 
   const goNext = () => {
     const next = (currentFace + 1) % totalFaces;
