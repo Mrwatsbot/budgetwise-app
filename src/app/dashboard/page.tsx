@@ -86,13 +86,39 @@ export default async function DashboardPage() {
     };
   });
 
-  // Mock budgets for now (will implement later)
-  const mockBudgets = [
-    { name: 'Groceries', icon: '🛒', budgeted: 400, spent: 0, color: '#22c55e' },
-    { name: 'Dining Out', icon: '🍔', budgeted: 250, spent: 0, color: '#f97316' },
-    { name: 'Transportation', icon: '🚗', budgeted: 150, spent: 0, color: '#3b82f6' },
-    { name: 'Entertainment', icon: '🎬', budgeted: 100, spent: 0, color: '#ec4899' },
-  ];
+  // Fetch real budgets
+  const currentMonthStr = startOfMonth.toISOString().split('T')[0];
+  const { data: budgetsData } = await supabase
+    .from('budgets')
+    .select(`
+      id,
+      budgeted,
+      category:categories(id, name, icon, color)
+    `)
+    .eq('user_id', user.id)
+    .eq('month', currentMonthStr);
+
+  // Calculate spent per category from transactions
+  const spentByCategory: Record<string, number> = {};
+  transactions.filter(t => t.amount < 0).forEach(t => {
+    if (t.category?.id) {
+      spentByCategory[t.category.id] = (spentByCategory[t.category.id] || 0) + Math.abs(t.amount);
+    }
+  });
+
+  // Format budgets for display
+  type BudgetRow = {
+    id: string;
+    budgeted: number;
+    category: { id: string; name: string; icon: string | null; color: string | null } | null;
+  };
+  const budgets = ((budgetsData || []) as BudgetRow[]).map(b => ({
+    name: b.category?.name || 'Unknown',
+    icon: b.category?.icon || '📦',
+    budgeted: b.budgeted,
+    spent: spentByCategory[b.category?.id || ''] || 0,
+    color: b.category?.color || '#a855f7',
+  })).slice(0, 4); // Show top 4 on dashboard
 
   const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
@@ -110,9 +136,11 @@ export default async function DashboardPage() {
             <h1 className="text-2xl font-bold">Dashboard</h1>
             <p className="text-muted-foreground">Welcome back, {userProfile.full_name}!</p>
           </div>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Transaction
+          <Button className="gradient-btn border-0 text-white" asChild>
+            <a href="/transactions">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Transaction
+            </a>
           </Button>
         </div>
 
@@ -158,7 +186,7 @@ export default async function DashboardPage() {
               <CardDescription>Your spending vs budget this month</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {mockBudgets.map((budget) => {
+              {budgets.length > 0 ? budgets.map((budget) => {
                 const percentage = (budget.spent / budget.budgeted) * 100;
                 const isOver = percentage > 100;
                 return (
@@ -183,7 +211,14 @@ export default async function DashboardPage() {
                     </div>
                   </div>
                 );
-              })}
+              }) : (
+                <div className="text-center py-4">
+                  <p className="text-muted-foreground mb-3">No budgets set yet</p>
+                  <Button variant="outline" asChild>
+                    <a href="/budgets">Set Up Budgets</a>
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
 
