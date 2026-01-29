@@ -26,8 +26,8 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
   const totalFaces = faces.length;
   const faceAngle = 360 / totalFaces; // 90° for 4 faces
   
-  // Budgets page (index 1) is tallest - always use it for layout during animation
-  const TALLEST_FACE = 1;
+  // Use Overview (index 0) for consistent animation height - shorter/cleaner rotation
+  const ANIMATION_LAYOUT_FACE = 0;
 
   const goToFace = (index: number) => {
     if (isAnimating || index === currentFace) return;
@@ -49,8 +49,8 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
     }, 550);
   };
   
-  // During animation, use tallest face for layout to prevent jarring height changes
-  const layoutFace = isAnimating ? TALLEST_FACE : currentFace;
+  // During animation, use consistent short height; after animation, match current face
+  const layoutFace = isAnimating ? ANIMATION_LAYOUT_FACE : currentFace;
 
   const goNext = () => {
     const next = (currentFace + 1) % totalFaces;
