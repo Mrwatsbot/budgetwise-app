@@ -159,7 +159,7 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
           {isAnimating && prevFace !== null && (
             <div 
               className={`absolute inset-0 ${getExitClass()}`}
-              style={{ transformOrigin: direction === 'left' ? 'left center' : 'right center' }}
+              style={{ transformOrigin: 'center center' }}
             >
               {faces[prevFace].content}
             </div>
@@ -168,7 +168,7 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
           {/* Current face */}
           <div 
             className={isAnimating ? getEnterClass() : ''}
-            style={isAnimating ? { transformOrigin: direction === 'left' ? 'right center' : 'left center' } : {}}
+            style={{ transformOrigin: 'center center' }}
           >
             {faces[currentFace].content}
           </div>
