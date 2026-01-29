@@ -179,8 +179,8 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
                     transform: `rotateY(${faceRotation}deg) translateZ(150px)`,
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
-                    visibility: index === currentFace || (isAnimating && visible) ? 'visible' : 'hidden',
-                    opacity: index === currentFace ? 1 : (isAnimating && visible) ? 1 : 0,
+                    visibility: visible ? 'visible' : 'hidden',
+                    opacity: visible ? 1 : 0,
                     pointerEvents: index === currentFace ? 'auto' : 'none',
                   }}
                 >
