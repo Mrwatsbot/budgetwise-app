@@ -184,19 +184,19 @@
 }
 
 .cube-exit-left {
-  animation: cubeExitLeft 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: cubeExitLeft 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .cube-enter-left {
-  animation: cubeEnterLeft 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: cubeEnterLeft 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .cube-exit-right {
-  animation: cubeExitRight 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: cubeExitRight 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .cube-enter-right {
-  animation: cubeEnterRight 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: cubeEnterRight 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 /* Hide scrollbar */

@@ -19,10 +19,12 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('left');
   const [prevFace, setPrevFace] = useState<number | null>(null);
+  const [animHeight, setAnimHeight] = useState<number | null>(null);
   
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
   const isHorizontalSwipe = useRef<boolean | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const totalFaces = faces.length;
 
@@ -33,6 +35,11 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
     // Determine direction if not specified
     const autoDir = dir || (index > currentFace ? 'left' : 'right');
     
+    // Capture current height before animating so all turns look the same
+    if (contentRef.current) {
+      setAnimHeight(contentRef.current.offsetHeight);
+    }
+    
     setDirection(autoDir);
     setPrevFace(currentFace);
     setCurrentFace(index);
@@ -41,7 +48,8 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
     setTimeout(() => {
       setIsAnimating(false);
       setPrevFace(null);
-    }, 450);
+      setAnimHeight(null);
+    }, 650);
   }, [isAnimating, currentFace, totalFaces]);
 
   const goNext = useCallback(() => {
@@ -154,7 +162,15 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="w-full max-w-3xl mx-auto relative" style={{ perspective: '800px' }}>
+        <div 
+          ref={contentRef}
+          className="w-full max-w-3xl mx-auto relative" 
+          style={{ 
+            perspective: '800px',
+            height: animHeight ? `${animHeight}px` : 'auto',
+            overflow: isAnimating ? 'hidden' : 'visible',
+          }}
+        >
           {/* Exiting face */}
           {isAnimating && prevFace !== null && (
             <div 
