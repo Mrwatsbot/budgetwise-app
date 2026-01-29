@@ -135,6 +135,67 @@
   background: radial-gradient(ellipse at top, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
 }
 
+/* Cube-turn animation - fake 3D rotation */
+@keyframes cubeExitLeft {
+  from {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+  to {
+    transform: rotateY(-90deg);
+    opacity: 0;
+  }
+}
+
+@keyframes cubeEnterLeft {
+  from {
+    transform: rotateY(90deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes cubeExitRight {
+  from {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+  to {
+    transform: rotateY(90deg);
+    opacity: 0;
+  }
+}
+
+@keyframes cubeEnterRight {
+  from {
+    transform: rotateY(-90deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+.cube-exit-left {
+  animation: cubeExitLeft 0.4s ease-in forwards;
+}
+
+.cube-enter-left {
+  animation: cubeEnterLeft 0.4s ease-out forwards;
+}
+
+.cube-exit-right {
+  animation: cubeExitRight 0.4s ease-in forwards;
+}
+
+.cube-enter-right {
+  animation: cubeEnterRight 0.4s ease-out forwards;
+}
+
 /* Hide scrollbar */
 .scrollbar-hide {
   -ms-overflow-style: none;

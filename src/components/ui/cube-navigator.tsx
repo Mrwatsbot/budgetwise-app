@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, ReactNode } from 'react';
+import { useState, useRef, ReactNode, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface CubeFace {
@@ -16,51 +16,43 @@ interface CubeNavigatorProps {
 
 export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
   const [currentFace, setCurrentFace] = useState(initialFace);
-  const [rotation, setRotation] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [direction, setDirection] = useState<'left' | 'right'>('left');
+  const [prevFace, setPrevFace] = useState<number | null>(null);
   
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
   const isHorizontalSwipe = useRef<boolean | null>(null);
 
   const totalFaces = faces.length;
-  const faceAngle = 360 / totalFaces; // 90° for 4 faces
-  
-  // Use Overview (index 0) for consistent animation height - shorter/cleaner rotation
-  const ANIMATION_LAYOUT_FACE = 0;
 
-  const goToFace = (index: number) => {
+  const goToFace = useCallback((index: number, dir?: 'left' | 'right') => {
     if (isAnimating || index === currentFace) return;
     if (index < 0 || index >= totalFaces) return;
     
-    setIsAnimating(true);
+    // Determine direction if not specified
+    const autoDir = dir || (index > currentFace ? 'left' : 'right');
     
-    // Calculate shortest rotation path
-    let diff = index - currentFace;
-    if (diff > totalFaces / 2) diff -= totalFaces;
-    if (diff < -totalFaces / 2) diff += totalFaces;
-    
-    const newRotation = rotation - (diff * faceAngle);
-    setRotation(newRotation);
+    setDirection(autoDir);
+    setPrevFace(currentFace);
     setCurrentFace(index);
+    setIsAnimating(true);
     
     setTimeout(() => {
       setIsAnimating(false);
-    }, 550);
-  };
-  
-  // During animation, use consistent short height; after animation, match current face
-  const layoutFace = isAnimating ? ANIMATION_LAYOUT_FACE : currentFace;
+      setPrevFace(null);
+    }, 450);
+  }, [isAnimating, currentFace, totalFaces]);
 
-  const goNext = () => {
+  const goNext = useCallback(() => {
     const next = (currentFace + 1) % totalFaces;
-    goToFace(next);
-  };
+    goToFace(next, 'left');
+  }, [currentFace, totalFaces, goToFace]);
 
-  const goPrev = () => {
+  const goPrev = useCallback(() => {
     const prev = (currentFace - 1 + totalFaces) % totalFaces;
-    goToFace(prev);
-  };
+    goToFace(prev, 'right');
+  }, [currentFace, totalFaces, goToFace]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -96,16 +88,19 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
     isHorizontalSwipe.current = null;
   };
 
-  // Check if a face should be visible (within 90° of current view)
-  const isFaceVisible = (faceIndex: number) => {
-    const faceRotation = faceIndex * faceAngle;
-    const normalizedCubeRotation = (((-rotation % 360) + 360) % 360);
-    
-    let angleDiff = Math.abs(normalizedCubeRotation - faceRotation);
-    if (angleDiff > 180) angleDiff = 360 - angleDiff;
-    
-    // Show face if it's within 90° of the front view
-    return angleDiff <= 90;
+  // Animation classes for the "cube turn" effect
+  const getExitClass = () => {
+    if (direction === 'left') {
+      return 'cube-exit-left';
+    }
+    return 'cube-exit-right';
+  };
+
+  const getEnterClass = () => {
+    if (direction === 'left') {
+      return 'cube-enter-left';
+    }
+    return 'cube-enter-right';
   };
 
   return (
@@ -116,7 +111,11 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
           {faces.map((face, index) => (
             <button
               key={face.id}
-              onClick={() => goToFace(index)}
+              onClick={() => {
+                if (index !== currentFace) {
+                  goToFace(index, index > currentFace ? 'left' : 'right');
+                }
+              }}
               disabled={isAnimating}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                 index === currentFace
@@ -148,44 +147,30 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
         <ChevronRight className="w-6 h-6" />
       </button>
 
-      {/* 3D Cube Container */}
+      {/* Content Area */}
       <div
-        className="w-full py-6 px-4 md:px-8 pb-24 md:pb-6"
+        className="w-full py-6 px-4 md:px-8 pb-24 md:pb-6 overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div 
-          className="w-full max-w-3xl mx-auto"
-          style={{ perspective: '1000px' }}
-        >
-          {/* The Cube - scale counteracts the zoom from translateZ */}
-          <div
-            className="relative w-full transition-transform duration-500 ease-out"
-            style={{
-              transformStyle: 'preserve-3d',
-              transform: `scale(0.87) rotateY(${rotation}deg)`,
-            }}
+        <div className="w-full max-w-3xl mx-auto relative" style={{ perspective: '800px' }}>
+          {/* Exiting face */}
+          {isAnimating && prevFace !== null && (
+            <div 
+              className={`absolute inset-0 ${getExitClass()}`}
+              style={{ transformOrigin: direction === 'left' ? 'left center' : 'right center' }}
+            >
+              {faces[prevFace].content}
+            </div>
+          )}
+          
+          {/* Current face */}
+          <div 
+            className={isAnimating ? getEnterClass() : ''}
+            style={isAnimating ? { transformOrigin: direction === 'left' ? 'right center' : 'left center' } : {}}
           >
-            {faces.map((face, index) => {
-              const faceRotation = index * faceAngle;
-              const visible = isFaceVisible(index);
-              
-              return (
-                <div
-                  key={face.id}
-                  className={`cube-face w-full pb-16 ${index === layoutFace ? 'relative' : 'absolute top-0 left-0'}`}
-                  style={{
-                    transform: `rotateY(${faceRotation}deg) translateZ(150px)`,
-                    backfaceVisibility: 'hidden',
-                    visibility: visible ? 'visible' : 'hidden',
-                    opacity: visible ? 1 : 0,
-                  }}
-                >
-                  {face.content}
-                </div>
-              );
-            })}
+            {faces[currentFace].content}
           </div>
         </div>
       </div>
@@ -198,7 +183,11 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
         {faces.map((_, index) => (
           <button
             key={index}
-            onClick={() => goToFace(index)}
+            onClick={() => {
+              if (index !== currentFace) {
+                goToFace(index, index > currentFace ? 'left' : 'right');
+              }
+            }}
             disabled={isAnimating}
             className={`transition-all rounded-full ${
               index === currentFace
