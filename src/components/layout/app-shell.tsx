@@ -7,6 +7,7 @@ import {
   LayoutDashboard, 
   Receipt, 
   PiggyBank, 
+  Landmark,
   Settings, 
   Menu,
   LogOut,
@@ -29,6 +30,7 @@ const getNavigation = (isDemo: boolean) => [
   { name: 'Dashboard', href: isDemo ? '/demo' : '/dashboard', icon: LayoutDashboard },
   { name: 'Transactions', href: isDemo ? '/demo' : '/transactions', icon: Receipt },
   { name: 'Budgets', href: isDemo ? '/demo' : '/budgets', icon: PiggyBank },
+  { name: 'Savings', href: isDemo ? '/demo' : '/savings', icon: Landmark },
   { name: 'Settings', href: isDemo ? '/demo' : '/settings', icon: Settings },
 ];
 

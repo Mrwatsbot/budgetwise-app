@@ -1,131 +1,35 @@
-import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+'use client';
+
+import { useUser } from '@/hooks/use-user';
+import { useDashboard } from '@/hooks/use-dashboard';
 import { AppShell } from '@/components/layout/app-shell';
+import { DashboardSkeleton } from '@/components/ui/page-skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, TrendingUp, TrendingDown, DollarSign, PiggyBank } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
 
-export default async function DashboardPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+export default function DashboardPage() {
+  const { userProfile, isLoading: userLoading } = useUser();
+  const {
+    accounts,
+    totalBalance,
+    monthlyIncome,
+    monthlyExpenses,
+    recentTransactions,
+    budgets,
+    currentMonth,
+    isLoading: dataLoading,
+  } = useDashboard();
 
-  if (!user) {
-    redirect('/login');
+  const isLoading = userLoading || dataLoading;
+
+  if (isLoading || !accounts || totalBalance === undefined) {
+    return (
+      <AppShell user={{ email: '', full_name: '' }}>
+        <DashboardSkeleton />
+      </AppShell>
+    );
   }
-
-  // Check if user has accounts, redirect to onboarding if not
-  const { data: accountsData } = await supabase
-    .from('accounts')
-    .select('id, name, type, balance')
-    .eq('user_id', user.id)
-    .eq('is_active', true);
-
-  if (!accountsData || accountsData.length === 0) {
-    redirect('/onboarding');
-  }
-  
-  // TypeScript now knows accounts is non-empty
-  const accounts = accountsData as { id: string; name: string; type: string; balance: number }[];
-
-  // Fetch real transaction data
-  const startOfMonth = new Date();
-  startOfMonth.setDate(1);
-  startOfMonth.setHours(0, 0, 0, 0);
-
-  const { data: transactionsData } = await supabase
-    .from('transactions')
-    .select(`
-      id,
-      amount,
-      payee_clean,
-      payee_original,
-      date,
-      category:categories(id, name, icon, color)
-    `)
-    .eq('user_id', user.id)
-    .gte('date', startOfMonth.toISOString().split('T')[0])
-    .order('date', { ascending: false })
-    .order('created_at', { ascending: false });
-
-  type TransactionRow = {
-    id: string;
-    amount: number;
-    payee_clean: string | null;
-    payee_original: string | null;
-    date: string;
-    category: { id: string; name: string; icon: string | null; color: string | null } | null;
-  };
-  const transactions = (transactionsData || []) as TransactionRow[];
-
-  // Calculate totals
-  const totalBalance = accounts.reduce((sum, acc) => sum + (acc.balance || 0), 0);
-  const monthlyIncome = transactions
-    .filter(t => t.amount > 0)
-    .reduce((sum, t) => sum + t.amount, 0);
-  const monthlyExpenses = transactions
-    .filter(t => t.amount < 0)
-    .reduce((sum, t) => sum + Math.abs(t.amount), 0);
-
-  // Format recent transactions for display
-  const recentTransactions = transactions.slice(0, 5).map(t => {
-    const date = new Date(t.date + 'T00:00:00');
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    let dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    if (date.toDateString() === today.toDateString()) dateStr = 'Today';
-    if (date.toDateString() === yesterday.toDateString()) dateStr = 'Yesterday';
-
-    return {
-      id: t.id,
-      payee: t.payee_clean || t.payee_original || 'Unknown',
-      amount: t.amount,
-      category: t.category?.name || 'Uncategorized',
-      date: dateStr,
-    };
-  });
-
-  // Fetch real budgets
-  const currentMonthStr = startOfMonth.toISOString().split('T')[0];
-  const { data: budgetsData } = await supabase
-    .from('budgets')
-    .select(`
-      id,
-      budgeted,
-      category:categories(id, name, icon, color)
-    `)
-    .eq('user_id', user.id)
-    .eq('month', currentMonthStr);
-
-  // Calculate spent per category from transactions
-  const spentByCategory: Record<string, number> = {};
-  transactions.filter(t => t.amount < 0).forEach(t => {
-    if (t.category?.id) {
-      spentByCategory[t.category.id] = (spentByCategory[t.category.id] || 0) + Math.abs(t.amount);
-    }
-  });
-
-  // Format budgets for display
-  type BudgetRow = {
-    id: string;
-    budgeted: number;
-    category: { id: string; name: string; icon: string | null; color: string | null } | null;
-  };
-  const budgets = ((budgetsData || []) as BudgetRow[]).map(b => ({
-    name: b.category?.name || 'Unknown',
-    icon: b.category?.icon || '📦',
-    budgeted: b.budgeted,
-    spent: spentByCategory[b.category?.id || ''] || 0,
-    color: b.category?.color || '#a855f7',
-  })).slice(0, 4); // Show top 4 on dashboard
-
-  const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-
-  const userProfile = {
-    email: user.email,
-    full_name: user.user_metadata?.full_name || user.email?.split('@')[0],
-  };
 
   return (
     <AppShell user={userProfile}>
@@ -162,7 +66,7 @@ export default async function DashboardPage() {
               <TrendingUp className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">+${monthlyIncome.toFixed(2)}</div>
+              <div className="text-2xl font-bold text-green-600">+${monthlyIncome!.toFixed(2)}</div>
               <p className="text-xs text-muted-foreground">{currentMonth}</p>
             </CardContent>
           </Card>
@@ -172,7 +76,7 @@ export default async function DashboardPage() {
               <TrendingDown className="h-4 w-4 text-red-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">-${monthlyExpenses.toFixed(2)}</div>
+              <div className="text-2xl font-bold text-red-600">-${monthlyExpenses!.toFixed(2)}</div>
               <p className="text-xs text-muted-foreground">{currentMonth}</p>
             </CardContent>
           </Card>
@@ -186,7 +90,7 @@ export default async function DashboardPage() {
               <CardDescription>Your spending vs budget this month</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {budgets.length > 0 ? budgets.map((budget) => {
+              {budgets && budgets.length > 0 ? budgets.map((budget) => {
                 const percentage = (budget.spent / budget.budgeted) * 100;
                 const isOver = percentage > 100;
                 return (
@@ -229,7 +133,7 @@ export default async function DashboardPage() {
               <CardDescription>Your latest activity</CardDescription>
             </CardHeader>
             <CardContent>
-              {recentTransactions.length > 0 ? (
+              {recentTransactions && recentTransactions.length > 0 ? (
                 <div className="space-y-4">
                   {recentTransactions.map((transaction) => (
                     <div key={transaction.id} className="flex items-center justify-between">

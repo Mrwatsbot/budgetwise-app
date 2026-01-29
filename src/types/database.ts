@@ -78,6 +78,41 @@ export interface Budget {
   spent?: number;
 }
 
+export type SavingsGoalType = 'emergency' | 'general' | 'retirement_401k' | 'ira' | 'hsa' | 'education_529' | 'brokerage' | 'custom';
+
+export const SAVINGS_GOAL_TYPE_META: Record<SavingsGoalType, { icon: string; label: string }> = {
+  emergency: { icon: '🛡️', label: 'Emergency Fund' },
+  general: { icon: '💰', label: 'General Savings' },
+  retirement_401k: { icon: '📊', label: '401(k)/403(b)' },
+  ira: { icon: '📈', label: 'IRA' },
+  hsa: { icon: '🏥', label: 'Health Savings' },
+  education_529: { icon: '🎓', label: '529 Plan' },
+  brokerage: { icon: '📉', label: 'Investments' },
+  custom: { icon: '⭐', label: 'Custom Goal' },
+};
+
+export interface SavingsGoal {
+  id: string;
+  user_id: string;
+  name: string;
+  type: SavingsGoalType;
+  target_amount: number | null;
+  current_amount: number;
+  monthly_contribution: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SavingsContribution {
+  id: string;
+  user_id: string;
+  savings_goal_id: string;
+  amount: number;
+  date: string;
+  created_at: string;
+}
+
 export interface PayeeRule {
   id: string;
   user_id: string;
@@ -135,6 +170,16 @@ export interface Database {
         Row: AIUsage;
         Insert: Omit<AIUsage, 'id' | 'created_at'>;
         Update: never;
+      };
+      savings_goals: {
+        Row: SavingsGoal;
+        Insert: Omit<SavingsGoal, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<SavingsGoal, 'id' | 'user_id' | 'created_at'>>;
+      };
+      savings_contributions: {
+        Row: SavingsContribution;
+        Insert: Omit<SavingsContribution, 'id' | 'created_at'>;
+        Update: Partial<Omit<SavingsContribution, 'id' | 'user_id' | 'created_at'>>;
       };
     };
   };

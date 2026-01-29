@@ -18,6 +18,7 @@ interface BudgetCardProps {
   spent: number;
   userId: string;
   currentMonth: string;
+  onMutate?: () => void;
 }
 
 export function BudgetCard({
@@ -30,6 +31,7 @@ export function BudgetCard({
   spent,
   userId,
   currentMonth,
+  onMutate,
 }: BudgetCardProps) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
@@ -80,7 +82,11 @@ export function BudgetCard({
 
       toast.success('Budget updated!');
       setEditing(false);
-      router.refresh();
+      if (onMutate) {
+        onMutate();
+      } else {
+        router.refresh();
+      }
     } catch (error: any) {
       toast.error(error.message || 'Failed to update budget');
     } finally {

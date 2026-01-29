@@ -38,9 +38,10 @@ interface Transaction {
 interface TransactionListProps {
   transactions: Transaction[];
   showAccount?: boolean;
+  onMutate?: () => void;
 }
 
-export function TransactionList({ transactions, showAccount = false }: TransactionListProps) {
+export function TransactionList({ transactions, showAccount = false, onMutate }: TransactionListProps) {
   const router = useRouter();
   const [deleting, setDeleting] = useState<string | null>(null);
 
@@ -58,7 +59,11 @@ export function TransactionList({ transactions, showAccount = false }: Transacti
       if (error) throw error;
 
       toast.success('Transaction deleted');
-      router.refresh();
+      if (onMutate) {
+        onMutate();
+      } else {
+        router.refresh();
+      }
     } catch (error: any) {
       toast.error(error.message || 'Failed to delete');
     } finally {

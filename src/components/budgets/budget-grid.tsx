@@ -16,9 +16,10 @@ interface BudgetGridProps {
   categoryBudgets: CategoryBudget[];
   userId: string;
   currentMonth: string;
+  onMutate?: () => void;
 }
 
-export function BudgetGrid({ categoryBudgets, userId, currentMonth }: BudgetGridProps) {
+export function BudgetGrid({ categoryBudgets, userId, currentMonth, onMutate }: BudgetGridProps) {
   // Separate budgeted and unbudgeted categories
   const budgetedCategories = categoryBudgets.filter(b => b.budgeted > 0);
   const unbudgetedCategories = categoryBudgets.filter(b => b.budgeted === 0);
@@ -36,6 +37,7 @@ export function BudgetGrid({ categoryBudgets, userId, currentMonth }: BudgetGrid
                 {...budget}
                 userId={userId}
                 currentMonth={currentMonth}
+                onMutate={onMutate}
               />
             ))}
           </div>
@@ -55,6 +57,7 @@ export function BudgetGrid({ categoryBudgets, userId, currentMonth }: BudgetGrid
                 {...budget}
                 userId={userId}
                 currentMonth={currentMonth}
+                onMutate={onMutate}
               />
             ))}
           </div>

@@ -42,9 +42,10 @@ interface AddTransactionDialogProps {
   categories: Category[];
   accounts: Account[];
   userId: string;
+  onMutate?: () => void;
 }
 
-export function AddTransactionDialog({ categories, accounts, userId }: AddTransactionDialogProps) {
+export function AddTransactionDialog({ categories, accounts, userId, onMutate }: AddTransactionDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -100,7 +101,11 @@ export function AddTransactionDialog({ categories, accounts, userId }: AddTransa
         memo: '',
         type: 'expense',
       });
-      router.refresh();
+      if (onMutate) {
+        onMutate();
+      } else {
+        router.refresh();
+      }
     } catch (error: any) {
       toast.error(error.message || 'Failed to add transaction');
     } finally {
