@@ -152,7 +152,7 @@ export function MobileTabShell({ tabs, initialTab = 0 }: MobileTabShellProps) {
               className={cn(
                 'flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-all whitespace-nowrap',
                 index === currentTab
-                  ? 'bg-[#d4872a] text-[#1c1917] shadow-lg shadow-[#d4872a40]'
+                  ? 'bg-[#e8922e] text-[#0f0d0b] shadow-lg shadow-[#e8922e40]'
                   : 'bg-secondary/80 text-muted-foreground hover:bg-secondary'
               )}
             >
@@ -210,7 +210,7 @@ export function MobileTabShell({ tabs, initialTab = 0 }: MobileTabShellProps) {
             className={cn(
               'transition-all rounded-full',
               index === currentTab
-                ? 'w-6 h-2 bg-[#d4872a]'
+                ? 'w-6 h-2 bg-[#e8922e]'
                 : 'w-2 h-2 bg-muted-foreground/40 hover:bg-muted-foreground/60'
             )}
             aria-label={`Go to ${tabs[index].label}`}

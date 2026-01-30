@@ -73,10 +73,10 @@ export function CreatorDashboard({
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Avg. Monthly</CardTitle>
-            <BarChart3 className="h-4 w-4 text-[#d4872a]" />
+            <BarChart3 className="h-4 w-4 text-[#e8922e]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#d4872a]">${averageMonthlyIncome.toFixed(2)}</div>
+            <div className="text-2xl font-bold text-[#e8922e]">${averageMonthlyIncome.toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">3-month average</p>
           </CardContent>
         </Card>
@@ -96,7 +96,7 @@ export function CreatorDashboard({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-[#d4872a]" />
+            <Zap className="h-5 w-5 text-[#e8922e]" />
             Income Streams
           </CardTitle>
           <CardDescription>Track revenue from multiple sources</CardDescription>

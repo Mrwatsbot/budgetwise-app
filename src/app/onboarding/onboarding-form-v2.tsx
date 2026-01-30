@@ -133,14 +133,14 @@ export function OnboardingFormV2({ userId }: OnboardingFormV2Props) {
                 onClick={() => handleIncomeTypeSelect(type.value)}
                 className={cn(
                   'flex items-center gap-4 p-4 rounded-xl border transition-all text-left',
-                  'hover:border-[#d4872a80] hover:bg-[#d4872a0d]',
+                  'hover:border-[#e8922e80] hover:bg-[#e8922e0d]',
                   formData.incomeType === type.value 
-                    ? 'border-[#d4872a80] bg-[#d4872a1a]' 
+                    ? 'border-[#e8922e80] bg-[#e8922e1a]' 
                     : 'border-border bg-secondary/30'
                 )}
               >
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#d4872a33] to-[#d4a03a33] border border-[#d4872a4d] flex items-center justify-center">
-                  <type.icon className="h-6 w-6 text-[#e09435]" />
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#e8922e33] to-[#f0ad3033] border border-[#e8922e4d] flex items-center justify-center">
+                  <type.icon className="h-6 w-6 text-[#f0a030]" />
                 </div>
                 <div className="flex-1">
                   <p className="font-medium">{type.label}</p>
@@ -170,21 +170,21 @@ export function OnboardingFormV2({ userId }: OnboardingFormV2Props) {
                 onClick={() => handleAccountTypeSelect(type.value)}
                 className={cn(
                   'flex items-center gap-4 p-4 rounded-xl border transition-all text-left',
-                  'hover:border-[#d4872a80] hover:bg-[#d4872a0d]',
+                  'hover:border-[#e8922e80] hover:bg-[#e8922e0d]',
                   formData.accountType === type.value 
-                    ? 'border-[#d4872a80] bg-[#d4872a1a]' 
+                    ? 'border-[#e8922e80] bg-[#e8922e1a]' 
                     : 'border-border bg-secondary/30'
                 )}
               >
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#d4872a33] to-[#d4a03a33] border border-[#d4872a4d] flex items-center justify-center">
-                  <type.icon className="h-6 w-6 text-[#e09435]" />
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#e8922e33] to-[#f0ad3033] border border-[#e8922e4d] flex items-center justify-center">
+                  <type.icon className="h-6 w-6 text-[#f0a030]" />
                 </div>
                 <div className="flex-1">
                   <p className="font-medium">{type.label}</p>
                   <p className="text-sm text-muted-foreground">{type.description}</p>
                 </div>
                 {formData.accountType === type.value && (
-                  <Check className="h-5 w-5 text-[#d4872a]" />
+                  <Check className="h-5 w-5 text-[#e8922e]" />
                 )}
               </button>
             ))}
