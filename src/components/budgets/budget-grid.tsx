@@ -1,6 +1,7 @@
 'use client';
 
 import { BudgetCard } from './budget-card';
+import { StaggerContainer, StaggerItem } from '@/components/ui/stagger-children';
 
 interface CategoryBudget {
   categoryId: string;
@@ -30,17 +31,18 @@ export function BudgetGrid({ categoryBudgets, userId, currentMonth, onMutate }: 
       {budgetedCategories.length > 0 && (
         <div>
           <h2 className="text-lg font-semibold mb-4">Active Budgets</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <StaggerContainer className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {budgetedCategories.map((budget) => (
-              <BudgetCard
-                key={budget.categoryId}
-                {...budget}
-                userId={userId}
-                currentMonth={currentMonth}
-                onMutate={onMutate}
-              />
+              <StaggerItem key={budget.categoryId}>
+                <BudgetCard
+                  {...budget}
+                  userId={userId}
+                  currentMonth={currentMonth}
+                  onMutate={onMutate}
+                />
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       )}
 
@@ -50,17 +52,18 @@ export function BudgetGrid({ categoryBudgets, userId, currentMonth, onMutate }: 
           <h2 className="text-lg font-semibold mb-4 text-muted-foreground">
             {budgetedCategories.length > 0 ? 'Add More Budgets' : 'Set Your First Budget'}
           </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <StaggerContainer className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {unbudgetedCategories.map((budget) => (
-              <BudgetCard
-                key={budget.categoryId}
-                {...budget}
-                userId={userId}
-                currentMonth={currentMonth}
-                onMutate={onMutate}
-              />
+              <StaggerItem key={budget.categoryId}>
+                <BudgetCard
+                  {...budget}
+                  userId={userId}
+                  currentMonth={currentMonth}
+                  onMutate={onMutate}
+                />
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       )}
     </div>

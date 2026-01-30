@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { AnimatedNumber } from '@/components/ui/animated-number';
 import { Plus, TrendingUp, TrendingDown, DollarSign, Zap, BarChart3 } from 'lucide-react';
 import type { Profile } from '@/types/database';
 
@@ -40,7 +41,7 @@ export function CreatorDashboard({
           <h1 className="text-2xl font-bold">Creator Dashboard</h1>
           <p className="text-muted-foreground">Welcome back, {userProfile.full_name}! 🎨</p>
         </div>
-        <Button className="gradient-btn border-0 text-white" asChild>
+        <Button className="gradient-btn border-0" asChild>
           <a href="/transactions">
             <Plus className="mr-2 h-4 w-4" />
             Add Transaction
@@ -56,7 +57,9 @@ export function CreatorDashboard({
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalBalance.toFixed(2)}</div>
+            <div className="text-2xl font-bold font-display hero-number">
+              <AnimatedNumber value={totalBalance} format="currency" />
+            </div>
             <p className="text-xs text-muted-foreground">Safety buffer</p>
           </CardContent>
         </Card>
@@ -66,7 +69,9 @@ export function CreatorDashboard({
             <TrendingUp className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">+${monthlyIncome.toFixed(2)}</div>
+            <div className="text-2xl font-bold text-green-600 font-display hero-number-green">
+              +<AnimatedNumber value={monthlyIncome} format="currency" />
+            </div>
             <p className="text-xs text-muted-foreground">{currentMonth}</p>
           </CardContent>
         </Card>
@@ -76,7 +81,9 @@ export function CreatorDashboard({
             <BarChart3 className="h-4 w-4 text-[#e8922e]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#e8922e]">${averageMonthlyIncome.toFixed(2)}</div>
+            <div className="text-2xl font-bold text-[#e8922e] font-display hero-number">
+              <AnimatedNumber value={averageMonthlyIncome} format="currency" />
+            </div>
             <p className="text-xs text-muted-foreground">3-month average</p>
           </CardContent>
         </Card>
@@ -86,7 +93,9 @@ export function CreatorDashboard({
             <TrendingDown className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">-${monthlyExpenses.toFixed(2)}</div>
+            <div className="text-2xl font-bold text-red-600 font-display hero-number">
+              -<AnimatedNumber value={monthlyExpenses} format="currency" />
+            </div>
             <p className="text-xs text-muted-foreground">This month</p>
           </CardContent>
         </Card>
@@ -132,7 +141,7 @@ export function CreatorDashboard({
                       <span className="font-medium">{budget.name}</span>
                     </div>
                     <span className={isOver ? 'text-red-500' : ''}>
-                      ${budget.spent.toFixed(2)} / ${budget.budgeted}
+                      <AnimatedNumber value={budget.spent} format="currency" /> / ${ budget.budgeted}
                     </span>
                   </div>
                   <div className="h-2 rounded-full bg-muted overflow-hidden">
@@ -175,7 +184,8 @@ export function CreatorDashboard({
                       </span>
                     </div>
                     <span className={transaction.amount > 0 ? 'text-green-600 font-medium' : 'font-medium'}>
-                      {transaction.amount > 0 ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
+                      {transaction.amount > 0 ? '+' : '-'}
+                      <AnimatedNumber value={Math.abs(transaction.amount)} format="currency" />
                     </span>
                   </div>
                 ))}

@@ -41,12 +41,12 @@ export function IncomeOverview({ monthlyIncome, totalSpent, totalBudgeted }: Inc
       <div className="h-4 rounded-full bg-secondary overflow-hidden flex">
         {/* Spent portion */}
         <div
-          className="h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all"
+          className="h-full bg-gradient-to-r from-[#e8922e] to-[#d4800f] transition-all"
           style={{ width: `${Math.min(spentPercentage, 100)}%` }}
         />
         {/* Budgeted but not spent */}
         <div
-          className="h-full bg-purple-500/30 transition-all"
+          className="h-full bg-[#e8922e4d] transition-all"
           style={{ width: `${Math.max(0, Math.min(budgetedPercentage - spentPercentage, 100 - spentPercentage))}%` }}
         />
         {/* Unallocated */}
@@ -60,7 +60,7 @@ export function IncomeOverview({ monthlyIncome, totalSpent, totalBudgeted }: Inc
       <div className="grid grid-cols-3 gap-4 mt-4">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-purple-500" />
+            <div className="w-3 h-3 rounded-full bg-[#e8922e]" />
             <TrendingDown className="w-3.5 h-3.5 text-muted-foreground" />
           </div>
           <div>
@@ -71,7 +71,7 @@ export function IncomeOverview({ monthlyIncome, totalSpent, totalBudgeted }: Inc
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-purple-500/30" />
+            <div className="w-3 h-3 rounded-full bg-[#e8922e4d]" />
             <PiggyBank className="w-3.5 h-3.5 text-muted-foreground" />
           </div>
           <div>

@@ -69,7 +69,7 @@ export function DemoBudgetCard({
   const IconComponent = categoryIcon ? iconMap[categoryIcon] || Package : Package;
 
   return (
-    <div className="glass-card rounded-xl p-5 transition-all hover:border-purple-500/30">
+    <div className="glass-card rounded-xl p-5 transition-all hover:border-[#e8922e33]">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -127,7 +127,7 @@ export function DemoBudgetCard({
           <div className="flex gap-2">
             <Button
               size="sm"
-              className="flex-1 gradient-btn border-0 text-white"
+              className="flex-1 gradient-btn border-0"
               onClick={handleSave}
             >
               <Check className="h-4 w-4" />
@@ -173,7 +173,7 @@ export function DemoBudgetCard({
           <Button
             size="sm"
             variant="outline"
-            className="border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+            className="border-[#e8922e33] text-[#e8922e] hover:bg-[#e8922e1a]"
             onClick={() => setEditing(true)}
           >
             Set Budget

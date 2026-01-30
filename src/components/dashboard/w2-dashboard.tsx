@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { AnimatedNumber } from '@/components/ui/animated-number';
 import { Plus, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
 import type { Profile } from '@/types/database';
 
@@ -34,7 +35,7 @@ export function W2Dashboard({
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground">Welcome back, {userProfile.full_name}!</p>
         </div>
-        <Button className="gradient-btn border-0 text-white" asChild>
+        <Button className="gradient-btn border-0" asChild>
           <a href="/transactions">
             <Plus className="mr-2 h-4 w-4" />
             Add Transaction
@@ -50,7 +51,9 @@ export function W2Dashboard({
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalBalance.toFixed(2)}</div>
+            <div className="text-2xl font-bold font-display hero-number">
+              <AnimatedNumber value={totalBalance} format="currency" />
+            </div>
             <p className="text-xs text-muted-foreground">Across {accounts.length} account{accounts.length !== 1 ? 's' : ''}</p>
           </CardContent>
         </Card>
@@ -60,7 +63,9 @@ export function W2Dashboard({
             <TrendingUp className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">+${monthlyIncome.toFixed(2)}</div>
+            <div className="text-2xl font-bold text-green-600 font-display hero-number-green">
+              +<AnimatedNumber value={monthlyIncome} format="currency" />
+            </div>
             <p className="text-xs text-muted-foreground">{currentMonth}</p>
           </CardContent>
         </Card>
@@ -70,7 +75,9 @@ export function W2Dashboard({
             <TrendingDown className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">-${monthlyExpenses.toFixed(2)}</div>
+            <div className="text-2xl font-bold text-red-600 font-display hero-number">
+              -<AnimatedNumber value={monthlyExpenses} format="currency" />
+            </div>
             <p className="text-xs text-muted-foreground">{currentMonth}</p>
           </CardContent>
         </Card>
@@ -95,7 +102,7 @@ export function W2Dashboard({
                       <span className="font-medium">{budget.name}</span>
                     </div>
                     <span className={isOver ? 'text-red-500' : ''}>
-                      ${budget.spent.toFixed(2)} / ${budget.budgeted}
+                      <AnimatedNumber value={budget.spent} format="currency" /> / ${budget.budgeted}
                     </span>
                   </div>
                   <div className="h-2 rounded-full bg-muted overflow-hidden">
@@ -138,7 +145,8 @@ export function W2Dashboard({
                       </span>
                     </div>
                     <span className={transaction.amount > 0 ? 'text-green-600 font-medium' : 'font-medium'}>
-                      {transaction.amount > 0 ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
+                      {transaction.amount > 0 ? '+' : '-'}
+                      <AnimatedNumber value={Math.abs(transaction.amount)} format="currency" />
                     </span>
                   </div>
                 ))}

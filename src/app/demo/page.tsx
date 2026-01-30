@@ -47,7 +47,7 @@ const mockInsights = [
 const initialBudgets = [
   { categoryId: '1', categoryName: 'Food & Dining', categoryIcon: 'utensils', categoryColor: '#f97316', budgeted: 500, spent: 342.50 },
   { categoryId: '2', categoryName: 'Transportation', categoryIcon: 'car', categoryColor: '#3b82f6', budgeted: 200, spent: 156.00 },
-  { categoryId: '3', categoryName: 'Shopping', categoryIcon: 'shopping-bag', categoryColor: '#a855f7', budgeted: 300, spent: 425.99 },
+  { categoryId: '3', categoryName: 'Shopping', categoryIcon: 'shopping-bag', categoryColor: '#c76bad', budgeted: 300, spent: 425.99 },
   { categoryId: '4', categoryName: 'Entertainment', categoryIcon: 'film', categoryColor: '#ec4899', budgeted: 150, spent: 89.00 },
   { categoryId: '5', categoryName: 'Utilities', categoryIcon: 'zap', categoryColor: '#eab308', budgeted: 250, spent: 187.32 },
   { categoryId: '6', categoryName: 'Health', categoryIcon: 'heart-pulse', categoryColor: '#22c55e', budgeted: 0, spent: 45.00 },
@@ -198,7 +198,7 @@ export default function DemoPage() {
             <span>32%</span>
           </div>
           <div className="h-2 rounded-full bg-secondary overflow-hidden">
-            <div className="h-full w-[32%] rounded-full bg-gradient-to-r from-green-500 to-green-400" />
+            <div className="h-full w-[32%] rounded-full bg-gradient-to-r from-[#6db555] to-[#8bcb6a]" />
           </div>
         </div>
       </div>
@@ -236,7 +236,7 @@ export default function DemoPage() {
       <div className="glass-card rounded-xl p-4">
         <p className="text-sm font-medium mb-3">Payoff Strategy</p>
         <div className="flex gap-2">
-          <Button variant="default" size="sm" className="flex-1 gradient-btn border-0 text-white">
+          <Button variant="default" size="sm" className="flex-1 gradient-btn border-0">
             Avalanche (Save $)
           </Button>
           <Button variant="outline" size="sm" className="flex-1 border-border">
@@ -257,20 +257,20 @@ export default function DemoPage() {
 
       {/* Action Cards */}
       <div className="grid gap-4">
-        <div className="glass-card rounded-xl p-6 hover:border-purple-500/30 transition-colors cursor-pointer">
+        <div className="glass-card rounded-xl p-6 hover:border-[#e8922e33] transition-colors cursor-pointer">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 border border-purple-500/30 flex items-center justify-center flex-shrink-0">
-              <Search className="w-6 h-6 text-purple-400" />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#e8922e33] to-[#f0ad3033] border border-[#e8922e4d] flex items-center justify-center flex-shrink-0">
+              <Search className="w-6 h-6 text-[#e8922e]" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold mb-1">Analyze Spending</h3>
               <p className="text-sm text-muted-foreground mb-3">AI reviews your transactions and identifies patterns, anomalies, and opportunities.</p>
-              <Button className="gradient-btn border-0 text-white">Run Analysis</Button>
+              <Button className="gradient-btn border-0">Run Analysis</Button>
             </div>
           </div>
         </div>
 
-        <div className="glass-card rounded-xl p-6 hover:border-purple-500/30 transition-colors cursor-pointer">
+        <div className="glass-card rounded-xl p-6 hover:border-[#e8922e33] transition-colors cursor-pointer">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 flex items-center justify-center flex-shrink-0">
               <Zap className="w-6 h-6 text-green-400" />
@@ -283,7 +283,7 @@ export default function DemoPage() {
           </div>
         </div>
 
-        <div className="glass-card rounded-xl p-6 hover:border-purple-500/30 transition-colors cursor-pointer">
+        <div className="glass-card rounded-xl p-6 hover:border-[#e8922e33] transition-colors cursor-pointer">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
               <FileText className="w-6 h-6 text-blue-400" />
@@ -296,7 +296,7 @@ export default function DemoPage() {
           </div>
         </div>
 
-        <div className="glass-card rounded-xl p-6 hover:border-purple-500/30 transition-colors cursor-pointer">
+        <div className="glass-card rounded-xl p-6 hover:border-[#e8922e33] transition-colors cursor-pointer">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 border border-orange-500/30 flex items-center justify-center flex-shrink-0">
               <MessageSquare className="w-6 h-6 text-orange-400" />
@@ -350,10 +350,10 @@ export default function DemoPage() {
       <div className="glass-card rounded-xl p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Target className="w-5 h-5 text-purple-400" />
+            <Target className="w-5 h-5 text-[#e8922e]" />
             <span className="font-medium">Active Challenges</span>
           </div>
-          <Button variant="ghost" size="sm" className="text-purple-400 text-xs">
+          <Button variant="ghost" size="sm" className="text-[#e8922e] text-xs">
             View All
           </Button>
         </div>
@@ -368,7 +368,7 @@ export default function DemoPage() {
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-2 rounded-full bg-secondary overflow-hidden">
                   <div 
-                    className="h-full rounded-full bg-gradient-to-r from-purple-500 to-green-500"
+                    className="h-full rounded-full bg-gradient-to-r from-[#e8922e] to-green-500"
                     style={{ width: `${(challenge.progress / challenge.total) * 100}%` }}
                   />
                 </div>
@@ -394,7 +394,7 @@ export default function DemoPage() {
                 <span className="font-medium text-sm">{challenge.title}</span>
                 <p className="text-xs text-muted-foreground">{challenge.description}</p>
               </div>
-              <Button size="sm" variant="outline" className="border-purple-500/30 text-purple-400 text-xs">
+              <Button size="sm" variant="outline" className="border-[#e8922e4d] text-[#e8922e] text-xs">
                 Start
               </Button>
             </div>
@@ -424,7 +424,7 @@ export default function DemoPage() {
             <span className="font-semibold">BudgetWise</span>
           </div>
           <div className="flex items-center gap-2 text-xs">
-            <span className="px-2 py-1 rounded-full bg-purple-500/20 text-purple-400">Demo Mode</span>
+            <span className="px-2 py-1 rounded-full bg-[#e8922e33] text-[#e8922e]">Demo Mode</span>
           </div>
         </div>
       </header>

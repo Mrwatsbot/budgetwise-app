@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, ReactNode, useCallback } from 'react';
+import { useState, useRef, ReactNode, useCallback, useEffect, useLayoutEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface CubeFace {
@@ -20,7 +20,12 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
   const [direction, setDirection] = useState<'left' | 'right'>('left');
   const [prevFace, setPrevFace] = useState<number | null>(null);
   const [animHeight, setAnimHeight] = useState<number | null>(null);
-  
+
+  // Sliding indicator state
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
   const isHorizontalSwipe = useRef<boolean | null>(null);
@@ -28,21 +33,60 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
 
   const totalFaces = faces.length;
 
+  // Measure and position the sliding indicator
+  const updateIndicator = useCallback(() => {
+    const activeEl = tabRefs.current[currentFace];
+    const container = scrollContainerRef.current;
+    if (!activeEl || !container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const tabRect = activeEl.getBoundingClientRect();
+
+    setIndicatorStyle({
+      left: tabRect.left - containerRect.left + container.scrollLeft,
+      width: tabRect.width,
+    });
+  }, [currentFace]);
+
+  useLayoutEffect(() => {
+    updateIndicator();
+  }, [currentFace, updateIndicator]);
+
+  useEffect(() => {
+    window.addEventListener('resize', updateIndicator);
+    return () => window.removeEventListener('resize', updateIndicator);
+  }, [updateIndicator]);
+
+  // Auto-scroll active tab to center
+  useEffect(() => {
+    const activeEl = tabRefs.current[currentFace];
+    const container = scrollContainerRef.current;
+    if (!activeEl || !container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const tabRect = activeEl.getBoundingClientRect();
+    const tabCenter = tabRect.left + tabRect.width / 2;
+    const containerCenter = containerRect.left + containerRect.width / 2;
+    const scrollDelta = tabCenter - containerCenter;
+
+    container.scrollBy({
+      left: scrollDelta,
+      behavior: 'smooth',
+    });
+  }, [currentFace]);
+
   const goToFace = useCallback((index: number, dir?: 'left' | 'right') => {
     if (isAnimating || index === currentFace) return;
     if (index < 0 || index >= totalFaces) return;
-    
-    // Determine direction if not specified
+
     const autoDir = dir || (index > currentFace ? 'left' : 'right');
-    
-    // Use viewport height for consistent rotation center on ALL pages
-    setAnimHeight(window.innerHeight - 120); // subtract header + tabs
-    
+
+    setAnimHeight(window.innerHeight - 120);
     setDirection(autoDir);
     setPrevFace(currentFace);
     setCurrentFace(index);
     setIsAnimating(true);
-    
+
     setTimeout(() => {
       setIsAnimating(false);
       setPrevFace(null);
@@ -69,11 +113,11 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
   const handleTouchMove = (e: React.TouchEvent) => {
     const diffX = e.touches[0].clientX - touchStartX.current;
     const diffY = e.touches[0].clientY - touchStartY.current;
-    
+
     if (isHorizontalSwipe.current === null && (Math.abs(diffX) > 10 || Math.abs(diffY) > 10)) {
       isHorizontalSwipe.current = Math.abs(diffX) > Math.abs(diffY);
     }
-    
+
     if (isHorizontalSwipe.current) {
       e.preventDefault();
     }
@@ -81,7 +125,7 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (!isHorizontalSwipe.current) return;
-    
+
     const diffX = touchStartX.current - e.changedTouches[0].clientX;
     const threshold = 50;
 
@@ -90,56 +134,62 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
     } else if (diffX < -threshold) {
       goPrev();
     }
-    
+
     isHorizontalSwipe.current = null;
   };
 
-  // Animation classes for the "cube turn" effect
-  const getExitClass = () => {
-    if (direction === 'left') {
-      return 'cube-exit-left';
-    }
-    return 'cube-exit-right';
-  };
-
-  const getEnterClass = () => {
-    if (direction === 'left') {
-      return 'cube-enter-left';
-    }
-    return 'cube-enter-right';
-  };
+  const getExitClass = () => direction === 'left' ? 'cube-exit-left' : 'cube-exit-right';
+  const getEnterClass = () => direction === 'left' ? 'cube-enter-left' : 'cube-enter-right';
 
   return (
     <div className="relative w-full" style={{ minHeight: 'calc(100dvh - 56px)' }}>
-      {/* Face indicators - Fixed at top */}
-      <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b border-border/50">
-        <div className="flex justify-center py-3 gap-2">
-          {faces.map((face, index) => (
-            <button
-              key={face.id}
-              onClick={() => {
-                if (index !== currentFace) {
-                  goToFace(index, index > currentFace ? 'left' : 'right');
-                }
-              }}
-              disabled={isAnimating}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                index === currentFace
-                  ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/25'
-                  : 'bg-secondary/80 text-muted-foreground hover:bg-secondary'
-              }`}
-            >
-              {face.label}
-            </button>
-          ))}
+      {/* ── Top Tab Bar — Scrollable with sliding indicator ── */}
+      <div className="sticky top-0 z-30 bg-background border-b border-[#2a2523]">
+        <div
+          ref={scrollContainerRef}
+          className="relative overflow-x-auto scrollbar-hide"
+        >
+          {/* Sliding indicator pill */}
+          <div
+            className="tab-indicator absolute top-1/2 -translate-y-1/2 h-[34px] rounded-full"
+            style={{
+              left: `${indicatorStyle.left}px`,
+              width: `${indicatorStyle.width}px`,
+              background: 'linear-gradient(135deg, #e8922e 0%, #d4800f 100%)',
+              boxShadow: '0 0 20px rgba(232, 146, 46, 0.25), inset 0 1px 0 rgba(255,255,255,0.15)',
+            }}
+          />
+
+          {/* Tab buttons */}
+          <div className="flex items-center gap-1 px-3 py-2.5 w-max min-w-full justify-center">
+            {faces.map((face, index) => (
+              <button
+                key={face.id}
+                ref={(el) => { tabRefs.current[index] = el; }}
+                onClick={() => {
+                  if (index !== currentFace && !isAnimating) {
+                    goToFace(index, index > currentFace ? 'left' : 'right');
+                  }
+                }}
+                disabled={isAnimating}
+                className={`relative z-10 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors duration-200 whitespace-nowrap ${
+                  index === currentFace
+                    ? 'text-[#0f0d0b]'
+                    : 'text-[#8a8279] hover:text-[#b8afa4]'
+                }`}
+              >
+                {face.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Navigation arrows - Desktop */}
+      {/* Desktop Navigation Arrows */}
       <button
         onClick={goPrev}
         disabled={isAnimating}
-        className="hidden md:flex fixed left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-card items-center justify-center text-muted-foreground hover:text-foreground hover:border-purple-500/30 transition-all"
+        className="hidden md:flex fixed left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-card items-center justify-center text-[#8a8279] hover:text-[#ede6db] hover:border-[#e8922e33] transition-all"
         aria-label="Previous"
       >
         <ChevronLeft className="w-6 h-6" />
@@ -147,23 +197,23 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
       <button
         onClick={goNext}
         disabled={isAnimating}
-        className="hidden md:flex fixed right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-card items-center justify-center text-muted-foreground hover:text-foreground hover:border-purple-500/30 transition-all"
+        className="hidden md:flex fixed right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-card items-center justify-center text-[#8a8279] hover:text-[#ede6db] hover:border-[#e8922e33] transition-all"
         aria-label="Next"
       >
         <ChevronRight className="w-6 h-6" />
       </button>
 
-      {/* Content Area */}
+      {/* ── Content Area ── */}
       <div
-        className="w-full py-6 px-4 md:px-8 pb-24 md:pb-6 overflow-hidden"
+        className="w-full py-6 px-4 md:px-8 pb-20 md:pb-6 overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div 
+        <div
           ref={contentRef}
-          className="w-full max-w-3xl mx-auto relative" 
-          style={{ 
+          className="w-full max-w-3xl mx-auto relative"
+          style={{
             perspective: '800px',
             height: animHeight ? `${animHeight}px` : 'auto',
             overflow: isAnimating ? 'hidden' : 'visible',
@@ -171,16 +221,16 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
         >
           {/* Exiting face */}
           {isAnimating && prevFace !== null && (
-            <div 
+            <div
               className={`absolute inset-0 ${getExitClass()}`}
               style={{ transformOrigin: 'center center' }}
             >
               {faces[prevFace].content}
             </div>
           )}
-          
+
           {/* Current face */}
-          <div 
+          <div
             className={isAnimating ? getEnterClass() : ''}
             style={{ transformOrigin: 'center center' }}
           >
@@ -189,24 +239,24 @@ export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
         </div>
       </div>
 
-      {/* Bottom progress indicator - Mobile */}
-      <div 
-        className="md:hidden fixed left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-background/90 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50"
-        style={{ bottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}
+      {/* ── Bottom Dots — Subtle, no frosting ── */}
+      <div
+        className="md:hidden fixed left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5 px-3 py-1.5"
+        style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
       >
         {faces.map((_, index) => (
           <button
             key={index}
             onClick={() => {
-              if (index !== currentFace) {
+              if (index !== currentFace && !isAnimating) {
                 goToFace(index, index > currentFace ? 'left' : 'right');
               }
             }}
             disabled={isAnimating}
-            className={`transition-all rounded-full ${
+            className={`rounded-full transition-all duration-300 ${
               index === currentFace
-                ? 'w-6 h-2 bg-purple-500'
-                : 'w-2 h-2 bg-muted-foreground/40 hover:bg-muted-foreground/60'
+                ? 'w-7 h-2 bg-[#e8922e] shadow-[0_0_8px_rgba(232,146,46,0.4)]'
+                : 'w-2 h-2 bg-[#3a3430] hover:bg-[#4a4440]'
             }`}
             aria-label={`Go to ${faces[index].label}`}
           />

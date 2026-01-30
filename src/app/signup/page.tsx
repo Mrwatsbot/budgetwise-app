@@ -142,7 +142,7 @@ export default function SignupPage() {
             {error && (
               <p className="text-sm text-red-400">{error}</p>
             )}
-            <Button type="submit" className="w-full gradient-btn border-0 text-white h-11" disabled={loading}>
+            <Button type="submit" className="w-full gradient-btn border-0 h-11" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

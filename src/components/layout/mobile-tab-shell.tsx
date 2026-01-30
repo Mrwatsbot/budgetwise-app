@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useLayoutEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 interface TabConfig {
@@ -22,6 +22,11 @@ export function MobileTabShell({ tabs, initialTab = 0 }: MobileTabShellProps) {
   const [prevTab, setPrevTab] = useState<number | null>(null);
   const [animHeight, setAnimHeight] = useState<number | null>(null);
 
+  // Sliding indicator state
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const contentRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
@@ -40,6 +45,49 @@ export function MobileTabShell({ tabs, initialTab = 0 }: MobileTabShellProps) {
   useEffect(() => {
     animatingRef.current = isAnimating;
   }, [isAnimating]);
+
+  // Measure and position the sliding indicator behind active tab
+  const updateIndicator = useCallback(() => {
+    const activeEl = tabRefs.current[currentTab];
+    const container = scrollContainerRef.current;
+    if (!activeEl || !container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const tabRect = activeEl.getBoundingClientRect();
+
+    setIndicatorStyle({
+      left: tabRect.left - containerRect.left + container.scrollLeft,
+      width: tabRect.width,
+    });
+  }, [currentTab]);
+
+  // Update indicator on tab change + resize
+  useLayoutEffect(() => {
+    updateIndicator();
+  }, [currentTab, updateIndicator]);
+
+  useEffect(() => {
+    window.addEventListener('resize', updateIndicator);
+    return () => window.removeEventListener('resize', updateIndicator);
+  }, [updateIndicator]);
+
+  // Auto-scroll active tab to center of the scrollable bar
+  useEffect(() => {
+    const activeEl = tabRefs.current[currentTab];
+    const container = scrollContainerRef.current;
+    if (!activeEl || !container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const tabRect = activeEl.getBoundingClientRect();
+    const tabCenter = tabRect.left + tabRect.width / 2;
+    const containerCenter = containerRect.left + containerRect.width / 2;
+    const scrollDelta = tabCenter - containerCenter;
+
+    container.scrollBy({
+      left: scrollDelta,
+      behavior: 'smooth',
+    });
+  }, [currentTab]);
 
   const goToTab = useCallback((index: number, dir?: 'left' | 'right') => {
     if (animatingRef.current || index === currentTabRef.current) return;
@@ -65,7 +113,6 @@ export function MobileTabShell({ tabs, initialTab = 0 }: MobileTabShellProps) {
   }, [totalTabs]);
 
   // Attach touch listeners directly to the DOM with { passive: false }
-  // This gives us proper control over preventDefault
   useEffect(() => {
     const el = contentRef.current;
     if (!el) return;
@@ -80,18 +127,15 @@ export function MobileTabShell({ tabs, initialTab = 0 }: MobileTabShellProps) {
 
     const onTouchMove = (e: TouchEvent) => {
       if (animatingRef.current) return;
-      
+
       const diffX = e.touches[0].clientX - touchStartX.current;
       const diffY = e.touches[0].clientY - touchStartY.current;
 
-      // Decide direction once after meaningful movement
       if (!swipeDecided.current && (Math.abs(diffX) > 12 || Math.abs(diffY) > 12)) {
         swipeDecided.current = true;
-        // Require clearly horizontal: X movement must exceed Y by 1.3x
         isHorizontal.current = Math.abs(diffX) > Math.abs(diffY) * 1.3;
       }
 
-      // Block native scroll only for horizontal swipes
       if (swipeDecided.current && isHorizontal.current) {
         e.preventDefault();
       }
@@ -120,7 +164,6 @@ export function MobileTabShell({ tabs, initialTab = 0 }: MobileTabShellProps) {
       isHorizontal.current = false;
     };
 
-    // passive: false is critical - allows us to call preventDefault on touch events
     el.addEventListener('touchstart', onTouchStart, { passive: true });
     el.addEventListener('touchmove', onTouchMove, { passive: false });
     el.addEventListener('touchend', onTouchEnd, { passive: true });
@@ -137,34 +180,52 @@ export function MobileTabShell({ tabs, initialTab = 0 }: MobileTabShellProps) {
 
   return (
     <div className="relative w-full min-h-dvh">
-      {/* Tab indicators */}
-      <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b border-border/50">
-        <div className="flex justify-center py-3 gap-1.5 px-2 overflow-x-auto scrollbar-hide">
-          {tabs.map((tab, index) => (
-            <button
-              key={tab.id}
-              onClick={() => {
-                if (index !== currentTab && !isAnimating) {
-                  goToTab(index, index > currentTab ? 'left' : 'right');
-                }
-              }}
-              disabled={isAnimating}
-              className={cn(
-                'flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-all whitespace-nowrap',
-                index === currentTab
-                  ? 'bg-[#e8922e] text-[#0f0d0b] shadow-lg shadow-[#e8922e40]'
-                  : 'bg-secondary/80 text-muted-foreground hover:bg-secondary'
-              )}
-            >
-              <tab.icon className="h-3.5 w-3.5" />
-              {tab.label}
-            </button>
-          ))}
+      {/* ── Top Tab Bar ── */}
+      <div className="sticky top-0 z-30 bg-background border-b border-[#2a2523]">
+        <div
+          ref={scrollContainerRef}
+          className="relative overflow-x-auto scrollbar-hide"
+        >
+          {/* Sliding indicator pill — sits behind the active button */}
+          <div
+            className="tab-indicator absolute top-1/2 -translate-y-1/2 h-[34px] rounded-full"
+            style={{
+              left: `${indicatorStyle.left}px`,
+              width: `${indicatorStyle.width}px`,
+              background: 'linear-gradient(135deg, #e8922e 0%, #d4800f 100%)',
+              boxShadow: '0 0 20px rgba(232, 146, 46, 0.25), inset 0 1px 0 rgba(255,255,255,0.15)',
+            }}
+          />
+
+          {/* Tab buttons */}
+          <div className="flex items-center gap-1 px-3 py-2.5 w-max min-w-full justify-center">
+            {tabs.map((tab, index) => (
+              <button
+                key={tab.id}
+                ref={(el) => { tabRefs.current[index] = el; }}
+                onClick={() => {
+                  if (index !== currentTab && !isAnimating) {
+                    goToTab(index, index > currentTab ? 'left' : 'right');
+                  }
+                }}
+                disabled={isAnimating}
+                className={cn(
+                  'relative z-10 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors duration-200 whitespace-nowrap',
+                  index === currentTab
+                    ? 'text-[#0f0d0b]'
+                    : 'text-[#8a8279] hover:text-[#b8afa4]'
+                )}
+              >
+                <tab.icon className="h-3.5 w-3.5" />
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Content Area - min-height ensures swipe works even on empty pages */}
-      <div ref={contentRef} className="w-full py-4 px-4 pb-24" style={{ minHeight: 'calc(100dvh - 60px)' }}>
+      {/* ── Content Area ── */}
+      <div ref={contentRef} className="w-full py-4 px-4 pb-20" style={{ minHeight: 'calc(100dvh - 60px)' }}>
         <div
           className="w-full max-w-6xl mx-auto relative"
           style={{
@@ -193,10 +254,10 @@ export function MobileTabShell({ tabs, initialTab = 0 }: MobileTabShellProps) {
         </div>
       </div>
 
-      {/* Bottom progress dots */}
+      {/* ── Bottom Dots — Subtle, no frosting ── */}
       <div
-        className="fixed left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-background/90 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50"
-        style={{ bottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}
+        className="fixed left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5 px-3 py-1.5"
+        style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
       >
         {tabs.map((_, index) => (
           <button
@@ -208,10 +269,10 @@ export function MobileTabShell({ tabs, initialTab = 0 }: MobileTabShellProps) {
             }}
             disabled={isAnimating}
             className={cn(
-              'transition-all rounded-full',
+              'rounded-full transition-all duration-300',
               index === currentTab
-                ? 'w-6 h-2 bg-[#e8922e]'
-                : 'w-2 h-2 bg-muted-foreground/40 hover:bg-muted-foreground/60'
+                ? 'w-7 h-2 bg-[#e8922e] shadow-[0_0_8px_rgba(232,146,46,0.4)]'
+                : 'w-2 h-2 bg-[#3a3430] hover:bg-[#4a4440]'
             )}
             aria-label={`Go to ${tabs[index].label}`}
           />

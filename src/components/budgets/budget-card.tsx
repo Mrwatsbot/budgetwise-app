@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { AnimatedNumber } from '@/components/ui/animated-number';
+import { Pressable } from '@/components/ui/pressable';
 import { Pencil, Check, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -100,7 +102,7 @@ export function BudgetCard({
   };
 
   return (
-    <div className="glass-card rounded-xl p-5 transition-all hover:border-purple-500/30">
+    <Pressable className="glass-card rounded-xl p-5 transition-all hover:border-[#e8922e33]">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -117,8 +119,8 @@ export function BudgetCard({
             {budgeted > 0 && !editing && (
               <p className={`text-sm ${isOver ? 'text-red-400' : 'text-muted-foreground'}`}>
                 {isOver 
-                  ? `$${Math.abs(remaining).toFixed(2)} over` 
-                  : `$${remaining.toFixed(2)} left`}
+                  ? <><AnimatedNumber value={Math.abs(remaining)} format="currency" /> over</> 
+                  : <><AnimatedNumber value={remaining} format="currency" /> left</>}
               </p>
             )}
           </div>
@@ -155,7 +157,7 @@ export function BudgetCard({
           <div className="flex gap-2">
             <Button
               size="sm"
-              className="flex-1 gradient-btn border-0 text-white"
+              className="flex-1 gradient-btn border-0"
               onClick={handleSave}
               disabled={loading}
             >
@@ -176,8 +178,12 @@ export function BudgetCard({
         /* Budget Progress */
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">${spent.toFixed(2)} spent</span>
-            <span className="font-medium">${budgeted.toFixed(2)}</span>
+            <span className="text-muted-foreground">
+              <AnimatedNumber value={spent} format="currency" /> spent
+            </span>
+            <span className="font-medium">
+              <AnimatedNumber value={budgeted} format="currency" />
+            </span>
           </div>
           <div className="h-2 rounded-full bg-secondary overflow-hidden">
             <div
@@ -198,18 +204,18 @@ export function BudgetCard({
         /* No Budget Set */
         <div className="text-center py-2">
           <p className="text-sm text-muted-foreground mb-2">
-            {spent > 0 ? `$${spent.toFixed(2)} spent this month` : 'No budget set'}
+            {spent > 0 ? <><AnimatedNumber value={spent} format="currency" /> spent this month</> : 'No budget set'}
           </p>
           <Button
             size="sm"
             variant="outline"
-            className="border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+            className="border-[#e8922e33] text-[#e8922e] hover:bg-[#e8922e1a]"
             onClick={() => setEditing(true)}
           >
             Set Budget
           </Button>
         </div>
       )}
-    </div>
+    </Pressable>
   );
 }

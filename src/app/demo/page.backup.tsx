@@ -77,7 +77,7 @@ export default function DemoPage() {
             <p className="text-sm text-muted-foreground">Try editing budgets! Changes are local only.</p>
           </div>
           <a href="/signup">
-            <button className="px-4 py-2 rounded-lg gradient-btn border-0 text-white text-sm font-medium">
+            <button className="px-4 py-2 rounded-lg gradient-btn border-0 text-sm font-medium">
               Create Real Account
             </button>
           </a>

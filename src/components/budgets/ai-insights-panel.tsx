@@ -64,8 +64,8 @@ export function AIInsightsPanel({ insights, onAnalyze, onFindSavings }: AIInsigh
     <div className="glass-card rounded-xl p-6">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500/20 to-indigo-500/20 border border-purple-500/30 flex items-center justify-center">
-          <Sparkles className="w-5 h-5 text-purple-400" />
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#e8922e33] to-[#f0ad3033] border border-[#e8922e4d] flex items-center justify-center">
+          <Sparkles className="w-5 h-5 text-[#e8922e]" />
         </div>
         <div>
           <h2 className="text-lg font-semibold">AI Insights</h2>
@@ -86,7 +86,7 @@ export function AIInsightsPanel({ insights, onAnalyze, onFindSavings }: AIInsigh
               <div className="flex-1 min-w-0">
                 <p className="text-sm">{insight.text}</p>
                 {insight.action && (
-                  <button className="text-xs text-purple-400 hover:text-purple-300 mt-1 flex items-center gap-1">
+                  <button className="text-xs text-[#e8922e] hover:text-[#f0a030] mt-1 flex items-center gap-1">
                     {insight.action}
                     <ChevronRight className="w-3 h-3" />
                   </button>
@@ -100,7 +100,7 @@ export function AIInsightsPanel({ insights, onAnalyze, onFindSavings }: AIInsigh
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-3">
         <Button 
-          className="flex-1 gradient-btn border-0 text-white"
+          className="flex-1 gradient-btn border-0"
           onClick={handleAnalyze}
           disabled={analyzing}
         >
@@ -118,7 +118,7 @@ export function AIInsightsPanel({ insights, onAnalyze, onFindSavings }: AIInsigh
         </Button>
         <Button 
           variant="outline"
-          className="flex-1 border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+          className="flex-1 border-[#e8922e4d] text-[#e8922e] hover:bg-[#e8922e1a]"
           onClick={handleFindSavings}
           disabled={findingSavings}
         >

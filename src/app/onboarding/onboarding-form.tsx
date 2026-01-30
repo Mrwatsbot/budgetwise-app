@@ -162,7 +162,7 @@ export function OnboardingForm({ userId }: OnboardingFormProps) {
             >
               Back
             </Button>
-            <Button type="submit" className="flex-1 gradient-btn border-0 text-white" disabled={loading}>
+            <Button type="submit" className="flex-1 gradient-btn border-0" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create Account & Continue
             </Button>

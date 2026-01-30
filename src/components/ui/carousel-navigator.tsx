@@ -92,7 +92,7 @@ export function CarouselNavigator({ slides, initialSlide = 0 }: CarouselNavigato
             onClick={() => goTo(index)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
               index === currentSlide
-                ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/25'
+                ? 'bg-[#e8922e] text-white shadow-lg shadow-[#e8922e40]'
                 : 'bg-secondary/80 text-muted-foreground hover:bg-secondary'
             }`}
           >
@@ -105,7 +105,7 @@ export function CarouselNavigator({ slides, initialSlide = 0 }: CarouselNavigato
       {currentSlide > 0 && (
         <button
           onClick={() => goTo(currentSlide - 1)}
-          className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-card items-center justify-center text-muted-foreground hover:text-foreground hover:border-purple-500/30 transition-all hover:scale-105"
+          className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-card items-center justify-center text-muted-foreground hover:text-foreground hover:border-[#e8922e33] transition-all hover:scale-105"
           aria-label="Previous"
         >
           <ChevronLeft className="w-6 h-6" />
@@ -114,7 +114,7 @@ export function CarouselNavigator({ slides, initialSlide = 0 }: CarouselNavigato
       {currentSlide < totalSlides - 1 && (
         <button
           onClick={() => goTo(currentSlide + 1)}
-          className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-card items-center justify-center text-muted-foreground hover:text-foreground hover:border-purple-500/30 transition-all hover:scale-105"
+          className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-card items-center justify-center text-muted-foreground hover:text-foreground hover:border-[#e8922e33] transition-all hover:scale-105"
           aria-label="Next"
         >
           <ChevronRight className="w-6 h-6" />
@@ -171,7 +171,7 @@ export function CarouselNavigator({ slides, initialSlide = 0 }: CarouselNavigato
             onClick={() => goTo(index)}
             className={`w-2 h-2 rounded-full transition-all ${
               index === currentSlide
-                ? 'w-6 bg-purple-500'
+                ? 'w-6 bg-[#e8922e]'
                 : 'bg-muted-foreground/30'
             }`}
             aria-label={`Go to slide ${index + 1}`}

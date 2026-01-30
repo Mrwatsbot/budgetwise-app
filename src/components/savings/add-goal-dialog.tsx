@@ -97,7 +97,7 @@ export function AddGoalDialog({ userId, onMutate }: AddGoalDialogProps) {
   return (
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
       <DialogTrigger asChild>
-        <Button className="gradient-btn border-0 text-white">
+        <Button className="gradient-btn border-0">
           <Plus className="mr-2 h-4 w-4" />
           Add Goal
         </Button>
@@ -207,7 +207,7 @@ export function AddGoalDialog({ userId, onMutate }: AddGoalDialogProps) {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading} className="gradient-btn border-0 text-white">
+            <Button type="submit" disabled={loading} className="gradient-btn border-0">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create Goal
             </Button>

@@ -47,62 +47,64 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
-/* Burnished Design System - Rich, Warm, Bold */
+/* ============================================================
+   BURNISHED DESIGN SYSTEM v2 — Rich, Warm, Alive
+   ============================================================ */
 :root {
   /* === SPACING & RADIUS === */
   --radius: 0.5rem;
   
   /* === BACKGROUNDS === */
-  --background: #141110; /* deep warm black */
-  --foreground: #f5efe6; /* warm ivory */
-  --card: #231f1d; /* rich dark surface */
-  --card-foreground: #f5efe6;
-  --popover: #2e2926; /* elevated surface */
-  --popover-foreground: #f5efe6;
+  --background: #141110;
+  --foreground: #ede6db;          /* warm ivory — headlines & emphasis only */
+  --card: #1e1a18;                /* slightly lighter, warmer dark */
+  --card-foreground: #c8bfb4;    /* warm stone — body text inside cards */
+  --popover: #2a2523;
+  --popover-foreground: #c8bfb4;
   
   /* === PRIMARY (Vivid Amber) === */
-  --primary: #e8922e; /* punched-up amber */
-  --primary-foreground: #0f0d0b; /* near-black on amber */
+  --primary: #e8922e;
+  --primary-foreground: #0f0d0b;
   
   /* === SECONDARY (Rich Sage) === */
-  --secondary: #6db555; /* vibrant green */
-  --secondary-foreground: #f5efe6;
+  --secondary: #6db555;
+  --secondary-foreground: #ede6db;
   
   /* === MUTED === */
-  --muted: #2e2926;
-  --muted-foreground: #9c958e;
+  --muted: #2a2523;
+  --muted-foreground: #8a8279;   /* warm taupe — tertiary text */
   
   /* === ACCENT === */
-  --accent: rgba(232, 146, 46, 0.18);
+  --accent: rgba(232, 146, 46, 0.14);
   --accent-foreground: #e8922e;
   
   /* === SEMANTIC === */
-  --destructive: #e04d3a; /* vivid red */
-  --success: #5cb85c; /* strong green */
-  --warning: #f0ad30; /* bright golden */
+  --destructive: #e04d3a;
+  --success: #5cb85c;
+  --warning: #f0ad30;
   
   /* === BORDERS === */
-  --border: #3a3430;
-  --input: #3a3430;
-  --ring: rgba(232, 146, 46, 0.6);
+  --border: #2e2926;
+  --input: #2e2926;
+  --ring: rgba(232, 146, 46, 0.5);
   
-  /* === CHART PALETTE (rich, saturated) === */
-  --chart-1: #e8922e; /* vivid amber */
-  --chart-2: #6db555; /* emerald sage */
-  --chart-3: #e04d3a; /* vivid red */
-  --chart-4: #f0ad30; /* golden */
-  --chart-5: #5b8fd9; /* rich blue */
-  --chart-6: #c76bad; /* vivid rose */
+  /* === CHART PALETTE === */
+  --chart-1: #e8922e;
+  --chart-2: #6db555;
+  --chart-3: #e04d3a;
+  --chart-4: #f0ad30;
+  --chart-5: #5b8fd9;
+  --chart-6: #c76bad;
   
   /* === SIDEBAR === */
   --sidebar: #141110;
-  --sidebar-foreground: #f5efe6;
+  --sidebar-foreground: #c8bfb4;
   --sidebar-primary: #e8922e;
   --sidebar-primary-foreground: #0f0d0b;
-  --sidebar-accent: rgba(232, 146, 46, 0.18);
+  --sidebar-accent: rgba(232, 146, 46, 0.14);
   --sidebar-accent-foreground: #e8922e;
-  --sidebar-border: #3a3430;
-  --sidebar-ring: rgba(232, 146, 46, 0.6);
+  --sidebar-border: #2e2926;
+  --sidebar-ring: rgba(232, 146, 46, 0.5);
   
   /* === EMBER BAR === */
   --ember-start: #4a2a0a;
@@ -111,6 +113,9 @@
   --ember-glow: rgba(232, 146, 46, 0.5);
 }
 
+/* ============================================================
+   BASE LAYER
+   ============================================================ */
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -119,72 +124,125 @@
     min-height: 100dvh;
   }
   body {
-    @apply bg-background text-foreground antialiased overflow-y-auto overflow-x-hidden;
+    @apply bg-background text-card-foreground antialiased overflow-y-auto overflow-x-hidden;
     min-height: 100dvh;
-    /* Rich radial glow - deeper, more dramatic */
-    background: radial-gradient(ellipse 80% 50% at 50% -20%, #2a1f18 0%, #141110 70%);
-    /* iOS safe area padding */
     padding-bottom: env(safe-area-inset-bottom, 0);
+    letter-spacing: 0.01em;
+    /* Layered warm ambient glow */
+    background:
+      radial-gradient(ellipse 120% 80% at 50% -30%, rgba(232, 146, 46, 0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 50% at 50% -20%, #1f1814 0%, #141110 70%);
   }
+
+  .text-xs,
+  .text-sm {
+    letter-spacing: 0.02em;
+  }
+
+  /* Headlines & emphasis: bright ivory foreground */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--foreground);
+  }
+
+  /* Body text defaults to warm stone via card-foreground on body */
 }
 
-/* Grain texture overlay - adds analog warmth */
+/* Grain texture overlay — analog warmth */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.035;
+  opacity: 0.03;
   pointer-events: none;
   z-index: 9999;
 }
 
-/* Glass card effect for nav/header */
+/* ============================================================
+   GLASS CARD — Navigation & overlays (translucent)
+   ============================================================ */
 .glass-card {
-  background: rgba(35, 31, 29, 0.85);
+  background: linear-gradient(
+    180deg,
+    rgba(42, 37, 35, 0.92) 0%,
+    rgba(30, 26, 24, 0.88) 100%
+  );
   backdrop-filter: blur(12px);
-  border: 1px solid #3a3430;
+  border: 1px solid rgba(245, 239, 230, 0.06);
+  box-shadow:
+    inset 0 1px 0 rgba(245, 239, 230, 0.04),
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    0 0 0 0.5px rgba(0, 0, 0, 0.4);
 }
 
 .glass-card:hover {
-  background: rgba(46, 41, 38, 0.95);
-  border-color: rgba(232, 146, 46, 0.35);
+  background: linear-gradient(
+    180deg,
+    rgba(50, 44, 41, 0.95) 0%,
+    rgba(35, 31, 29, 0.92) 100%
+  );
+  border-color: rgba(232, 146, 46, 0.2);
+  box-shadow:
+    inset 0 1px 0 rgba(245, 239, 230, 0.06),
+    0 4px 16px rgba(0, 0, 0, 0.35),
+    0 0 0 0.5px rgba(232, 146, 46, 0.1);
 }
 
-/* Solid card for regular content */
+/* ============================================================
+   SOLID CARD — Content cards (opaque, deeper)
+   ============================================================ */
 .solid-card {
-  background: #231f1d;
-  border: 1px solid #2e2926;
-  box-shadow: inset 0 1px 0 rgba(245, 239, 230, 0.04);
+  background: linear-gradient(
+    180deg,
+    #211d1b 0%,
+    #1e1a18 100%
+  );
+  border: 1px solid #2a2523;
+  box-shadow:
+    inset 0 1px 0 rgba(245, 239, 230, 0.03),
+    0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .solid-card:hover {
-  background: #2e2926;
   border-color: #3a3430;
+  box-shadow:
+    inset 0 1px 0 rgba(245, 239, 230, 0.05),
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 0 24px rgba(232, 146, 46, 0.04);
 }
 
-/* Rich amber button - bold with subtle gradient */
+/* ============================================================
+   GRADIENT BUTTON — Rich amber with depth
+   ============================================================ */
 .gradient-btn {
   background: linear-gradient(135deg, #e8922e 0%, #f0a030 100%);
   color: #0f0d0b;
   font-weight: 700;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(232,146,46,0.15), inset 0 1px 0 rgba(255,255,255,0.15);
-  transition: all 120ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(232, 146, 46, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .gradient-btn:hover {
   background: linear-gradient(135deg, #f0a030 0%, #fbbf24 100%);
-  box-shadow: 0 4px 16px rgba(232, 146, 46, 0.35), 0 0 0 1px rgba(232,146,46,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+  box-shadow:
+    0 4px 20px rgba(232, 146, 46, 0.35),
+    0 0 0 1px rgba(232, 146, 46, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transform: translateY(-1px);
 }
 
 .gradient-btn:active {
   background: linear-gradient(135deg, #cc7e20 0%, #e8922e 100%);
   transform: translateY(0.5px);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-/* Gradient text - rich amber-to-gold */
+/* ============================================================
+   GRADIENT TEXT — Amber-to-gold shimmer
+   ============================================================ */
 .gradient-text {
   background: linear-gradient(135deg, #e8922e 0%, #fbbf24 50%, #e8922e 100%);
   -webkit-background-clip: text;
@@ -192,16 +250,70 @@ body::after {
   background-clip: text;
 }
 
-/* Background gradient effect - richer warm accent */
+/* ============================================================
+   RADIAL BACKGROUND — Warm accent glow
+   ============================================================ */
 .bg-gradient-radial {
-  background: radial-gradient(ellipse at top, rgba(232, 146, 46, 0.12) 0%, transparent 50%);
+  background: radial-gradient(ellipse at top, rgba(232, 146, 46, 0.1) 0%, transparent 50%);
 }
 
-/* === EMBER BAR - Signature Element === */
+/* ============================================================
+   PREMIUM CARD ACCENTS — Warm edge glow on specific cards
+   ============================================================ */
+.card-glow-amber {
+  position: relative;
+}
+.card-glow-amber::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(232, 146, 46, 0.2) 0%,
+    transparent 40%,
+    transparent 60%,
+    rgba(232, 146, 46, 0.08) 100%
+  );
+  z-index: -1;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  padding: 1px;
+  pointer-events: none;
+}
+
+/* ============================================================
+   ACCENT LINE — Warm top accent for hero cards
+   ============================================================ */
+.accent-line-top {
+  position: relative;
+  overflow: hidden;
+}
+.accent-line-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(232, 146, 46, 0.5) 30%,
+    rgba(251, 191, 36, 0.6) 50%,
+    rgba(232, 146, 46, 0.5) 70%,
+    transparent 100%
+  );
+}
+
+/* ============================================================
+   EMBER BAR — Signature progress element
+   ============================================================ */
 .ember-bar {
   position: relative;
   height: 12px;
-  background: #2e2926;
+  background: #2a2523;
   border-radius: 9999px;
   overflow: visible;
 }
@@ -214,7 +326,6 @@ body::after {
   transition: width 800ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* The glow point at the leading edge */
 .ember-bar-fill::after {
   content: '';
   position: absolute;
@@ -230,17 +341,16 @@ body::after {
 }
 
 @keyframes ember-pulse {
-  0%, 100% { 
-    opacity: 0.85; 
-    box-shadow: 0 0 14px rgba(232, 146, 46, 0.5); 
+  0%, 100% {
+    opacity: 0.85;
+    box-shadow: 0 0 14px rgba(232, 146, 46, 0.5);
   }
-  50% { 
-    opacity: 1; 
-    box-shadow: 0 0 24px rgba(232, 146, 46, 0.5), 0 0 10px #e8922e; 
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 24px rgba(232, 146, 46, 0.5), 0 0 10px #e8922e;
   }
 }
 
-/* Rising ember particles */
 .ember-particle {
   position: absolute;
   width: 3px;
@@ -252,20 +362,11 @@ body::after {
 }
 
 @keyframes ember-rise {
-  0% { 
-    opacity: 0; 
-    transform: translateY(0) scale(1); 
-  }
-  20% { 
-    opacity: 0.8; 
-  }
-  100% { 
-    opacity: 0; 
-    transform: translateY(-20px) translateX(5px) scale(0.3); 
-  }
+  0% { opacity: 0; transform: translateY(0) scale(1); }
+  20% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-20px) translateX(5px) scale(0.3); }
 }
 
-/* Hero-sized Ember Bar (for Runway metric) */
 .ember-bar-hero {
   height: 20px;
 }
@@ -276,117 +377,168 @@ body::after {
   box-shadow: 0 0 24px rgba(232, 146, 46, 0.5), 0 0 10px #e8922e;
 }
 
-/* === CUBE ANIMATION - Keep unchanged === */
-
-/* Swiping left (going to next): current face goes left + rotates, new comes from right */
+/* ============================================================
+   CUBE ANIMATION — Page transitions
+   ============================================================ */
 @keyframes cubeExitLeft {
-  0% {
-    transform: translateX(0%) rotateY(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(-100%) rotateY(-90deg);
-    opacity: 0.3;
-  }
+  0% { transform: translateX(0%) rotateY(0deg); opacity: 1; }
+  100% { transform: translateX(-100%) rotateY(-90deg); opacity: 0.3; }
 }
-
 @keyframes cubeEnterLeft {
-  0% {
-    transform: translateX(100%) rotateY(90deg);
-    opacity: 0.3;
-  }
-  100% {
-    transform: translateX(0%) rotateY(0deg);
-    opacity: 1;
-  }
+  0% { transform: translateX(100%) rotateY(90deg); opacity: 0.3; }
+  100% { transform: translateX(0%) rotateY(0deg); opacity: 1; }
 }
-
-/* Swiping right (going to prev): current face goes right + rotates, new comes from left */
 @keyframes cubeExitRight {
-  0% {
-    transform: translateX(0%) rotateY(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(100%) rotateY(90deg);
-    opacity: 0.3;
-  }
+  0% { transform: translateX(0%) rotateY(0deg); opacity: 1; }
+  100% { transform: translateX(100%) rotateY(90deg); opacity: 0.3; }
 }
-
 @keyframes cubeEnterRight {
-  0% {
-    transform: translateX(-100%) rotateY(-90deg);
-    opacity: 0.3;
-  }
-  100% {
-    transform: translateX(0%) rotateY(0deg);
-    opacity: 1;
-  }
+  0% { transform: translateX(-100%) rotateY(-90deg); opacity: 0.3; }
+  100% { transform: translateX(0%) rotateY(0deg); opacity: 1; }
 }
 
-.cube-exit-left {
-  animation: cubeExitLeft 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
+.cube-exit-left  { animation: cubeExitLeft  0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.cube-enter-left { animation: cubeEnterLeft 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.cube-exit-right  { animation: cubeExitRight  0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.cube-enter-right { animation: cubeEnterRight 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 
-.cube-enter-left {
-  animation: cubeEnterLeft 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.cube-exit-right {
-  animation: cubeExitRight 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.cube-enter-right {
-  animation: cubeEnterRight 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-/* Hide scrollbar */
+/* ============================================================
+   SCROLLBAR HIDE
+   ============================================================ */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 
-/* View Transitions API for smooth page changes */
+/* ============================================================
+   VIEW TRANSITIONS
+   ============================================================ */
 @view-transition {
   navigation: auto;
 }
 
-/* Page transition animations using View Transitions API */
 ::view-transition-old(root) {
   animation: slideOutLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 ::view-transition-new(root) {
   animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes slideOutLeft {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(-30%);
-    opacity: 0;
-  }
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-30%); opacity: 0; }
 }
-
 @keyframes slideInRight {
-  from {
-    transform: translateX(30%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  from { transform: translateX(30%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
-/* Optimize transitions */
 .page-transition-content {
   view-transition-name: main-content;
+}
+
+/* ============================================================
+   AMBIENT GLOW — Subtle warm light behind key sections
+   ============================================================ */
+.ambient-glow {
+  position: relative;
+}
+.ambient-glow::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: 10%;
+  right: 10%;
+  height: 60%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(232, 146, 46, 0.08) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================================
+   TAB BAR — Sliding animated indicator
+   ============================================================ */
+.tab-indicator {
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1),
+              width 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, width;
+}
+
+/* ============================================================
+   PREMIUM MOTION DESIGN UPGRADES
+   ============================================================ */
+
+/* Hero display numbers — large, bold with warm glow */
+.hero-number {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  text-shadow: 0 0 24px rgba(232, 146, 46, 0.25);
+}
+
+.hero-number-green {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  text-shadow: 0 0 24px rgba(109, 181, 85, 0.25);
+}
+
+/* Warm skeleton loader with Burnished palette shimmer */
+.skeleton-warm {
+  background: linear-gradient(
+    90deg,
+    #1e1a18 0%,
+    #2a2523 50%,
+    #352f2b 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 2s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0%, 100% { background-position: 200% 0; }
+  50% { background-position: 0 0; }
+}
+
+/* Tabular number spacing for financial displays */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Faster page transitions */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.fade-slide-in {
+  animation: fadeSlideIn 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fade-slide-out {
+  animation: fadeSlideOut 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }

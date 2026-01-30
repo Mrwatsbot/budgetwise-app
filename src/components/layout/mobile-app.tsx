@@ -16,6 +16,8 @@ import { AddGoalDialog } from '@/components/savings/add-goal-dialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { AnimatedNumber } from '@/components/ui/animated-number';
+import { StaggerContainer, StaggerItem } from '@/components/ui/stagger-children';
 import { LayoutDashboard, Receipt, PiggyBank, Landmark, Settings, Briefcase, Palette, Loader2, Target, TrendingUp, Calendar, Hash } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { toast } from 'sonner';
@@ -146,20 +148,24 @@ function BudgetsTab() {
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-xs text-muted-foreground">Budgeted</p>
-            <p className="text-lg font-bold">${totalBudgeted.toFixed(0)}</p>
+            <p className="text-lg font-bold">
+              <AnimatedNumber value={totalBudgeted} format="integer" prefix="$" />
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-xs text-muted-foreground">Spent</p>
-            <p className="text-lg font-bold text-red-500">${totalSpent.toFixed(0)}</p>
+            <p className="text-lg font-bold text-red-500">
+              <AnimatedNumber value={totalSpent} format="integer" prefix="$" />
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-xs text-muted-foreground">Remaining</p>
             <p className={cn('text-lg font-bold', remaining >= 0 ? 'text-green-500' : 'text-red-500')}>
-              ${remaining.toFixed(0)}
+              <AnimatedNumber value={remaining} format="integer" prefix="$" />
             </p>
           </CardContent>
         </Card>
@@ -208,21 +214,27 @@ function SavingsTab() {
           <CardContent className="p-4 text-center">
             <Target className="h-4 w-4 mx-auto mb-1 text-[#e8922e]" />
             <p className="text-xs text-muted-foreground">Total Saved</p>
-            <p className="text-lg font-bold">${totalSaved.toFixed(0)}</p>
+            <p className="text-lg font-bold">
+              <AnimatedNumber value={totalSaved} format="integer" prefix="$" />
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <TrendingUp className="h-4 w-4 mx-auto mb-1 text-green-400" />
             <p className="text-xs text-muted-foreground">Monthly</p>
-            <p className="text-lg font-bold">${(totalMonthlyContribution || 0).toFixed(0)}</p>
+            <p className="text-lg font-bold">
+              <AnimatedNumber value={totalMonthlyContribution || 0} format="integer" prefix="$" />
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <Calendar className="h-4 w-4 mx-auto mb-1 text-[#f0a030]" />
             <p className="text-xs text-muted-foreground">Target</p>
-            <p className="text-lg font-bold">${(totalTarget || 0).toFixed(0)}</p>
+            <p className="text-lg font-bold">
+              <AnimatedNumber value={totalTarget || 0} format="integer" prefix="$" />
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -236,11 +248,13 @@ function SavingsTab() {
 
       {/* Goals */}
       {goals.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <StaggerContainer className="grid gap-4 sm:grid-cols-2">
           {goals.map((goal: any) => (
-            <GoalCard key={goal.id} goal={goal} onMutate={() => mutate()} />
+            <StaggerItem key={goal.id}>
+              <GoalCard goal={goal} onMutate={() => mutate()} />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       ) : (
         <Card>
           <CardContent className="py-8 text-center">

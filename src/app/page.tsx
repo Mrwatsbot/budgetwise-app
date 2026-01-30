@@ -23,7 +23,7 @@ export default function Home() {
             </Button>
           </Link>
           <Link href="/signup">
-            <Button className="gradient-btn border-0 text-white">
+            <Button className="gradient-btn border-0">
               Get Started
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
@@ -55,7 +55,7 @@ export default function Home() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             <Link href="/signup">
-              <Button size="lg" className="gradient-btn border-0 text-white px-8 h-12 text-base">
+              <Button size="lg" className="gradient-btn border-0 px-8 h-12 text-base">
                 Start Free
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>

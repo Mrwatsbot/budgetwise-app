@@ -5,6 +5,8 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { AnimatedNumber } from '@/components/ui/animated-number';
+import { Pressable } from '@/components/ui/pressable';
 import {
   Dialog,
   DialogContent,
@@ -64,12 +66,12 @@ export function GoalCard({ goal, onMutate }: GoalCardProps) {
   const getProgressColor = () => {
     switch (goal.type) {
       case 'emergency': return '#ef4444';
-      case 'retirement_401k': return '#8b5cf6';
+      case 'retirement_401k': return '#e8922e';
       case 'ira': return '#3b82f6';
       case 'hsa': return '#10b981';
       case 'education_529': return '#f59e0b';
-      case 'brokerage': return '#6366f1';
-      default: return '#a855f7';
+      case 'brokerage': return '#5b8fd9';
+      default: return '#e8922e';
     }
   };
 
@@ -176,7 +178,7 @@ export function GoalCard({ goal, onMutate }: GoalCardProps) {
 
   return (
     <>
-      <div className="glass-card rounded-xl p-5 transition-all hover:border-purple-500/30">
+      <Pressable className="glass-card rounded-xl p-5 transition-all hover:border-[#e8922e33]">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
@@ -230,10 +232,12 @@ export function GoalCard({ goal, onMutate }: GoalCardProps) {
 
         {/* Current Amount (big number) */}
         <div className="mb-3">
-          <p className="text-2xl font-bold">${goal.current_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+          <p className="text-2xl font-bold font-display hero-number">
+            <AnimatedNumber value={goal.current_amount} format="currency" />
+          </p>
           {hasTarget && (
             <p className="text-sm text-muted-foreground">
-              of ${goal.target_amount!.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} · {percentage.toFixed(0)}%
+              of <AnimatedNumber value={goal.target_amount!} format="currency" /> · <AnimatedNumber value={percentage} format="integer" />%
             </p>
           )}
         </div>
@@ -260,7 +264,7 @@ export function GoalCard({ goal, onMutate }: GoalCardProps) {
               className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full"
               style={{ backgroundColor: `${progressColor}15`, color: progressColor }}
             >
-              ${goal.monthly_contribution.toFixed(2)}/mo
+              <AnimatedNumber value={goal.monthly_contribution} format="currency" />/mo
             </span>
           </div>
         )}
@@ -269,13 +273,13 @@ export function GoalCard({ goal, onMutate }: GoalCardProps) {
         <Button
           size="sm"
           variant="outline"
-          className="w-full border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+          className="w-full border-[#e8922e33] text-[#e8922e] hover:bg-[#e8922e1a]"
           onClick={() => setContributionOpen(true)}
         >
           <Plus className="mr-1 h-3 w-3" />
           Add Contribution
         </Button>
-      </div>
+      </Pressable>
 
       {/* Contribution Dialog */}
       <Dialog open={contributionOpen} onOpenChange={setContributionOpen}>
@@ -321,7 +325,7 @@ export function GoalCard({ goal, onMutate }: GoalCardProps) {
             <Button
               onClick={handleAddContribution}
               disabled={contributionLoading}
-              className="gradient-btn border-0 text-white"
+              className="gradient-btn border-0"
             >
               {contributionLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Add
@@ -409,7 +413,7 @@ export function GoalCard({ goal, onMutate }: GoalCardProps) {
               <Button type="button" variant="outline" onClick={() => setEditOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={editLoading} className="gradient-btn border-0 text-white">
+              <Button type="submit" disabled={editLoading} className="gradient-btn border-0">
                 {editLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Save Changes
               </Button>
