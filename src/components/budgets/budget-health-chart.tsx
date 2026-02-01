@@ -1,23 +1,10 @@
 'use client';
 
 import { 
-  Utensils, Car, ShoppingBag, Film, Zap, 
-  HeartPulse, Repeat, Sparkles, Package,
   TrendingUp, TrendingDown, AlertTriangle, CheckCircle2,
-  type LucideIcon 
 } from 'lucide-react';
-
-// Map icon names to Lucide components
-const iconMap: Record<string, LucideIcon> = {
-  'utensils': Utensils,
-  'car': Car,
-  'shopping-bag': ShoppingBag,
-  'film': Film,
-  'zap': Zap,
-  'heart-pulse': HeartPulse,
-  'repeat': Repeat,
-  'sparkles': Sparkles,
-};
+import { getCategoryIcon } from '@/lib/category-icons';
+import { getBudgetBarStyle } from '@/lib/bar-colors';
 
 interface CategoryBudget {
   categoryId: string;
@@ -57,7 +44,7 @@ export function BudgetHealthChart({ categoryBudgets }: BudgetHealthChartProps) {
   const getHealthStatus = () => {
     if (overallPercentage > 100) return { label: 'Over Budget', color: 'text-red-400', bg: 'bg-red-500/20' };
     if (overallPercentage > 85) return { label: 'Near Limit', color: 'text-yellow-400', bg: 'bg-yellow-500/20' };
-    return { label: 'On Track', color: 'text-green-400', bg: 'bg-green-500/20' };
+    return { label: 'On Track', color: 'text-[#7aba5c]', bg: 'bg-[#6db555]/20' };
   };
 
   const healthStatus = getHealthStatus();
@@ -104,7 +91,7 @@ export function BudgetHealthChart({ categoryBudgets }: BudgetHealthChartProps) {
           const percentage = (budget.spent / budget.budgeted) * 100;
           const remaining = budget.budgeted - budget.spent;
           const isOver = remaining < 0;
-          const IconComponent = budget.categoryIcon ? iconMap[budget.categoryIcon] || Package : Package;
+          const IconComponent = getCategoryIcon(budget.categoryIcon, budget.categoryName);
 
           return (
             <div key={budget.categoryId} className="space-y-1.5">
@@ -113,7 +100,7 @@ export function BudgetHealthChart({ categoryBudgets }: BudgetHealthChartProps) {
                 <div className="flex items-center gap-2">
                   <IconComponent 
                     className="w-4 h-4" 
-                    style={{ color: budget.categoryColor || '#a855f7' }} 
+                    style={{ color: budget.categoryColor || '#1a7a6d' }} 
                   />
                   <span className="font-medium">{budget.categoryName}</span>
                 </div>
@@ -121,7 +108,7 @@ export function BudgetHealthChart({ categoryBudgets }: BudgetHealthChartProps) {
                   <span className="text-muted-foreground">
                     {Math.round(percentage)}%
                   </span>
-                  <span className={`font-medium min-w-[70px] text-right ${isOver ? 'text-red-400' : 'text-green-400'}`}>
+                  <span className={`font-medium min-w-[70px] text-right ${isOver ? 'text-red-400' : 'text-[#7aba5c]'}`}>
                     {isOver ? '+' : '-'}${Math.abs(remaining).toFixed(0)}
                   </span>
                   {isOver && <AlertTriangle className="w-4 h-4 text-red-400" />}
@@ -129,14 +116,16 @@ export function BudgetHealthChart({ categoryBudgets }: BudgetHealthChartProps) {
               </div>
               
               {/* Progress Bar */}
-              <div className="h-2.5 rounded-full bg-secondary overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    width: `${Math.min(percentage, 100)}%`,
-                    backgroundColor: getBarColor(percentage),
-                  }}
-                />
+              <div className="h-2.5 rounded-full bg-border/10 overflow-hidden progress-bar-container">
+                {percentage > 0 && (
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${Math.min(percentage, 100)}%`,
+                      ...getBudgetBarStyle(budget.spent, budget.budgeted),
+                    }}
+                  />
+                )}
                 {/* Overage indicator */}
                 {percentage > 100 && (
                   <div 
@@ -157,7 +146,7 @@ export function BudgetHealthChart({ categoryBudgets }: BudgetHealthChartProps) {
       <div className="flex items-center justify-between pt-3 border-t border-border text-sm">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
+            <div className="w-2 h-2 rounded-full bg-[#6db555]" />
             <span className="text-muted-foreground">On track ({onTrack})</span>
           </div>
           {nearLimit > 0 && (

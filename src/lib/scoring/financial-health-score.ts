@@ -193,7 +193,7 @@ function calculateWealthBuilding(
   let detail: string;
   
   if (rate >= 0.20) {
-    detail = `${ratePct}% wealth building rate — Crushing it! 🚀`;
+    detail = `${ratePct}% wealth building rate — Crushing it!`;
   } else if (rate >= 0.15) {
     detail = `${ratePct}% rate — Strong progress, ${(20 - rate * 100).toFixed(0)}% from max`;
   } else if (rate >= 0.10) {
@@ -227,7 +227,7 @@ function calculateDebtVelocity(
   if (currentWeighted === 0 && previousWeighted === 0) {
     return {
       score: 200, maxScore, percentage: 100,
-      detail: 'Debt-free! 🏆', sublabel,
+      detail: 'Debt-free!', sublabel,
     };
   }
   
@@ -235,7 +235,7 @@ function calculateDebtVelocity(
   if (currentWeighted === 0 && previousWeighted > 0) {
     return {
       score: 200, maxScore, percentage: 100,
-      detail: 'You paid off all your debt! 🎉', sublabel,
+      detail: 'You paid off all your debt!', sublabel,
     };
   }
   
@@ -314,7 +314,7 @@ function calculatePaymentConsistency(
   let detail: string;
   
   if (onTime === totalBills) {
-    detail = `Perfect! ${totalBills}/${totalBills} bills on time 🎯`;
+    detail = `Perfect! ${totalBills}/${totalBills} bills on time`;
   } else if (effectiveRate >= 0.95) {
     detail = `${onTimeRate}% on-time — Excellent track record`;
   } else if (effectiveRate >= 0.90) {
@@ -372,7 +372,7 @@ function calculateBudgetDiscipline(
   
   let detail: string;
   if (budgetsOnTrack === totalBudgets) {
-    detail = `All ${totalBudgets} budgets on track! 🎯`;
+    detail = `All ${totalBudgets} budgets on track!`;
   } else if (adherenceScore / 90 >= 0.8) {
     detail = `${budgetsOnTrack}/${totalBudgets} on track — Close to perfect`;
   } else if (adherenceScore / 90 >= 0.6) {
@@ -413,7 +413,7 @@ function calculateEmergencyBuffer(
   
   let detail: string;
   if (monthsCovered >= 6) {
-    detail = `${monthsCovered.toFixed(1)} months covered — Fortress mode! 🏰`;
+    detail = `${monthsCovered.toFixed(1)} months covered — Fortress mode!`;
   } else if (monthsCovered >= 4) {
     detail = `${monthsCovered.toFixed(1)} months covered — Strong safety net`;
   } else if (monthsCovered >= 3) {
@@ -447,7 +447,7 @@ function calculateDebtToIncome(
   const totalRawDebt = currentDebts.reduce((sum, d) => sum + d.balance, 0);
   
   if (totalRawDebt === 0) {
-    return { score: 125, maxScore, percentage: 100, detail: 'No debt! Perfect score 🏆', sublabel };
+    return { score: 125, maxScore, percentage: 100, detail: 'No debt! Perfect score', sublabel };
   }
   
   // Use weighted monthly payments for DTI calculation
@@ -518,7 +518,7 @@ function generateTips(breakdown: ScoreBreakdown): string[] {
   }
   
   if (tips.length === 0) {
-    tips.push('You\'re doing amazing! Keep up the great work 🌟');
+    tips.push('You\'re doing amazing! Keep up the great work');
   }
   
   return tips;

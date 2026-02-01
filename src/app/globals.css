@@ -48,31 +48,31 @@
 }
 
 /* ============================================================
-   BURNISHED DESIGN SYSTEM v2 — Rich, Warm, Alive
+   THALLO DESIGN SYSTEM — Deep Teal, Premium, Trustworthy
    ============================================================ */
 :root {
   /* === SPACING & RADIUS === */
   --radius: 0.5rem;
   
   /* === BACKGROUNDS === */
-  --background: #141110;
-  --foreground: #ede6db;          /* warm ivory — headlines & emphasis only */
-  --card: #1e1a18;                /* slightly lighter, warmer dark */
-  --card-foreground: #c8bfb4;    /* warm stone — body text inside cards */
-  --popover: #2a2523;
-  --popover-foreground: #c8bfb4;
+  --background: #0d1514;
+  --foreground: #e0f2f0;          /* soft teal-tinted white — headlines & emphasis */
+  --card: #0f1f1d;                /* dark teal card background */
+  --card-foreground: #b8d5d0;    /* soft teal-tinted body text */
+  --popover: #1a2826;
+  --popover-foreground: #b8d5d0;
   
   /* === PRIMARY (Deep Teal) === */
   --primary: #1a7a6d;
-  --primary-foreground: #0f0d0b;
+  --primary-foreground: #ffffff;
   
-  /* === SECONDARY (Rich Sage) === */
-  --secondary: #6db555;
-  --secondary-foreground: #ede6db;
+  /* === SECONDARY (Warm Accent - sparingly) === */
+  --secondary: #1a7a6d;
+  --secondary-foreground: #0f0d0b;
   
   /* === MUTED === */
-  --muted: #2a2523;
-  --muted-foreground: #8a8279;   /* warm taupe — tertiary text */
+  --muted: #1a2826;
+  --muted-foreground: #6b8884;   /* muted teal — tertiary text */
   
   /* === ACCENT === */
   --accent: rgba(26, 122, 109, 0.14);
@@ -81,32 +81,32 @@
   /* === SEMANTIC === */
   --destructive: #e04d3a;
   --success: #5cb85c;
-  --warning: #f0ad30;
+  --warning: #1a7a6d;
   
   /* === BORDERS === */
-  --border: #2e2926;
-  --input: #2e2926;
+  --border: #1e3330;
+  --input: #1e3330;
   --ring: rgba(26, 122, 109, 0.5);
   
   /* === CHART PALETTE === */
   --chart-1: #1a7a6d;
   --chart-2: #6db555;
   --chart-3: #e04d3a;
-  --chart-4: #22a090;
+  --chart-4: #1a7a6d;
   --chart-5: #5b8fd9;
   --chart-6: #c76bad;
   
   /* === SIDEBAR === */
-  --sidebar: #141110;
-  --sidebar-foreground: #c8bfb4;
+  --sidebar: #0d1514;
+  --sidebar-foreground: #b8d5d0;
   --sidebar-primary: #1a7a6d;
-  --sidebar-primary-foreground: #0f0d0b;
+  --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: rgba(26, 122, 109, 0.14);
   --sidebar-accent-foreground: #1a7a6d;
-  --sidebar-border: #2e2926;
+  --sidebar-border: #1e3330;
   --sidebar-ring: rgba(26, 122, 109, 0.5);
   
-  /* === EMBER BAR === */
+  /* === TEAL BAR (formerly EMBER BAR) === */
   --ember-start: #0a3a34;
   --ember-mid: #1a7a6d;
   --ember-end: #2aaa9a;
@@ -128,10 +128,10 @@
     min-height: 100dvh;
     padding-bottom: env(safe-area-inset-bottom, 0);
     letter-spacing: 0.01em;
-    /* Layered warm ambient glow */
+    /* Layered teal ambient glow */
     background:
       radial-gradient(ellipse 120% 80% at 50% -30%, rgba(26, 122, 109, 0.07) 0%, transparent 60%),
-      radial-gradient(ellipse 80% 50% at 50% -20%, #1f1814 0%, #141110 70%);
+      radial-gradient(ellipse 80% 50% at 50% -20%, #0f1f1d 0%, #0d1514 70%);
   }
 
   .text-xs,
@@ -164,13 +164,13 @@ body::after {
 .glass-card {
   background: linear-gradient(
     180deg,
-    rgba(42, 37, 35, 0.92) 0%,
-    rgba(30, 26, 24, 0.88) 100%
+    rgba(26, 40, 38, 0.92) 0%,
+    rgba(15, 31, 29, 0.88) 100%
   );
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(245, 239, 230, 0.06);
+  border: 1px solid rgba(168, 213, 207, 0.06);
   box-shadow:
-    inset 0 1px 0 rgba(245, 239, 230, 0.04),
+    inset 0 1px 0 rgba(168, 213, 207, 0.04),
     0 2px 8px rgba(0, 0, 0, 0.3),
     0 0 0 0.5px rgba(0, 0, 0, 0.4);
 }
@@ -178,14 +178,14 @@ body::after {
 .glass-card:hover {
   background: linear-gradient(
     180deg,
-    rgba(50, 44, 41, 0.95) 0%,
-    rgba(35, 31, 29, 0.92) 100%
+    rgba(34, 50, 48, 0.95) 0%,
+    rgba(21, 37, 35, 0.92) 100%
   );
-  border-color: rgba(26, 122, 109, 0.2);
+  border-color: rgba(26, 122, 109, 0.3);
   box-shadow:
-    inset 0 1px 0 rgba(245, 239, 230, 0.06),
+    inset 0 1px 0 rgba(168, 213, 207, 0.06),
     0 4px 16px rgba(0, 0, 0, 0.35),
-    0 0 0 0.5px rgba(26, 122, 109, 0.1);
+    0 0 0 0.5px rgba(26, 122, 109, 0.15);
 }
 
 /* ============================================================
@@ -194,29 +194,29 @@ body::after {
 .solid-card {
   background: linear-gradient(
     180deg,
-    #211d1b 0%,
-    #1e1a18 100%
+    #142321 0%,
+    #0f1f1d 100%
   );
-  border: 1px solid #2a2523;
+  border: 1px solid #1a2826;
   box-shadow:
-    inset 0 1px 0 rgba(245, 239, 230, 0.03),
+    inset 0 1px 0 rgba(168, 213, 207, 0.03),
     0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .solid-card:hover {
-  border-color: #3a3430;
+  border-color: #1e3330;
   box-shadow:
-    inset 0 1px 0 rgba(245, 239, 230, 0.05),
+    inset 0 1px 0 rgba(168, 213, 207, 0.05),
     0 4px 16px rgba(0, 0, 0, 0.3),
-    0 0 24px rgba(26, 122, 109, 0.04);
+    0 0 24px rgba(26, 122, 109, 0.06);
 }
 
 /* ============================================================
-   GRADIENT BUTTON — Rich teal with depth
+   GRADIENT BUTTON — Deep teal with premium feel
    ============================================================ */
 .gradient-btn {
   background: linear-gradient(135deg, #1a7a6d 0%, #22a090 100%);
-  color: #0f0d0b;
+  color: #ffffff;
   font-weight: 700;
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.3),
@@ -228,20 +228,20 @@ body::after {
 .gradient-btn:hover {
   background: linear-gradient(135deg, #22a090 0%, #2aaa9a 100%);
   box-shadow:
-    0 4px 20px rgba(26, 122, 109, 0.35),
-    0 0 0 1px rgba(26, 122, 109, 0.25),
+    0 4px 20px rgba(26, 122, 109, 0.4),
+    0 0 0 1px rgba(26, 122, 109, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transform: translateY(-1px);
 }
 
 .gradient-btn:active {
-  background: linear-gradient(135deg, #116558 0%, #1a7a6d 100%);
+  background: linear-gradient(135deg, #146b5f 0%, #1a7a6d 100%);
   transform: translateY(0.5px);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* ============================================================
-   GRADIENT TEXT — Teal shimmer
+   GRADIENT TEXT — Teal-to-cyan shimmer
    ============================================================ */
 .gradient-text {
   background: linear-gradient(135deg, #1a7a6d 0%, #2aaa9a 50%, #1a7a6d 100%);
@@ -251,14 +251,14 @@ body::after {
 }
 
 /* ============================================================
-   RADIAL BACKGROUND — Warm accent glow
+   RADIAL BACKGROUND — Teal accent glow
    ============================================================ */
 .bg-gradient-radial {
-  background: radial-gradient(ellipse at top, rgba(26, 122, 109, 0.1) 0%, transparent 50%);
+  background: radial-gradient(ellipse at top, rgba(26, 122, 109, 0.12) 0%, transparent 50%);
 }
 
 /* ============================================================
-   PREMIUM CARD ACCENTS — Warm edge glow on specific cards
+   PREMIUM CARD ACCENTS — Teal edge glow on specific cards
    ============================================================ */
 .card-glow-amber {
   position: relative;
@@ -270,10 +270,10 @@ body::after {
   border-radius: inherit;
   background: linear-gradient(
     135deg,
-    rgba(26, 122, 109, 0.2) 0%,
+    rgba(26, 122, 109, 0.25) 0%,
     transparent 40%,
     transparent 60%,
-    rgba(26, 122, 109, 0.08) 100%
+    rgba(26, 122, 109, 0.1) 100%
   );
   z-index: -1;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -284,7 +284,7 @@ body::after {
 }
 
 /* ============================================================
-   ACCENT LINE — Warm top accent for hero cards
+   ACCENT LINE — Teal top accent for hero cards
    ============================================================ */
 .accent-line-top {
   position: relative;
@@ -301,19 +301,19 @@ body::after {
     90deg,
     transparent 0%,
     rgba(26, 122, 109, 0.5) 30%,
-    rgba(251, 191, 36, 0.6) 50%,
+    rgba(42, 170, 154, 0.6) 50%,
     rgba(26, 122, 109, 0.5) 70%,
     transparent 100%
   );
 }
 
 /* ============================================================
-   EMBER BAR — Signature progress element
+   TEAL BAR — Signature progress element
    ============================================================ */
 .ember-bar {
   position: relative;
   height: 12px;
-  background: #2a2523;
+  background: #1a2826;
   border-radius: 9999px;
   overflow: visible;
 }
@@ -336,18 +336,18 @@ body::after {
   height: 16px;
   background: #1a7a6d;
   border-radius: 50%;
-  box-shadow: 0 0 14px rgba(26, 122, 109, 0.5), 0 0 6px #1a7a6d;
+  box-shadow: 0 0 14px rgba(26, 122, 109, 0.6), 0 0 6px #1a7a6d;
   animation: ember-pulse 2s ease-in-out infinite;
 }
 
 @keyframes ember-pulse {
   0%, 100% {
     opacity: 0.85;
-    box-shadow: 0 0 14px rgba(26, 122, 109, 0.5);
+    box-shadow: 0 0 14px rgba(26, 122, 109, 0.6);
   }
   50% {
     opacity: 1;
-    box-shadow: 0 0 24px rgba(26, 122, 109, 0.5), 0 0 10px #1a7a6d;
+    box-shadow: 0 0 24px rgba(26, 122, 109, 0.7), 0 0 10px #1a7a6d;
   }
 }
 
@@ -374,7 +374,7 @@ body::after {
 .ember-bar-hero .ember-bar-fill::after {
   width: 24px;
   height: 24px;
-  box-shadow: 0 0 24px rgba(26, 122, 109, 0.5), 0 0 10px #1a7a6d;
+  box-shadow: 0 0 24px rgba(26, 122, 109, 0.6), 0 0 10px #1a7a6d;
 }
 
 /* ============================================================
@@ -441,7 +441,7 @@ body::after {
 }
 
 /* ============================================================
-   AMBIENT GLOW — Subtle warm light behind key sections
+   AMBIENT GLOW — Subtle teal light behind key sections
    ============================================================ */
 .ambient-glow {
   position: relative;
@@ -455,7 +455,7 @@ body::after {
   height: 60%;
   background: radial-gradient(
     ellipse at center,
-    rgba(26, 122, 109, 0.08) 0%,
+    rgba(26, 122, 109, 0.1) 0%,
     transparent 70%
   );
   pointer-events: none;
@@ -475,12 +475,128 @@ body::after {
    PREMIUM MOTION DESIGN UPGRADES
    ============================================================ */
 
-/* Hero display numbers — large, bold with warm glow */
+/* ============================================================
+   SHIMMER BUTTON — Slow animated glow for feature CTAs
+   ============================================================ */
+.shimmer-btn {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a7a6d 0%, #22a090 100%);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(26, 122, 109, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.shimmer-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.2) 48%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0.2) 52%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-sweep 2.5s linear infinite;
+}
+
+.shimmer-btn:hover {
+  box-shadow:
+    0 4px 20px rgba(26, 122, 109, 0.5),
+    0 0 0 1px rgba(26, 122, 109, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.shimmer-btn:active {
+  transform: translateY(0.5px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes shimmer-sweep {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Slower shimmer speed override */
+.shimmer-btn::before,
+.shimmer-btn-outline::before {
+  animation-duration: 3.5s !important;
+}
+
+/* Outline shimmer variant — for secondary feature buttons */
+.shimmer-btn-outline {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(26, 122, 109, 0.4);
+  background: rgba(26, 122, 109, 0.08);
+  color: #1a7a6d;
+  font-weight: 600;
+  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.shimmer-btn-outline::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(26, 122, 109, 0.08) 48%,
+    rgba(26, 122, 109, 0.15) 50%,
+    rgba(26, 122, 109, 0.08) 52%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-sweep 2.5s linear infinite;
+}
+
+.shimmer-btn-outline:hover {
+  background: rgba(26, 122, 109, 0.15);
+  border-color: rgba(26, 122, 109, 0.6);
+  box-shadow: 0 0 16px rgba(26, 122, 109, 0.2);
+}
+
+/* ============================================================
+   MULTI-COLOR PROGRESS BAR — Gradient fill
+   ============================================================ */
+/* Budget bars: green (plenty left) → teal (running out) */
+/* REMOVED: Old static tri-color gradient — replaced by time-aware inline styles */
+/* .progress-bar-gradient { ... } */
+
+/* Debt payoff bars: teal (barely started) → green (almost done) */
+.progress-bar-gradient-debt {
+  background: linear-gradient(90deg, #1a7a6d 0%, #5b8fd9 50%, #6db555 100%);
+  box-shadow: inset 0 0 0 1px rgba(26, 122, 109, 0.2);
+}
+
+.progress-bar-gradient-warm {
+  background: linear-gradient(90deg, #1a7a6d 0%, #22a090 100%);
+  box-shadow: inset 0 0 0 1px rgba(26, 122, 109, 0.2);
+}
+
+/* Bar container outline */
+.progress-bar-container {
+  border: 1px solid rgba(26, 122, 109, 0.15);
+}
+
+/* Hero display numbers — large, bold with teal glow */
 .hero-number {
   font-family: var(--font-display);
   font-weight: 800;
   letter-spacing: -0.03em;
-  text-shadow: 0 0 24px rgba(26, 122, 109, 0.25);
+  text-shadow: 0 0 24px rgba(26, 122, 109, 0.3);
 }
 
 .hero-number-green {
@@ -490,13 +606,13 @@ body::after {
   text-shadow: 0 0 24px rgba(109, 181, 85, 0.25);
 }
 
-/* Warm skeleton loader with Burnished palette shimmer */
+/* Teal skeleton loader with deep teal palette shimmer */
 .skeleton-warm {
   background: linear-gradient(
     90deg,
-    #1e1a18 0%,
-    #2a2523 50%,
-    #352f2b 100%
+    #0f1f1d 0%,
+    #1a2826 50%,
+    #1e3330 100%
   );
   background-size: 200% 100%;
   animation: skeleton-shimmer 2s ease-in-out infinite;

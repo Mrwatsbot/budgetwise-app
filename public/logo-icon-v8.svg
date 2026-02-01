@@ -1,0 +1,68 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Thallo olive branch v8: Based on Recraft silhouette, reduced leaves -->
+  <!-- Solid black silhouette style. ~14 leaves, 3 olives, spiral curl -->
+  
+  <!-- Main stem with spiral curl -->
+  <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" 
+        stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"
+        style="stroke-dasharray: none"/>
+  
+  <!-- Slightly thicker base overlay for taper effect -->
+  <path d="M 10 92 C 11 86, 12 80, 14 74" 
+        stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/>
+  
+  <g fill="currentColor" stroke="none">
+    
+    <!-- === LEFT / OUTER LEAVES (pointing upper-left away from curve) === -->
+    
+    <!-- L1 - bottom, medium -->
+    <path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/>
+    
+    <!-- L2 -->
+    <path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/>
+    
+    <!-- L3 - large -->
+    <path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/>
+    
+    <!-- L4 -->
+    <path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/>
+    
+    <!-- L5 -->
+    <path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/>
+    
+    <!-- L6 -->
+    <path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/>
+    
+    <!-- L7 - near curl, smaller -->
+    <path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/>
+    
+    <!-- === RIGHT / INNER LEAVES (pointing lower-right away from curve) === -->
+    
+    <!-- R1 - bottom -->
+    <path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/>
+    
+    <!-- R2 -->
+    <path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/>
+    
+    <!-- R3 - large -->
+    <path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/>
+    
+    <!-- R4 -->
+    <path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/>
+    
+    <!-- R5 -->
+    <path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/>
+    
+    <!-- R6 - near curl, smaller -->
+    <path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/>
+    
+    <!-- R7 - tiny at curl -->
+    <path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/>
+    
+    <!-- === OLIVES (solid filled) === -->
+    <circle cx="18" cy="74" r="2.8"/>
+    <circle cx="24" cy="64" r="2.5"/>
+    <circle cx="21" cy="69" r="2.3"/>
+    
+  </g>
+</svg>

@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thallo — Month in Review Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #1a7a6d;
+    --teal-dark: #146b5f;
+    --teal-light: #22a090;
+    --teal-bright: #2aaa9a;
+    --bg: #0c0f0e;
+    --card-bg: #141918;
+    --card-border: rgba(26,122,109,0.15);
+    --text: #e8e6e1;
+    --text-muted: #8a9490;
+    --text-dim: #5a6560;
+    --green: #6db555;
+    --red: #e05252;
+    --amber: #e8a830;
+    --blue: #4a90d9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .app-frame {
+    max-width: 420px;
+    margin: 0 auto;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  /* Card Container */
+  .cards-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card {
+    min-height: 100vh;
+    padding: 60px 24px 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Navigation dots */
+  .nav-dots {
+    position: fixed;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .nav-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    padding: 0;
+  }
+
+  .nav-dot.active {
+    background: var(--teal-bright);
+    height: 20px;
+    border-radius: 3px;
+  }
+
+  /* Scroll hint */
+  .scroll-hint {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    z-index: 100;
+    animation: bounce 2s infinite;
+  }
+
+  .scroll-hint span {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .scroll-hint svg {
+    opacity: 0.4;
+  }
+
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateX(-50%) translateY(0); }
+    30% { transform: translateX(-50%) translateY(6px); }
+  }
+
+  /* ====== CARD 1: THE HEADLINE ====== */
+  .card-headline {
+    background: radial-gradient(ellipse at 30% 20%, rgba(26,122,109,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(26,122,109,0.08) 0%, transparent 50%),
+                var(--bg);
+  }
+
+  .card-headline .month-label {
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal-bright);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+
+  .card-headline .review-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    line-height: 1.1;
+    margin-bottom: 40px;
+    color: var(--text);
+  }
+
+  .card-headline .big-number {
+    font-family: 'DM Serif Display', serif;
+    font-size: 72px;
+    line-height: 1;
+    color: var(--teal-bright);
+    margin-bottom: 8px;
+    letter-spacing: -2px;
+  }
+
+  .card-headline .big-label {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+  }
+
+  .card-headline .income-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-top: 1px solid var(--card-border);
+  }
+
+  .card-headline .income-row .label {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .card-headline .income-row .value {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .card-headline .income-row .value.green { color: var(--green); }
+  .card-headline .income-row .value.red { color: var(--red); }
+
+  .surplus-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(109,181,85,0.12);
+    border: 1px solid rgba(109,181,85,0.25);
+    padding: 8px 14px;
+    border-radius: 8px;
+    margin-top: 16px;
+  }
+
+  .surplus-badge span {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--green);
+  }
+
+  /* ====== CARD 2: THE WINS ====== */
+  .card-wins {
+    background: radial-gradient(ellipse at 50% 30%, rgba(109,181,85,0.08) 0%, transparent 60%),
+                var(--bg);
+  }
+
+  .card-section-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .card-section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    line-height: 1.2;
+    margin-bottom: 32px;
+  }
+
+  .win-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .win-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+  }
+
+  .win-card .win-emoji {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  .win-card .win-stat {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 4px;
+  }
+
+  .win-card .win-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  .win-card.highlight {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+    background: rgba(109,181,85,0.06);
+    border-color: rgba(109,181,85,0.2);
+  }
+
+  .win-card.highlight .win-emoji { font-size: 36px; margin-bottom: 0; }
+
+  /* ====== CARD 3: THE SURPRISE ====== */
+  .card-surprise {
+    background: radial-gradient(ellipse at 60% 40%, rgba(224,82,82,0.08) 0%, transparent 60%),
+                var(--bg);
+  }
+
+  .overshoot-bar {
+    margin: 24px 0;
+  }
+
+  .overshoot-bar .bar-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+
+  .overshoot-bar .bar-label .cat { color: var(--text); font-weight: 500; }
+  .overshoot-bar .bar-label .pct { color: var(--red); font-weight: 600; }
+
+  .bar-track {
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .bar-budget {
+    height: 100%;
+    background: var(--teal);
+    border-radius: 4px;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .bar-actual {
+    height: 100%;
+    border-radius: 4px;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .bar-actual.over { background: var(--red); opacity: 0.6; }
+  .bar-actual.under { background: var(--green); opacity: 0.6; }
+
+  .surprise-detail {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px;
+  }
+
+  .surprise-detail .sd-cat { color: var(--text-muted); }
+  .surprise-detail .sd-val { font-weight: 500; }
+  .surprise-detail .sd-val.over { color: var(--red); }
+  .surprise-detail .sd-val.under { color: var(--green); }
+
+  /* ====== CARD 4: THE TREND ====== */
+  .card-trend {
+    background: radial-gradient(ellipse at 40% 60%, rgba(26,122,109,0.1) 0%, transparent 60%),
+                var(--bg);
+  }
+
+  .trend-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    gap: 12px;
+  }
+
+  .trend-row:last-child { border-bottom: none; }
+
+  .trend-cat {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .sparkline-container {
+    width: 80px;
+    height: 28px;
+    position: relative;
+  }
+
+  .sparkline-container svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .trend-change {
+    width: 65px;
+    text-align: right;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .trend-change.up { color: var(--red); }
+  .trend-change.down { color: var(--green); }
+  .trend-change.flat { color: var(--text-dim); }
+
+  /* ====== CARD 5: THE FLOW ====== */
+  .card-flow {
+    background: radial-gradient(ellipse at 50% 50%, rgba(26,122,109,0.1) 0%, transparent 50%),
+                var(--bg);
+  }
+
+  .flow-diagram {
+    margin: 24px 0;
+    position: relative;
+  }
+
+  .flow-source {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .flow-source .flow-amount {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    color: var(--teal-bright);
+  }
+
+  .flow-source .flow-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .flow-branches {
+    display: flex;
+    gap: 8px;
+  }
+
+  .flow-branch {
+    flex: 1;
+    border-radius: 16px;
+    padding: 20px 12px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .flow-branch::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 16px;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .flow-branch.needs {
+    background: rgba(74,144,217,0.1);
+    border: 1px solid rgba(74,144,217,0.2);
+  }
+
+  .flow-branch.wants {
+    background: rgba(26,122,109,0.1);
+    border: 1px solid rgba(26,122,109,0.2);
+  }
+
+  .flow-branch.savings {
+    background: rgba(109,181,85,0.1);
+    border: 1px solid rgba(109,181,85,0.2);
+  }
+
+  .flow-branch .fb-pct {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .flow-branch.needs .fb-pct { color: var(--blue); }
+  .flow-branch.wants .fb-pct { color: var(--teal-bright); }
+  .flow-branch.savings .fb-pct { color: var(--green); }
+
+  .flow-branch .fb-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .flow-branch .fb-amount {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .flow-target {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 16px;
+  }
+
+  .flow-target span { color: var(--text-muted); font-weight: 500; }
+
+  /* ====== CARD 6: THE SCORE ====== */
+  .card-score {
+    background: radial-gradient(ellipse at 50% 30%, rgba(26,122,109,0.12) 0%, transparent 60%),
+                var(--bg);
+    text-align: center;
+  }
+
+  .score-ring {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+
+  .score-ring svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .score-ring .ring-bg {
+    fill: none;
+    stroke: rgba(255,255,255,0.06);
+    stroke-width: 8;
+  }
+
+  .score-ring .ring-fill {
+    fill: none;
+    stroke: url(#scoreGradient);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 440;
+    stroke-dashoffset: 110;
+    transition: stroke-dashoffset 1s ease;
+  }
+
+  .score-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .score-value .sv-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 52px;
+    color: var(--teal-bright);
+  }
+
+  .score-value .sv-label {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .score-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(109,181,85,0.1);
+    border: 1px solid rgba(109,181,85,0.2);
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 32px;
+  }
+
+  .score-change span {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--green);
+  }
+
+  .score-factors {
+    text-align: left;
+  }
+
+  .score-factor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .score-factor:last-child { border-bottom: none; }
+
+  .sf-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .sf-icon.up { background: rgba(109,181,85,0.15); }
+  .sf-icon.down { background: rgba(224,82,82,0.15); }
+  .sf-icon.flat { background: rgba(255,255,255,0.06); }
+
+  .sf-text { flex: 1; }
+  .sf-text .sf-name { font-size: 14px; font-weight: 500; }
+  .sf-text .sf-desc { font-size: 12px; color: var(--text-muted); }
+
+  .sf-delta {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .sf-delta.up { color: var(--green); }
+  .sf-delta.down { color: var(--red); }
+
+  /* ====== CARD 7: THE NUDGE ====== */
+  .card-nudge {
+    background: radial-gradient(ellipse at 30% 70%, rgba(26,122,109,0.12) 0%, transparent 60%),
+                var(--bg);
+  }
+
+  .nudge-card {
+    background: rgba(26,122,109,0.08);
+    border: 1px solid rgba(26,122,109,0.2);
+    border-radius: 20px;
+    padding: 28px 24px;
+    margin-top: 24px;
+  }
+
+  .nudge-card .nudge-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .nudge-card .nudge-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .nudge-card .nudge-impact {
+    font-size: 13px;
+    color: var(--teal-bright);
+    font-weight: 500;
+  }
+
+  .nudge-secondary {
+    margin-top: 16px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+  }
+
+  .nudge-secondary .ns-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .nudge-secondary .ns-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .nudge-secondary .ns-item .ns-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--teal);
+    flex-shrink: 0;
+  }
+
+  .cta-row {
+    margin-top: 28px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .cta-btn {
+    flex: 1;
+    padding: 14px 20px;
+    border-radius: 12px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .cta-primary {
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    color: white;
+  }
+
+  .cta-primary:hover { opacity: 0.9; }
+
+  .cta-secondary {
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* Logo watermark */
+  .thallo-watermark {
+    position: fixed;
+    top: 20px;
+    left: 24px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: rgba(26,122,109,0.4);
+    z-index: 100;
+    letter-spacing: 0.5px;
+  }
+
+  /* Page counter */
+  .page-counter {
+    position: fixed;
+    top: 22px;
+    right: 40px;
+    font-size: 12px;
+    color: var(--text-dim);
+    z-index: 100;
+    letter-spacing: 1px;
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card.active .animate {
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  .card.active .animate:nth-child(1) { animation-delay: 0.1s; }
+  .card.active .animate:nth-child(2) { animation-delay: 0.2s; }
+  .card.active .animate:nth-child(3) { animation-delay: 0.3s; }
+  .card.active .animate:nth-child(4) { animation-delay: 0.4s; }
+  .card.active .animate:nth-child(5) { animation-delay: 0.5s; }
+  .card.active .animate:nth-child(6) { animation-delay: 0.6s; }
+
+  .animate {
+    opacity: 0;
+  }
+
+  .card.active .animate {
+    animation: fadeInUp 0.6s ease forwards;
+  }
+</style>
+</head>
+<body>
+<div class="app-frame" id="appFrame">
+  <div class="thallo-watermark">thallo</div>
+  <div class="page-counter" id="pageCounter">1 / 7</div>
+
+  <div class="nav-dots" id="navDots">
+    <button class="nav-dot active" data-index="0"></button>
+    <button class="nav-dot" data-index="1"></button>
+    <button class="nav-dot" data-index="2"></button>
+    <button class="nav-dot" data-index="3"></button>
+    <button class="nav-dot" data-index="4"></button>
+    <button class="nav-dot" data-index="5"></button>
+    <button class="nav-dot" data-index="6"></button>
+  </div>
+
+  <div class="scroll-hint" id="scrollHint">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+    <span>Swipe up</span>
+  </div>
+
+  <div class="cards-wrapper" id="cardsWrapper">
+
+    <!-- CARD 1: THE HEADLINE -->
+    <div class="card card-headline active" data-card="0">
+      <div class="month-label animate">January 2026</div>
+      <div class="review-title animate">Month in<br>Review</div>
+      <div class="big-number animate">$3,240</div>
+      <div class="big-label animate">total spent this month</div>
+      <div class="income-row animate">
+        <span class="label">Income</span>
+        <span class="value">$4,500</span>
+      </div>
+      <div class="income-row animate">
+        <span class="label">Total Spent</span>
+        <span class="value red">−$3,240</span>
+      </div>
+      <div class="surplus-badge animate">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6db555" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        <span>$1,260 surplus — nice work!</span>
+      </div>
+    </div>
+
+    <!-- CARD 2: THE WINS -->
+    <div class="card card-wins" data-card="1">
+      <div class="card-section-label animate">Your Wins</div>
+      <div class="card-section-title animate">You crushed it in<br><span style="color: var(--green)">6 out of 10</span> categories</div>
+      <div class="win-grid">
+        <div class="win-card animate">
+          <div class="win-emoji">🎯</div>
+          <div class="win-stat">6/10</div>
+          <div class="win-desc">Categories on or under budget</div>
+        </div>
+        <div class="win-card animate">
+          <div class="win-emoji">💰</div>
+          <div class="win-stat">$320</div>
+          <div class="win-desc">Saved vs. budgeted across all categories</div>
+        </div>
+        <div class="win-card animate">
+          <div class="win-emoji">📉</div>
+          <div class="win-stat">52%</div>
+          <div class="win-desc">Under budget on Entertainment</div>
+        </div>
+        <div class="win-card animate">
+          <div class="win-emoji">🔥</div>
+          <div class="win-stat">3 mo</div>
+          <div class="win-desc">Consecutive surplus months</div>
+        </div>
+        <div class="win-card highlight animate">
+          <div class="win-emoji">🏆</div>
+          <div>
+            <div class="win-stat" style="font-size:18px">Best Category: Transportation</div>
+            <div class="win-desc">$85 under budget — 34% savings</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3: THE SURPRISE -->
+    <div class="card card-surprise" data-card="2">
+      <div class="card-section-label animate">Heads Up</div>
+      <div class="card-section-title animate">Dining Out was your<br><span style="color: var(--red)">biggest overshoot</span></div>
+
+      <div class="animate">
+        <div class="overshoot-bar">
+          <div class="bar-label">
+            <span class="cat">🍽️ Dining Out</span>
+            <span class="pct">+47% over</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-budget" style="width: 68%"></div>
+            <div class="bar-actual over" style="width: 100%"></div>
+          </div>
+        </div>
+        <div class="overshoot-bar">
+          <div class="bar-label">
+            <span class="cat">🛒 Groceries</span>
+            <span class="pct">+28% over</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-budget" style="width: 78%"></div>
+            <div class="bar-actual over" style="width: 100%"></div>
+          </div>
+        </div>
+        <div class="overshoot-bar">
+          <div class="bar-label">
+            <span class="cat">🛍️ Shopping</span>
+            <span class="pct">+12% over</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-budget" style="width: 89%"></div>
+            <div class="bar-actual over" style="width: 100%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="animate">
+        <div class="surprise-detail">
+          <span class="sd-cat">Budgeted for Dining</span>
+          <span class="sd-val">$300</span>
+        </div>
+        <div class="surprise-detail">
+          <span class="sd-cat">Actually spent</span>
+          <span class="sd-val over">$441</span>
+        </div>
+        <div class="surprise-detail">
+          <span class="sd-cat">Over by</span>
+          <span class="sd-val over">+$141</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 4: THE TREND -->
+    <div class="card card-trend" data-card="3">
+      <div class="card-section-label animate">Spending Trends</div>
+      <div class="card-section-title animate">How your categories<br>moved over <span style="color: var(--teal-bright)">3 months</span></div>
+
+      <div class="animate">
+        <div class="trend-row">
+          <span class="trend-cat">🛒 Groceries</span>
+          <div class="sparkline-container">
+            <svg viewBox="0 0 80 28">
+              <polyline points="5,22 25,18 55,12 75,8" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="75" cy="8" r="3" fill="var(--red)"/>
+            </svg>
+          </div>
+          <span class="trend-change up">↑ 18%</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-cat">🍽️ Dining Out</span>
+          <div class="sparkline-container">
+            <svg viewBox="0 0 80 28">
+              <polyline points="5,20 25,10 55,18 75,6" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="75" cy="6" r="3" fill="var(--red)"/>
+            </svg>
+          </div>
+          <span class="trend-change up">↑ 31%</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-cat">🎬 Entertainment</span>
+          <div class="sparkline-container">
+            <svg viewBox="0 0 80 28">
+              <polyline points="5,8 25,12 55,18 75,22" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="75" cy="22" r="3" fill="var(--green)"/>
+            </svg>
+          </div>
+          <span class="trend-change down">↓ 24%</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-cat">🚗 Transport</span>
+          <div class="sparkline-container">
+            <svg viewBox="0 0 80 28">
+              <polyline points="5,10 25,14 55,12 75,14" fill="none" stroke="var(--text-dim)" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="75" cy="14" r="3" fill="var(--text-dim)"/>
+            </svg>
+          </div>
+          <span class="trend-change flat">— 2%</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-cat">💊 Healthcare</span>
+          <div class="sparkline-container">
+            <svg viewBox="0 0 80 28">
+              <polyline points="5,14 25,18 55,10 75,20" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="75" cy="20" r="3" fill="var(--amber)"/>
+            </svg>
+          </div>
+          <span class="trend-change up">↑ 8%</span>
+        </div>
+        <div class="trend-row">
+          <span class="trend-cat">💰 Savings</span>
+          <div class="sparkline-container">
+            <svg viewBox="0 0 80 28">
+              <polyline points="5,20 25,16 55,12 75,10" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="75" cy="10" r="3" fill="var(--green)"/>
+            </svg>
+          </div>
+          <span class="trend-change down">↑ 15%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 5: THE FLOW -->
+    <div class="card card-flow" data-card="4">
+      <div class="card-section-label animate">Money Flow</div>
+      <div class="card-section-title animate">Where your <span style="color: var(--teal-bright)">$4,500</span><br>actually went</div>
+
+      <div class="flow-diagram animate">
+        <div class="flow-source">
+          <div class="flow-amount">$4,500</div>
+          <div class="flow-label">Monthly Income</div>
+        </div>
+
+        <div style="display:flex; justify-content:center; margin-bottom:16px;">
+          <svg width="200" height="40" viewBox="0 0 200 40">
+            <path d="M100,0 L30,40" stroke="rgba(74,144,217,0.3)" stroke-width="1.5" fill="none"/>
+            <path d="M100,0 L100,40" stroke="rgba(26,122,109,0.3)" stroke-width="1.5" fill="none"/>
+            <path d="M100,0 L170,40" stroke="rgba(109,181,85,0.3)" stroke-width="1.5" fill="none"/>
+          </svg>
+        </div>
+
+        <div class="flow-branches">
+          <div class="flow-branch needs">
+            <div class="fb-pct">52%</div>
+            <div class="fb-label">Needs</div>
+            <div class="fb-amount">$2,340</div>
+          </div>
+          <div class="flow-branch wants">
+            <div class="fb-pct">26%</div>
+            <div class="fb-label">Wants</div>
+            <div class="fb-amount">$1,170</div>
+          </div>
+          <div class="flow-branch savings">
+            <div class="fb-pct">22%</div>
+            <div class="fb-label">Savings</div>
+            <div class="fb-amount">$990</div>
+          </div>
+        </div>
+
+        <div class="flow-target animate">
+          Target: <span>50 / 30 / 20</span> · Actual: <span>52 / 26 / 22</span> — pretty close!
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 6: THE SCORE -->
+    <div class="card card-score" data-card="5">
+      <div class="card-section-label animate">Financial Health</div>
+      <div class="card-section-title animate" style="text-align:center">Your score this month</div>
+
+      <div class="score-ring animate">
+        <svg viewBox="0 0 160 160">
+          <defs>
+            <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color: var(--teal)" />
+              <stop offset="100%" style="stop-color: var(--green)" />
+            </linearGradient>
+          </defs>
+          <circle class="ring-bg" cx="80" cy="80" r="70"/>
+          <circle class="ring-fill" cx="80" cy="80" r="70"/>
+        </svg>
+        <div class="score-value">
+          <div class="sv-num">74</div>
+          <div class="sv-label">out of 100</div>
+        </div>
+      </div>
+
+      <div class="score-change animate">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6db555" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        <span>+5 points from last month</span>
+      </div>
+
+      <div class="score-factors animate">
+        <div class="score-factor">
+          <div class="sf-icon up">📊</div>
+          <div class="sf-text">
+            <div class="sf-name">Budget Adherence</div>
+            <div class="sf-desc">6/10 categories on target</div>
+          </div>
+          <div class="sf-delta up">+3</div>
+        </div>
+        <div class="score-factor">
+          <div class="sf-icon up">💰</div>
+          <div class="sf-text">
+            <div class="sf-name">Savings Rate</div>
+            <div class="sf-desc">22% of income saved</div>
+          </div>
+          <div class="sf-delta up">+4</div>
+        </div>
+        <div class="score-factor">
+          <div class="sf-icon down">🍽️</div>
+          <div class="sf-text">
+            <div class="sf-name">Overspending</div>
+            <div class="sf-desc">3 categories over budget</div>
+          </div>
+          <div class="sf-delta down">−2</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 7: THE NUDGE -->
+    <div class="card card-nudge" data-card="6">
+      <div class="card-section-label animate">Your February Game Plan</div>
+      <div class="card-section-title animate">One move to make<br><span style="color: var(--teal-bright)">next month</span></div>
+
+      <div class="nudge-card animate">
+        <div class="nudge-icon">🍽️ → 🏠</div>
+        <div class="nudge-text">
+          Cut dining out by <strong>$100/mo</strong> and move it to groceries. You're already spending more on groceries anyway — cooking at home will save you <strong>$1,200/year</strong>.
+        </div>
+        <div class="nudge-impact">
+          💡 Potential annual impact: +$1,200 in savings
+        </div>
+      </div>
+
+      <div class="nudge-secondary animate">
+        <div class="ns-title">Also worth watching</div>
+        <div class="ns-item">
+          <div class="ns-dot"></div>
+          Shopping crept up 12% — set a $150 hard cap
+        </div>
+        <div class="ns-item">
+          <div class="ns-dot"></div>
+          Your 3-month surplus streak is strong — keep it going
+        </div>
+        <div class="ns-item">
+          <div class="ns-dot"></div>
+          Consider running Budget Tune-Up to auto-adjust
+        </div>
+      </div>
+
+      <div class="cta-row animate">
+        <button class="cta-btn cta-secondary">Share</button>
+        <button class="cta-btn cta-primary">Run Tune-Up →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const wrapper = document.getElementById('cardsWrapper');
+  const frame = document.getElementById('appFrame');
+  const dots = document.querySelectorAll('.nav-dot');
+  const cards = document.querySelectorAll('.card');
+  const counter = document.getElementById('pageCounter');
+  const scrollHint = document.getElementById('scrollHint');
+  let currentCard = 0;
+  const totalCards = cards.length;
+  let isTransitioning = false;
+
+  function goToCard(index) {
+    if (index < 0 || index >= totalCards || isTransitioning) return;
+    isTransitioning = true;
+    currentCard = index;
+
+    wrapper.style.transform = `translateY(-${index * 100}vh)`;
+
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    cards.forEach((c, i) => c.classList.toggle('active', i === index));
+    counter.textContent = `${index + 1} / ${totalCards}`;
+
+    if (index > 0) {
+      scrollHint.style.opacity = '0';
+    } else {
+      scrollHint.style.opacity = '1';
+    }
+
+    setTimeout(() => { isTransitioning = false; }, 600);
+  }
+
+  // Wheel / scroll
+  let lastWheel = 0;
+  frame.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const now = Date.now();
+    if (now - lastWheel < 700) return;
+    lastWheel = now;
+
+    if (e.deltaY > 0) goToCard(currentCard + 1);
+    else if (e.deltaY < 0) goToCard(currentCard - 1);
+  }, { passive: false });
+
+  // Touch
+  let touchStartY = 0;
+  frame.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+  });
+
+  frame.addEventListener('touchend', (e) => {
+    const delta = touchStartY - e.changedTouches[0].clientY;
+    if (Math.abs(delta) > 50) {
+      if (delta > 0) goToCard(currentCard + 1);
+      else goToCard(currentCard - 1);
+    }
+  });
+
+  // Keyboard
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goToCard(currentCard + 1); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); goToCard(currentCard - 1); }
+  });
+
+  // Dot nav
+  dots.forEach(d => {
+    d.addEventListener('click', () => goToCard(parseInt(d.dataset.index)));
+  });
+
+  // Init
+  cards[0].classList.add('active');
+</script>
+</body>
+</html>

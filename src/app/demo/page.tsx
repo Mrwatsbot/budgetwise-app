@@ -8,11 +8,15 @@ import { BudgetHealthChart } from '@/components/budgets/budget-health-chart';
 import { DemoBudgetGrid } from '@/components/budgets/demo-budget-grid';
 import { FinancialHealthDisplay } from '@/components/score/financial-health-display';
 import { calculateFinancialHealthScore } from '@/lib/scoring/financial-health-score';
+import { AffordCheckDialog } from '@/components/budgets/afford-check-dialog';
+import { AutoBudgetDialog } from '@/components/budgets/auto-budget-dialog';
 import { 
   Wallet, TrendingDown, CreditCard, Sparkles,
   Search, Zap, FileText, MessageSquare, Trophy,
-  Target, Flame, Gift, CheckCircle2
+  Target, Flame, Gift, CheckCircle2,
+  PencilLine, Ban
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 // Mock income
@@ -47,7 +51,7 @@ const mockInsights = [
 const initialBudgets = [
   { categoryId: '1', categoryName: 'Food & Dining', categoryIcon: 'utensils', categoryColor: '#1a7a6d', budgeted: 500, spent: 342.50 },
   { categoryId: '2', categoryName: 'Transportation', categoryIcon: 'car', categoryColor: '#3b82f6', budgeted: 200, spent: 156.00 },
-  { categoryId: '3', categoryName: 'Shopping', categoryIcon: 'shopping-bag', categoryColor: '#c76bad', budgeted: 300, spent: 425.99 },
+  { categoryId: '3', categoryName: 'Shopping', categoryIcon: 'shopping-bag', categoryColor: '#1a7a6d', budgeted: 300, spent: 425.99 },
   { categoryId: '4', categoryName: 'Entertainment', categoryIcon: 'film', categoryColor: '#ec4899', budgeted: 150, spent: 89.00 },
   { categoryId: '5', categoryName: 'Utilities', categoryIcon: 'zap', categoryColor: '#eab308', budgeted: 250, spent: 187.32 },
   { categoryId: '6', categoryName: 'Health', categoryIcon: 'heart-pulse', categoryColor: '#22c55e', budgeted: 0, spent: 45.00 },
@@ -71,9 +75,9 @@ const mockChallenges = [
 
 // Mock streaks
 const mockStreaks = {
-  budget: { current: 12, best: 23, icon: '🎯' },
-  logging: { current: 45, best: 45, icon: '📝' },
-  noSpend: { current: 2, best: 5, icon: '🚫' },
+  budget: { current: 12, best: 23, iconName: 'target' },
+  logging: { current: 45, best: 45, iconName: 'pencil-line' },
+  noSpend: { current: 2, best: 5, iconName: 'ban' },
 };
 
 // Mock score input - calculated from the user's data
@@ -145,6 +149,23 @@ export default function DemoPage() {
         onAnalyze={() => console.log('Analyzing...')}
         onFindSavings={() => console.log('Finding savings...')}
       />
+      
+      {/* AI Action: Can I Afford This? */}
+      <div className="glass-card rounded-xl p-5">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="font-semibold">Smart Purchasing</h3>
+            <p className="text-xs text-muted-foreground">AI-powered affordability check</p>
+          </div>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          Thinking about a purchase? Let AI analyze if it fits your budget and suggest adjustments if needed.
+        </p>
+        <AffordCheckDialog 
+          currentMonth={new Date().toISOString().split('T')[0]}
+          onBudgetAdjusted={() => console.log('Budget adjusted in demo')}
+        />
+      </div>
     </div>
   );
 
@@ -157,6 +178,24 @@ export default function DemoPage() {
       </div>
       
       <BudgetHealthChart categoryBudgets={budgets} />
+      
+      {/* AI Auto Budget */}
+      <div className="glass-card rounded-xl p-5">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="font-semibold">AI Budget Generator</h3>
+            <p className="text-xs text-muted-foreground">Let AI create your budget in seconds</p>
+          </div>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          Answer a few quick questions and AI will generate a personalized budget based on the 50/30/20 rule and your specific situation.
+        </p>
+        <AutoBudgetDialog 
+          currentMonth={new Date().toISOString().split('T')[0]}
+          onApplied={() => console.log('Budget applied in demo')}
+          prominent={false}
+        />
+      </div>
       
       <DemoBudgetGrid 
         categoryBudgets={budgets} 
@@ -187,7 +226,7 @@ export default function DemoPage() {
           </div>
           <div className="text-right">
             <p className="text-sm text-muted-foreground">Debt-free in</p>
-            <p className="text-xl font-bold text-green-400">~18 months</p>
+            <p className="text-xl font-bold text-[#7aba5c]">~18 months</p>
           </div>
         </div>
 
@@ -198,7 +237,7 @@ export default function DemoPage() {
             <span>32%</span>
           </div>
           <div className="h-2 rounded-full bg-secondary overflow-hidden">
-            <div className="h-full w-[32%] rounded-full bg-gradient-to-r from-[#6db555] to-[#8bcb6a]" />
+            <div className="h-full w-[32%] rounded-full bg-gradient-to-r from-[#6db555] to-[#7aba5c]" />
           </div>
         </div>
       </div>
@@ -236,7 +275,7 @@ export default function DemoPage() {
       <div className="glass-card rounded-xl p-4">
         <p className="text-sm font-medium mb-3">Payoff Strategy</p>
         <div className="flex gap-2">
-          <Button variant="default" size="sm" className="flex-1 gradient-btn border-0">
+          <Button variant="default" size="sm" className="flex-1 shimmer-btn border-0">
             Avalanche (Save $)
           </Button>
           <Button variant="outline" size="sm" className="flex-1 border-border">
@@ -257,46 +296,46 @@ export default function DemoPage() {
 
       {/* Action Cards */}
       <div className="grid gap-4">
-        <div className="glass-card rounded-xl p-6 hover:border-[#1a7a6d33] transition-colors cursor-pointer">
+        <div className="glass-card rounded-xl p-6 hover:border-[#1a7a6d4d] transition-colors cursor-pointer">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#1a7a6d33] to-[#22a09033] border border-[#1a7a6d4d] flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#1a7a6d33] to-[#146b5f33] border border-[#1a7a6d4d] flex items-center justify-center flex-shrink-0">
               <Search className="w-6 h-6 text-[#1a7a6d]" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold mb-1">Analyze Spending</h3>
               <p className="text-sm text-muted-foreground mb-3">AI reviews your transactions and identifies patterns, anomalies, and opportunities.</p>
-              <Button className="gradient-btn border-0">Run Analysis</Button>
+              <Button className="shimmer-btn border-0">Run Analysis</Button>
             </div>
           </div>
         </div>
 
-        <div className="glass-card rounded-xl p-6 hover:border-[#1a7a6d33] transition-colors cursor-pointer">
+        <div className="glass-card rounded-xl p-6 hover:border-[#1a7a6d4d] transition-colors cursor-pointer">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 flex items-center justify-center flex-shrink-0">
-              <Zap className="w-6 h-6 text-green-400" />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#6db555]/20 to-emerald-500/20 border border-[#6db555]/30 flex items-center justify-center flex-shrink-0">
+              <Zap className="w-6 h-6 text-[#7aba5c]" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold mb-1">Find Savings</h3>
               <p className="text-sm text-muted-foreground mb-3">Discover subscriptions you forgot about, duplicate charges, and potential negotiation targets.</p>
-              <Button variant="outline" className="border-green-500/30 text-green-400 hover:bg-green-500/10">Scan Now</Button>
+              <Button variant="outline" className="border-[#6db555]/30 text-[#7aba5c] hover:bg-[#6db555]/10">Scan Now</Button>
             </div>
           </div>
         </div>
 
-        <div className="glass-card rounded-xl p-6 hover:border-[#1a7a6d33] transition-colors cursor-pointer">
+        <div className="glass-card rounded-xl p-6 hover:border-[#1a7a6d4d] transition-colors cursor-pointer">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#5b8fd9]33 to-[#22a090]33 border border-[#5b8fd9]4d flex items-center justify-center flex-shrink-0">
               <FileText className="w-6 h-6 text-blue-400" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold mb-1">Analyze a Bill</h3>
               <p className="text-sm text-muted-foreground mb-3">Upload or select a recurring bill. AI researches competitors and drafts a negotiation script.</p>
-              <Button variant="outline" className="border-blue-500/30 text-blue-400 hover:bg-blue-500/10">Select Bill</Button>
+              <Button variant="outline" className="border-[#5b8fd9]4d text-blue-400 hover:bg-blue-500/10">Select Bill</Button>
             </div>
           </div>
         </div>
 
-        <div className="glass-card rounded-xl p-6 hover:border-[#1a7a6d33] transition-colors cursor-pointer">
+        <div className="glass-card rounded-xl p-6 hover:border-[#1a7a6d4d] transition-colors cursor-pointer">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-600/20 to-teal-500/20 border border-teal-600/30 flex items-center justify-center flex-shrink-0">
               <MessageSquare className="w-6 h-6 text-teal-400" />
@@ -333,16 +372,20 @@ export default function DemoPage() {
           <span className="font-medium">Active Streaks</span>
         </div>
         <div className="grid grid-cols-3 gap-3">
-          {Object.entries(mockStreaks).map(([key, streak]) => (
-            <div key={key} className="text-center p-3 rounded-lg bg-secondary/50">
-              <span className="text-2xl">{streak.icon}</span>
-              <p className="text-xl font-bold mt-1">{streak.current}</p>
-              <p className="text-xs text-muted-foreground capitalize">{key}</p>
-              {streak.current === streak.best && streak.current > 0 && (
-                <span className="text-xs text-yellow-400">🏆 Best!</span>
-              )}
-            </div>
-          ))}
+          {Object.entries(mockStreaks).map(([key, streak]) => {
+            const iconMap: Record<string, LucideIcon> = { target: Target, 'pencil-line': PencilLine, ban: Ban };
+            const StreakIcon = iconMap[streak.iconName] || Target;
+            return (
+              <div key={key} className="text-center p-3 rounded-lg bg-secondary/50">
+                <StreakIcon className="w-6 h-6 mx-auto text-muted-foreground" />
+                <p className="text-xl font-bold mt-1">{streak.current}</p>
+                <p className="text-xs text-muted-foreground capitalize">{key}</p>
+                {streak.current === streak.best && streak.current > 0 && (
+                  <span className="text-xs text-yellow-400 flex items-center justify-center gap-1"><Trophy className="w-3 h-3 inline" /> Best!</span>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -362,13 +405,13 @@ export default function DemoPage() {
             <div key={challenge.id} className="p-3 rounded-lg bg-secondary/30 border border-border">
               <div className="flex items-center justify-between mb-2">
                 <span className="font-medium text-sm">{challenge.title}</span>
-                <span className="text-xs text-green-400 font-medium">{challenge.reward}</span>
+                <span className="text-xs text-[#7aba5c] font-medium">{challenge.reward}</span>
               </div>
               <p className="text-xs text-muted-foreground mb-2">{challenge.description}</p>
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-2 rounded-full bg-secondary overflow-hidden">
                   <div 
-                    className="h-full rounded-full bg-gradient-to-r from-[#1a7a6d] to-green-500"
+                    className="h-full rounded-full bg-gradient-to-r from-[#1a7a6d] to-[#6db555]"
                     style={{ width: `${(challenge.progress / challenge.total) * 100}%` }}
                   />
                 </div>
@@ -421,7 +464,7 @@ export default function DemoPage() {
             <div className="w-8 h-8 rounded-lg gradient-btn flex items-center justify-center">
               <Wallet className="h-4 w-4 text-white" />
             </div>
-            <span className="font-semibold">BudgetWise</span>
+            <span className="font-semibold">Thallo</span>
           </div>
           <div className="flex items-center gap-2 text-xs">
             <span className="px-2 py-1 rounded-full bg-[#1a7a6d33] text-[#1a7a6d]">Demo Mode</span>

@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Plus, Loader2 } from 'lucide-react';
+import { getCategoryIcon } from '@/lib/category-icons';
 import { toast } from 'sonner';
 
 interface Category {
@@ -42,10 +43,10 @@ interface AddTransactionDialogProps {
   categories: Category[];
   accounts: Account[];
   userId: string;
-  onMutate?: () => void;
+  onRefresh?: () => void;
 }
 
-export function AddTransactionDialog({ categories, accounts, userId, onMutate }: AddTransactionDialogProps) {
+export function AddTransactionDialog({ categories, accounts, userId, onRefresh }: AddTransactionDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -101,8 +102,8 @@ export function AddTransactionDialog({ categories, accounts, userId, onMutate }:
         memo: '',
         type: 'expense',
       });
-      if (onMutate) {
-        onMutate();
+      if (onRefresh) {
+        onRefresh();
       } else {
         router.refresh();
       }
@@ -170,12 +171,14 @@ export function AddTransactionDialog({ categories, accounts, userId, onMutate }:
               </div>
             </div>
 
-            {/* Payee */}
+            {/* Payee / Source */}
             <div className="grid gap-2">
-              <Label htmlFor="payee">Payee / Description</Label>
+              <Label htmlFor="payee">
+                {formData.type === 'expense' ? 'Payee / Description' : 'Source'}
+              </Label>
               <Input
                 id="payee"
-                placeholder="e.g., Grocery Store"
+                placeholder={formData.type === 'expense' ? 'e.g., Grocery Store' : 'e.g., Employer, Freelance Client'}
                 value={formData.payee}
                 onChange={(e) => setFormData(f => ({ ...f, payee: e.target.value }))}
                 required
@@ -196,7 +199,10 @@ export function AddTransactionDialog({ categories, accounts, userId, onMutate }:
                   {activeCategories.map((cat) => (
                     <SelectItem key={cat.id} value={cat.id}>
                       <span className="flex items-center gap-2">
-                        <span>{cat.icon}</span>
+                        {(() => {
+                          const Icon = getCategoryIcon(cat.icon, cat.name);
+                          return <Icon className="w-4 h-4 text-muted-foreground" />;
+                        })()}
                         <span>{cat.name}</span>
                       </span>
                     </SelectItem>

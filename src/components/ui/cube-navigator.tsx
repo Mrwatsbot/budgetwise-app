@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useRef, ReactNode, useCallback, useEffect, useLayoutEffect } from 'react';
+import { useState, useRef, useEffect, ReactNode, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useDragState } from '@/lib/contexts/drag-context';
 
 interface CubeFace {
   id: string;
@@ -12,254 +13,248 @@ interface CubeFace {
 interface CubeNavigatorProps {
   faces: CubeFace[];
   initialFace?: number;
+  onFaceChange?: (index: number) => void;
 }
 
-export function CubeNavigator({ faces, initialFace = 0 }: CubeNavigatorProps) {
+export function CubeNavigator({ faces, initialFace = 0, onFaceChange }: CubeNavigatorProps) {
   const [currentFace, setCurrentFace] = useState(initialFace);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [direction, setDirection] = useState<'left' | 'right'>('left');
-  const [prevFace, setPrevFace] = useState<number | null>(null);
-  const [animHeight, setAnimHeight] = useState<number | null>(null);
-
-  // Sliding indicator state
-  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const faceRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const tabBarRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
-  const isHorizontalSwipe = useRef<boolean | null>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const savedScrollPos = useRef<number>(0);
+  const { isDragging } = useDragState();
 
   const totalFaces = faces.length;
 
-  // Measure and position the sliding indicator
-  const updateIndicator = useCallback(() => {
-    const activeEl = tabRefs.current[currentFace];
-    const container = scrollContainerRef.current;
-    if (!activeEl || !container) return;
+  // Apply parallax depth effect based on scroll position
+  const updateParallax = useCallback(() => {
+    const container = scrollRef.current;
+    if (!container) return;
 
-    const containerRect = container.getBoundingClientRect();
-    const tabRect = activeEl.getBoundingClientRect();
+    const scrollLeft = container.scrollLeft;
+    const pageWidth = container.clientWidth;
 
-    setIndicatorStyle({
-      left: tabRect.left - containerRect.left + container.scrollLeft,
-      width: tabRect.width,
+    faceRefs.current.forEach((el, i) => {
+      if (!el) return;
+      const offset = (scrollLeft - i * pageWidth) / pageWidth; // -1 to 1 range
+      const absOffset = Math.abs(offset);
+      
+      // Scale: active page is 1.0, adjacent pages scale down to 0.92
+      const scale = 1 - absOffset * 0.08;
+      // Translate content slightly for parallax feel
+      const parallaxX = offset * -30; // content shifts opposite to scroll
+      // Subtle border radius increase on non-active pages
+      const radius = absOffset * 16;
+      // Opacity dim on far pages
+      const opacity = 1 - absOffset * 0.3;
+
+      const inner = el.firstElementChild as HTMLElement;
+      if (inner) {
+        inner.style.transform = `scale(${Math.max(scale, 0.92)}) translateX(${parallaxX}px)`;
+        inner.style.borderRadius = `${radius}px`;
+        inner.style.opacity = String(Math.max(opacity, 0.7));
+        inner.style.transition = 'none';
+      }
     });
-  }, [currentFace]);
+  }, []);
 
-  useLayoutEffect(() => {
-    updateIndicator();
-  }, [currentFace, updateIndicator]);
-
-  useEffect(() => {
-    window.addEventListener('resize', updateIndicator);
-    return () => window.removeEventListener('resize', updateIndicator);
-  }, [updateIndicator]);
-
-  // Auto-scroll active tab to center
-  useEffect(() => {
-    const activeEl = tabRefs.current[currentFace];
-    const container = scrollContainerRef.current;
-    if (!activeEl || !container) return;
-
-    const containerRect = container.getBoundingClientRect();
-    const tabRect = activeEl.getBoundingClientRect();
-    const tabCenter = tabRect.left + tabRect.width / 2;
-    const containerCenter = containerRect.left + containerRect.width / 2;
-    const scrollDelta = tabCenter - containerCenter;
-
-    container.scrollBy({
-      left: scrollDelta,
+  // Scroll to a specific face
+  const scrollToFace = useCallback((index: number) => {
+    if (!scrollRef.current || index < 0 || index >= totalFaces) return;
+    scrollRef.current.scrollTo({
+      left: index * scrollRef.current.clientWidth,
       behavior: 'smooth',
     });
+  }, [totalFaces]);
+
+  // Lock scroll position when dragging
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    if (!isDragging) return; // Exit early if not dragging
+
+    // Save current scroll position
+    savedScrollPos.current = el.scrollLeft;
+    
+    // Continuously enforce scroll position lock via scroll event
+    const enforceScrollLock = () => {
+      if (el.scrollLeft !== savedScrollPos.current) {
+        el.scrollLeft = savedScrollPos.current;
+      }
+    };
+
+    // Listen to scroll events and immediately reset position
+    el.addEventListener('scroll', enforceScrollLock, { passive: true });
+
+    // Cleanup runs when isDragging becomes false OR component unmounts
+    return () => {
+      el.removeEventListener('scroll', enforceScrollLock);
+    };
+  }, [isDragging]);
+
+  // Listen to scroll events for face detection + parallax
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const handleScroll = () => {
+      // Skip if dragging
+      if (isDragging) return;
+
+      // Parallax + eager face detection on every frame
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        updateParallax();
+        // Eagerly update active tab as soon as scroll crosses midpoint
+        if (!scrollRef.current) return;
+        const w = scrollRef.current.clientWidth;
+        const newIndex = Math.round(scrollRef.current.scrollLeft / w);
+        if (newIndex !== currentFace && newIndex >= 0 && newIndex < totalFaces) {
+          setCurrentFace(newIndex);
+          onFaceChange?.(newIndex);
+        }
+      });
+    };
+
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      el.removeEventListener('scroll', handleScroll);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [currentFace, totalFaces, onFaceChange, updateParallax, isDragging]);
+
+  // Set initial scroll position + initial parallax
+  useEffect(() => {
+    if (scrollRef.current && initialFace > 0) {
+      scrollRef.current.scrollLeft = initialFace * scrollRef.current.clientWidth;
+    }
+    // Initial parallax state
+    requestAnimationFrame(updateParallax);
+  }, [initialFace, updateParallax]);
+
+  // Auto-scroll the mobile tab bar to keep active tab visible
+  useEffect(() => {
+    const tabBar = tabBarRef.current;
+    const activeTab = tabRefs.current[currentFace];
+    if (!tabBar || !activeTab) return;
+
+    const tabBarRect = tabBar.getBoundingClientRect();
+    const activeTabRect = activeTab.getBoundingClientRect();
+    const tabBarScrollLeft = tabBar.scrollLeft;
+
+    // Calculate if active tab is out of view
+    const leftEdge = activeTabRect.left - tabBarRect.left + tabBarScrollLeft;
+    const rightEdge = leftEdge + activeTabRect.width;
+    const viewportWidth = tabBar.clientWidth;
+
+    // Scroll to center the active tab
+    const targetScroll = leftEdge - (viewportWidth / 2) + (activeTabRect.width / 2);
+
+    tabBar.scrollTo({
+      left: targetScroll,
+      behavior: 'instant',
+    });
   }, [currentFace]);
 
-  const goToFace = useCallback((index: number, dir?: 'left' | 'right') => {
-    if (isAnimating || index === currentFace) return;
-    if (index < 0 || index >= totalFaces) return;
-
-    const autoDir = dir || (index > currentFace ? 'left' : 'right');
-
-    setAnimHeight(window.innerHeight - 120);
-    setDirection(autoDir);
-    setPrevFace(currentFace);
-    setCurrentFace(index);
-    setIsAnimating(true);
-
-    setTimeout(() => {
-      setIsAnimating(false);
-      setPrevFace(null);
-      setAnimHeight(null);
-    }, 650);
-  }, [isAnimating, currentFace, totalFaces]);
-
   const goNext = useCallback(() => {
-    const next = (currentFace + 1) % totalFaces;
-    goToFace(next, 'left');
-  }, [currentFace, totalFaces, goToFace]);
+    if (currentFace + 1 < totalFaces) scrollToFace(currentFace + 1);
+  }, [currentFace, totalFaces, scrollToFace]);
 
   const goPrev = useCallback(() => {
-    const prev = (currentFace - 1 + totalFaces) % totalFaces;
-    goToFace(prev, 'right');
-  }, [currentFace, totalFaces, goToFace]);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-    isHorizontalSwipe.current = null;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    const diffX = e.touches[0].clientX - touchStartX.current;
-    const diffY = e.touches[0].clientY - touchStartY.current;
-
-    if (isHorizontalSwipe.current === null && (Math.abs(diffX) > 10 || Math.abs(diffY) > 10)) {
-      isHorizontalSwipe.current = Math.abs(diffX) > Math.abs(diffY);
-    }
-
-    if (isHorizontalSwipe.current) {
-      e.preventDefault();
-    }
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!isHorizontalSwipe.current) return;
-
-    const diffX = touchStartX.current - e.changedTouches[0].clientX;
-    const threshold = 50;
-
-    if (diffX > threshold) {
-      goNext();
-    } else if (diffX < -threshold) {
-      goPrev();
-    }
-
-    isHorizontalSwipe.current = null;
-  };
-
-  const getExitClass = () => direction === 'left' ? 'cube-exit-left' : 'cube-exit-right';
-  const getEnterClass = () => direction === 'left' ? 'cube-enter-left' : 'cube-enter-right';
+    if (currentFace > 0) scrollToFace(currentFace - 1);
+  }, [currentFace, scrollToFace]);
 
   return (
     <div className="relative w-full" style={{ minHeight: 'calc(100dvh - 56px)' }}>
-      {/* ── Top Tab Bar — Scrollable with sliding indicator ── */}
-      <div className="sticky top-0 z-30 bg-background border-b border-[#2a2523]">
-        <div
-          ref={scrollContainerRef}
-          className="relative overflow-x-auto scrollbar-hide"
-        >
-          {/* Sliding indicator pill */}
-          <div
-            className="tab-indicator absolute top-1/2 -translate-y-1/2 h-[34px] rounded-full"
-            style={{
-              left: `${indicatorStyle.left}px`,
-              width: `${indicatorStyle.width}px`,
-              background: 'linear-gradient(135deg, #1a7a6d 0%, #146b5f 100%)',
-              boxShadow: '0 0 20px rgba(26, 122, 109, 0.25), inset 0 1px 0 rgba(255,255,255,0.15)',
-            }}
-          />
-
-          {/* Tab buttons */}
-          <div className="flex items-center gap-1 px-3 py-2.5 w-max min-w-full justify-center">
-            {faces.map((face, index) => (
-              <button
-                key={face.id}
-                ref={(el) => { tabRefs.current[index] = el; }}
-                onClick={() => {
-                  if (index !== currentFace && !isAnimating) {
-                    goToFace(index, index > currentFace ? 'left' : 'right');
-                  }
-                }}
-                disabled={isAnimating}
-                className={`relative z-10 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors duration-200 whitespace-nowrap ${
-                  index === currentFace
-                    ? 'text-[#0f0d0b]'
-                    : 'text-[#8a8279] hover:text-[#b8afa4]'
-                }`}
-              >
-                {face.label}
-              </button>
-            ))}
-          </div>
+      {/* Face tab buttons - Desktop/tablet only */}
+      <div className="hidden md:block sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b border-border/50">
+        <div className="flex justify-center py-3 gap-2">
+          {faces.map((face, index) => (
+            <button
+              key={face.id}
+              onClick={() => scrollToFace(index)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                index === currentFace
+                  ? 'bg-[#1a7a6d] text-white shadow-lg shadow-[#1a7a6d40]'
+                  : 'bg-secondary/80 text-muted-foreground hover:bg-secondary'
+              }`}
+            >
+              {face.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Desktop Navigation Arrows */}
+      {/* Mobile horizontal scrolling tab bar */}
+      <div className="md:hidden sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border/50">
+        <div 
+          ref={tabBarRef}
+          className="flex gap-2 px-3 py-2.5 overflow-x-auto scrollbar-hide scroll-smooth"
+          style={{
+            scrollbarWidth: 'none',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
+          {faces.map((face, index) => (
+            <button
+              key={face.id}
+              ref={(el) => { tabRefs.current[index] = el; }}
+              onClick={() => scrollToFace(index)}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 shrink-0 ${
+                index === currentFace
+                  ? 'bg-[#1a7a6d] text-white shadow-md shadow-[#1a7a6d40]'
+                  : 'bg-secondary/60 text-muted-foreground hover:bg-secondary/80'
+              }`}
+            >
+              {face.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Navigation arrows - Desktop */}
       <button
         onClick={goPrev}
-        disabled={isAnimating}
-        className="hidden md:flex fixed left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-card items-center justify-center text-[#8a8279] hover:text-[#ede6db] hover:border-[#1a7a6d33] transition-all"
+        className="hidden md:flex fixed left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-card items-center justify-center text-muted-foreground hover:text-foreground hover:border-[#1a7a6d4d] transition-all"
         aria-label="Previous"
       >
         <ChevronLeft className="w-6 h-6" />
       </button>
       <button
         onClick={goNext}
-        disabled={isAnimating}
-        className="hidden md:flex fixed right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-card items-center justify-center text-[#8a8279] hover:text-[#ede6db] hover:border-[#1a7a6d33] transition-all"
+        className="hidden md:flex fixed right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-card items-center justify-center text-muted-foreground hover:text-foreground hover:border-[#1a7a6d4d] transition-all"
         aria-label="Next"
       >
         <ChevronRight className="w-6 h-6" />
       </button>
 
-      {/* ── Content Area ── */}
+      {/* Horizontal scroll container — native scroll-snap with parallax */}
       <div
-        className="w-full py-6 px-4 md:px-8 pb-20 md:pb-6 overflow-hidden"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        ref={scrollRef}
+        className={`flex items-start snap-x snap-mandatory scrollbar-hide ${isDragging ? 'overflow-x-hidden' : 'overflow-x-auto'}`}
+        style={{
+          WebkitOverflowScrolling: isDragging ? 'auto' : 'touch',
+          scrollbarWidth: 'none',
+          touchAction: isDragging ? 'none' : 'auto',
+          userSelect: isDragging ? 'none' : 'auto',
+        }}
       >
-        <div
-          ref={contentRef}
-          className="w-full max-w-3xl mx-auto relative"
-          style={{
-            perspective: '800px',
-            height: animHeight ? `${animHeight}px` : 'auto',
-            overflow: isAnimating ? 'hidden' : 'visible',
-          }}
-        >
-          {/* Exiting face */}
-          {isAnimating && prevFace !== null && (
-            <div
-              className={`absolute inset-0 ${getExitClass()}`}
-              style={{ transformOrigin: 'center center' }}
-            >
-              {faces[prevFace].content}
-            </div>
-          )}
-
-          {/* Current face */}
+        {faces.map((face, index) => (
           <div
-            className={isAnimating ? getEnterClass() : ''}
-            style={{ transformOrigin: 'center center' }}
+            key={face.id}
+            ref={(el) => { faceRefs.current[index] = el; }}
+            className="min-w-full w-full snap-center shrink-0 overflow-hidden"
           >
-            {faces[currentFace].content}
+            <div
+              className="w-full max-w-6xl mx-auto py-6 px-4 md:px-8 pb-6 will-change-transform"
+              style={{ transformOrigin: 'center top' }}
+            >
+              {face.content}
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* ── Bottom Dots — Subtle, no frosting ── */}
-      <div
-        className="md:hidden fixed left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5 px-3 py-1.5"
-        style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
-      >
-        {faces.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => {
-              if (index !== currentFace && !isAnimating) {
-                goToFace(index, index > currentFace ? 'left' : 'right');
-              }
-            }}
-            disabled={isAnimating}
-            className={`rounded-full transition-all duration-300 ${
-              index === currentFace
-                ? 'w-7 h-2 bg-[#1a7a6d] shadow-[0_0_8px_rgba(232,146,46,0.4)]'
-                : 'w-2 h-2 bg-[#3a3430] hover:bg-[#4a4440]'
-            }`}
-            aria-label={`Go to ${faces[index].label}`}
-          />
         ))}
       </div>
     </div>

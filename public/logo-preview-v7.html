@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; font-family: -apple-system, system-ui, 'Inter', sans-serif; color: white; padding: 40px 20px; }
+  h1 { text-align: center; font-size: 22px; font-weight: 600; color: #ccc; margin-bottom: 8px; }
+  .subtitle { text-align: center; color: #555; font-size: 13px; margin-bottom: 50px; }
+  h2 { font-size: 13px; font-weight: 600; color: #666; margin-bottom: 20px; text-align: center; text-transform: uppercase; letter-spacing: 0.12em; }
+  .section { margin-bottom: 60px; }
+  .row { display: flex; gap: 24px; justify-content: center; align-items: start; flex-wrap: wrap; }
+  .item { text-align: center; }
+  .label { color: #555; font-size: 11px; margin-top: 8px; }
+  .divider { border: none; border-top: 1px solid #1a1a1a; margin: 50px auto; max-width: 600px; }
+
+  /* Inline SVG helper - the branch paths reused everywhere */
+  .branch path:first-child { stroke-width: 1.5; }
+  .branch path:not(:first-child) { stroke-width: 0.9; }
+</style>
+</head>
+<body>
+
+<h1>Thallo — Logo v7</h1>
+<p class="subtitle">Refined olive branch with olives · 7 leaves, 3 drupes, no vein detail</p>
+
+<!-- ===== SIZE TEST ===== -->
+<div class="section">
+  <h2>Size & Readability Test</h2>
+  <div class="row" style="align-items:center;gap:40px">
+    <!-- 120px -->
+    <div class="item">
+      <div style="background:#1a1a1a;border:1px solid #2a2a2a;width:140px;height:140px;border-radius:28px;display:flex;align-items:center;justify-content:center;padding:22px">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white">
+          <g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/>
+            <path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/>
+            <path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/>
+            <path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/>
+            <path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/>
+            <path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/>
+            <path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/>
+            <path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/>
+          </g>
+          <circle cx="13" cy="27" r="1.7" fill="currentColor"/>
+          <circle cx="11" cy="24" r="1.5" fill="currentColor"/>
+          <circle cx="15" cy="24.5" r="1.4" fill="currentColor"/>
+        </svg>
+      </div>
+      <p class="label">140px</p>
+    </div>
+    <!-- 64px -->
+    <div class="item">
+      <div style="background:#1a1a1a;border:1px solid #2a2a2a;width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;padding:10px">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white">
+          <g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/>
+        </svg>
+      </div>
+      <p class="label">64px</p>
+    </div>
+    <!-- 40px -->
+    <div class="item">
+      <div style="background:#1a1a1a;border:1px solid #2a2a2a;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:6px">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white">
+          <g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/>
+        </svg>
+      </div>
+      <p class="label">40px navbar</p>
+    </div>
+    <!-- 16px -->
+    <div class="item">
+      <div style="display:flex;gap:12px">
+        <div style="background:#1a1a1a;border:1px solid #333;width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;padding:2px">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white">
+            <g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+      <p class="label">16px favicon</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== COLOR PALETTES WITH LOGO ===== -->
+<div class="section">
+  <h2>Color Palettes — Logo + Full Scheme</h2>
+  
+  <div class="row" style="gap:24px;align-items:stretch">
+
+    <!-- 1. CURRENT ORANGE -->
+    <div style="background:#151515;border:1px solid #222;border-radius:20px;width:260px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#e8922e,#d4800f);padding:30px;display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:80px;height:80px;color:white">
+          <g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/>
+        </svg>
+      </div>
+      <div style="padding:20px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <div style="background:linear-gradient(135deg,#e8922e,#d4800f);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:5px">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white"><g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/></svg>
+          </div>
+          <span style="font-weight:700;font-size:16px">Thallo</span>
+        </div>
+        <p style="color:#e8922e;font-weight:600;font-size:14px;margin-bottom:4px">Warm Orange</p>
+        <p style="color:#555;font-size:11px;margin-bottom:14px">Energetic, approachable. Stands apart from the green/blue fintech sea.</p>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <div style="flex:1;height:32px;border-radius:8px;background:#e8922e" title="#e8922e"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#faf7f2;border:1px solid #333" title="#faf7f2"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#1a1a1a" title="#1a1a1a"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#f0e6d6" title="#f0e6d6"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#c47520" title="#c47520"></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Primary</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Surface</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Dark</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Cream</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Accent</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. DEEP TEAL -->
+    <div style="background:#151515;border:1px solid #222;border-radius:20px;width:260px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#1a7a6d,#146b5f);padding:30px;display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:80px;height:80px;color:white">
+          <g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/>
+        </svg>
+      </div>
+      <div style="padding:20px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <div style="background:linear-gradient(135deg,#1a7a6d,#146b5f);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:5px">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white"><g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/></svg>
+          </div>
+          <span style="font-weight:700;font-size:16px">Thallo</span>
+        </div>
+        <p style="color:#2aaa9a;font-weight:600;font-size:14px;margin-bottom:4px">Deep Teal</p>
+        <p style="color:#555;font-size:11px;margin-bottom:14px">Trust meets growth. Premium feel without generic green. Calm authority.</p>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <div style="flex:1;height:32px;border-radius:8px;background:#1a7a6d" title="#1a7a6d"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#f2f8f7;border:1px solid #333" title="#f2f8f7"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#0f1f1d" title="#0f1f1d"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#a8d5cf" title="#a8d5cf"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#e8922e" title="#e8922e"></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Primary</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Surface</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Dark</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Light</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Accent</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. WARM GOLD -->
+    <div style="background:#151515;border:1px solid #222;border-radius:20px;width:260px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#b8860b,#9a7209);padding:30px;display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:80px;height:80px;color:white">
+          <g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/>
+        </svg>
+      </div>
+      <div style="padding:20px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <div style="background:linear-gradient(135deg,#b8860b,#9a7209);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:5px">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white"><g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/></svg>
+          </div>
+          <span style="font-weight:700;font-size:16px">Thallo</span>
+        </div>
+        <p style="color:#d4a017;font-weight:600;font-size:14px;margin-bottom:4px">Warm Gold</p>
+        <p style="color:#555;font-size:11px;margin-bottom:14px">Prosperity, Greek heritage. Olive oil meets classical luxury. Rich and grounded.</p>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <div style="flex:1;height:32px;border-radius:8px;background:#b8860b" title="#b8860b"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#faf8f0;border:1px solid #333" title="#faf8f0"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#1a1610" title="#1a1610"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#e8d5a0" title="#e8d5a0"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#6b5c2a" title="#6b5c2a"></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Primary</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Surface</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Dark</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Light</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Deep</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. SAGE GREEN -->
+    <div style="background:#151515;border:1px solid #222;border-radius:20px;width:260px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#5a7a5a,#4a6a4a);padding:30px;display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:80px;height:80px;color:white">
+          <g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/>
+        </svg>
+      </div>
+      <div style="padding:20px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <div style="background:linear-gradient(135deg,#5a7a5a,#4a6a4a);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:5px">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white"><g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/></svg>
+          </div>
+          <span style="font-weight:700;font-size:16px">Thallo</span>
+        </div>
+        <p style="color:#7a9a7a;font-weight:600;font-size:14px;margin-bottom:4px">Sage Green</p>
+        <p style="color:#555;font-size:11px;margin-bottom:14px">Growth, nature, spring. Most literal Thallo match. Risk: blends into Mint/YNAB.</p>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <div style="flex:1;height:32px;border-radius:8px;background:#5a7a5a" title="#5a7a5a"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#f5f7f3;border:1px solid #333" title="#f5f7f3"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#1a1f1a" title="#1a1f1a"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#c4d4b8" title="#c4d4b8"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#3d5a3d" title="#3d5a3d"></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Primary</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Surface</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Dark</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Light</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Deep</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. OLIVE + GOLD -->
+    <div style="background:#151515;border:1px solid #222;border-radius:20px;width:260px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#6b7c3f,#556b2f);padding:30px;display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:80px;height:80px;color:#f5d88c">
+          <g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/>
+        </svg>
+      </div>
+      <div style="padding:20px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <div style="background:linear-gradient(135deg,#6b7c3f,#556b2f);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:5px">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#f5d88c"><g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/></svg>
+          </div>
+          <span style="font-weight:700;font-size:16px">Thallo</span>
+        </div>
+        <p style="color:#a0b060;font-weight:600;font-size:14px;margin-bottom:4px">Olive + Gold</p>
+        <p style="color:#555;font-size:11px;margin-bottom:14px">Most "olive branch." Mediterranean earth tones. Warm and organic.</p>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <div style="flex:1;height:32px;border-radius:8px;background:#6b7c3f" title="#6b7c3f"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#f5d88c" title="#f5d88c"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#faf8f0;border:1px solid #333" title="#faf8f0"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#1a1c12" title="#1a1c12"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#3d4a22" title="#3d4a22"></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Olive</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Gold</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Surface</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Dark</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Deep</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. NAVY + ORANGE -->
+    <div style="background:#151515;border:1px solid #222;border-radius:20px;width:260px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#1e2d4a,#162340);padding:30px;display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:80px;height:80px;color:#e8922e">
+          <g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/>
+        </svg>
+      </div>
+      <div style="padding:20px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <div style="background:linear-gradient(135deg,#1e2d4a,#162340);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:5px">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#e8922e"><g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/></svg>
+          </div>
+          <span style="font-weight:700;font-size:16px">Thallo</span>
+        </div>
+        <p style="color:#5577aa;font-weight:600;font-size:14px;margin-bottom:4px">Navy + Orange</p>
+        <p style="color:#555;font-size:11px;margin-bottom:14px">Maximum trust. Navy = stability, orange CTA = action. Bold and professional.</p>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <div style="flex:1;height:32px;border-radius:8px;background:#1e2d4a" title="#1e2d4a"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#e8922e" title="#e8922e"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#f5f7fa;border:1px solid #333" title="#f5f7fa"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#ffd7a8" title="#ffd7a8"></div>
+          <div style="flex:1;height:32px;border-radius:8px;background:#0f1826" title="#0f1826"></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Navy</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Orange</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Surface</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Peach</span>
+          <span style="flex:1;color:#444;font-size:9px;text-align:center">Deep</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== DARK MODE VARIANTS ===== -->
+<div class="section">
+  <h2>Logo on Dark Background</h2>
+  <div class="row" style="gap:20px">
+    <div class="item">
+      <div style="background:#111;border:1px solid #222;width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;padding:10px">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#e8922e"><g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/></svg>
+      </div>
+      <p class="label">Orange</p>
+    </div>
+    <div class="item">
+      <div style="background:#111;border:1px solid #222;width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;padding:10px">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#2aaa9a"><g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/></svg>
+      </div>
+      <p class="label">Teal</p>
+    </div>
+    <div class="item">
+      <div style="background:#111;border:1px solid #222;width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;padding:10px">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#d4a017"><g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/></svg>
+      </div>
+      <p class="label">Gold</p>
+    </div>
+    <div class="item">
+      <div style="background:#111;border:1px solid #222;width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;padding:10px">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#8aaa6a"><g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/></svg>
+      </div>
+      <p class="label">Sage</p>
+    </div>
+    <div class="item">
+      <div style="background:#111;border:1px solid #222;width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;padding:10px">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white"><g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" stroke-width="1.5"/><path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" stroke-width="0.9"/><path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" stroke-width="0.9"/><path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" stroke-width="0.9"/><path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" stroke-width="0.9"/><path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" stroke-width="0.9"/><path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" stroke-width="0.9"/><path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" stroke-width="0.9"/></g><circle cx="13" cy="27" r="1.7" fill="currentColor"/><circle cx="11" cy="24" r="1.5" fill="currentColor"/><circle cx="15" cy="24.5" r="1.4" fill="currentColor"/></svg>
+      </div>
+      <p class="label">White</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

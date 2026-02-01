@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BudgetWise 🎮💰
+
+**The financial fitness game that makes you richer.**
+
+Budget, track debt, build wealth — and watch your Financial Health Score level up. AI coaching tells you what to do next. Achievements and streaks keep you coming back.
+
+## What Makes BudgetWise Different
+
+- **Financial Health Score (0-1000)** — A personal tracker that tells you if you're getting better with money. Direction matters more than snapshots.
+- **Gamification** — Steam/Xbox-style achievements with rarity, streaks, challenges, and leaderboards. Built by a game developer.
+- **AI Coach** — Every insight ties to your score. "Do X → your score goes up Y." Not a chatbot — a financial coach.
+- **Full Budgeting Engine** — Income, spending, debt tracking, savings, bill management. Everything you need under the hood.
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **UI:** Tailwind CSS + shadcn/ui
+- **Database:** Supabase (PostgreSQL)
+- **Auth:** Supabase Auth
+- **AI:** OpenRouter (Grok 4.1 Fast)
+- **Payments:** Stripe
+- **Hosting:** Vercel
+- **Platform:** PWA first
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Copy `.env.local.example` to `.env.local` and fill in your keys.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Documentation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [Product Strategy](docs/PRODUCT-STRATEGY.md)
+- [Project Plan](docs/PROJECT-PLAN.md)
+- [Gamification System](docs/GAMIFICATION.md)
+- [Database Schema](docs/DATABASE-SCHEMA.md)
 
-## Learn More
+## License
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Proprietary — All rights reserved.

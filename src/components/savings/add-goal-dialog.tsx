@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,7 +9,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -21,74 +20,67 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { SAVINGS_GOAL_TYPE_META, type SavingsGoalType } from '@/types/database';
+import { addSavingsGoal } from '@/lib/hooks/use-data';
+
+const GOAL_TYPES = [
+  { value: 'emergency', label: 'Emergency Fund' },
+  { value: 'general', label: 'General Savings' },
+  { value: 'retirement_401k', label: '401(k)/403(b)' },
+  { value: 'ira', label: 'IRA' },
+  { value: 'hsa', label: 'Health Savings' },
+  { value: 'education_529', label: '529 Plan' },
+  { value: 'brokerage', label: 'Investments' },
+  { value: 'custom', label: 'Custom Goal' },
+];
 
 interface AddGoalDialogProps {
-  userId: string;
-  onMutate?: () => void;
+  onRefresh?: () => void;
 }
 
-const GOAL_TYPES = Object.entries(SAVINGS_GOAL_TYPE_META) as [SavingsGoalType, { icon: string; label: string }][];
-
-export function AddGoalDialog({ userId, onMutate }: AddGoalDialogProps) {
+export function AddGoalDialog({ onRefresh }: AddGoalDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const [formData, setFormData] = useState({
-    name: '',
-    type: 'general' as SavingsGoalType,
-    targetAmount: '',
-    currentAmount: '',
-    monthlyContribution: '',
-  });
+  const [name, setName] = useState('');
+  const [type, setType] = useState('general');
+  const [targetAmount, setTargetAmount] = useState('');
+  const [currentAmount, setCurrentAmount] = useState('');
+  const [monthlyContribution, setMonthlyContribution] = useState('');
 
   const resetForm = () => {
-    setFormData({
-      name: '',
-      type: 'general',
-      targetAmount: '',
-      currentAmount: '',
-      monthlyContribution: '',
-    });
+    setName('');
+    setType('general');
+    setTargetAmount('');
+    setCurrentAmount('');
+    setMonthlyContribution('');
+    setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.name.trim()) {
-      toast.error('Please enter a goal name');
+    if (!name.trim()) {
+      setError('Name is required');
       return;
     }
 
     setLoading(true);
+    setError('');
 
     try {
-      const supabase = createClient();
+      await addSavingsGoal({
+        name: name.trim(),
+        type,
+        target_amount: targetAmount ? parseFloat(targetAmount) : null,
+        current_amount: currentAmount ? parseFloat(currentAmount) : 0,
+        monthly_contribution: monthlyContribution ? parseFloat(monthlyContribution) : 0,
+      });
 
-      const targetAmount = formData.targetAmount ? parseFloat(formData.targetAmount) : null;
-      const currentAmount = formData.currentAmount ? parseFloat(formData.currentAmount) : 0;
-      const monthlyContribution = formData.monthlyContribution ? parseFloat(formData.monthlyContribution) : 0;
-
-      const { error } = await supabase.from('savings_goals').insert({
-        user_id: userId,
-        name: formData.name.trim(),
-        type: formData.type,
-        target_amount: targetAmount,
-        current_amount: currentAmount,
-        monthly_contribution: monthlyContribution,
-        is_active: true,
-      } as any);
-
-      if (error) throw error;
-
-      toast.success('Savings goal created!');
-      setOpen(false);
       resetForm();
-      onMutate?.();
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to create goal');
+      setOpen(false);
+      onRefresh?.();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to add goal');
     } finally {
       setLoading(false);
     }
@@ -102,116 +94,93 @@ export function AddGoalDialog({ userId, onMutate }: AddGoalDialogProps) {
           Add Goal
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>New Savings Goal</DialogTitle>
-            <DialogDescription>
-              Set up a new savings or investment goal to track your progress.
-            </DialogDescription>
-          </DialogHeader>
+      <DialogContent className="sm:max-w-md bg-background border-border max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Add Savings Goal</DialogTitle>
+          <DialogDescription>Set up a new savings or investment goal to track your progress.</DialogDescription>
+        </DialogHeader>
 
-          <div className="grid gap-4 py-4">
-            {/* Name */}
-            <div className="grid gap-2">
-              <Label htmlFor="goal-name">Goal Name</Label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="text-sm text-red-500 bg-red-500/10 rounded-lg px-3 py-2">{error}</div>
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="goal-name">Name</Label>
+            <Input
+              id="goal-name"
+              placeholder="e.g. Emergency Fund, Roth IRA, Vacation"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Goal Type</Label>
+            <Select value={type} onValueChange={setType}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {GOAL_TYPES.map((gt) => (
+                  <SelectItem key={gt.value} value={gt.value}>
+                    {gt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="target-amount">Target Amount</Label>
+            <Input
+              id="target-amount"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="$0.00"
+              value={targetAmount}
+              onChange={(e) => setTargetAmount(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">Leave empty for ongoing goals</p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="current-amount">Current Balance</Label>
               <Input
-                id="goal-name"
-                placeholder="e.g., Emergency Fund"
-                value={formData.name}
-                onChange={(e) => setFormData(f => ({ ...f, name: e.target.value }))}
-                required
+                id="current-amount"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="$0.00"
+                value={currentAmount}
+                onChange={(e) => setCurrentAmount(e.target.value)}
               />
             </div>
-
-            {/* Type */}
-            <div className="grid gap-2">
-              <Label>Type</Label>
-              <Select
-                value={formData.type}
-                onValueChange={(value) => setFormData(f => ({ ...f, type: value as SavingsGoalType }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {GOAL_TYPES.map(([value, { icon, label }]) => (
-                    <SelectItem key={value} value={value}>
-                      <span className="flex items-center gap-2">
-                        <span>{icon}</span>
-                        <span>{label}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Target Amount */}
-            <div className="grid gap-2">
-              <Label htmlFor="target-amount">Target Amount</Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                <Input
-                  id="target-amount"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  className="pl-7"
-                  value={formData.targetAmount}
-                  onChange={(e) => setFormData(f => ({ ...f, targetAmount: e.target.value }))}
-                />
-              </div>
-              <p className="text-xs text-muted-foreground">Leave empty for ongoing goals with no target</p>
-            </div>
-
-            {/* Current Amount */}
-            <div className="grid gap-2">
-              <Label htmlFor="current-amount">Current Balance</Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                <Input
-                  id="current-amount"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  className="pl-7"
-                  value={formData.currentAmount}
-                  onChange={(e) => setFormData(f => ({ ...f, currentAmount: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            {/* Monthly Contribution */}
-            <div className="grid gap-2">
+            <div className="space-y-2">
               <Label htmlFor="monthly-contribution">Monthly Contribution</Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                <Input
-                  id="monthly-contribution"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  className="pl-7"
-                  value={formData.monthlyContribution}
-                  onChange={(e) => setFormData(f => ({ ...f, monthlyContribution: e.target.value }))}
-                />
-              </div>
+              <Input
+                id="monthly-contribution"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="$0.00"
+                value={monthlyContribution}
+                onChange={(e) => setMonthlyContribution(e.target.value)}
+              />
             </div>
           </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+          <div className="flex gap-2 pt-2">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1">
               Cancel
             </Button>
-            <Button type="submit" disabled={loading} className="gradient-btn border-0">
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Goal
+            <Button type="submit" disabled={loading} className="flex-1 gradient-btn border-0">
+              {loading ? 'Adding...' : 'Add Goal'}
             </Button>
-          </DialogFooter>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

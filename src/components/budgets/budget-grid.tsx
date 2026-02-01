@@ -1,7 +1,6 @@
 'use client';
 
 import { BudgetCard } from './budget-card';
-import { StaggerContainer, StaggerItem } from '@/components/ui/stagger-children';
 
 interface CategoryBudget {
   categoryId: string;
@@ -17,12 +16,18 @@ interface BudgetGridProps {
   categoryBudgets: CategoryBudget[];
   userId: string;
   currentMonth: string;
-  onMutate?: () => void;
+  onRefresh?: () => void;
 }
 
-export function BudgetGrid({ categoryBudgets, userId, currentMonth, onMutate }: BudgetGridProps) {
-  // Separate budgeted and unbudgeted categories
-  const budgetedCategories = categoryBudgets.filter(b => b.budgeted > 0);
+export function BudgetGrid({ categoryBudgets, userId, currentMonth, onRefresh }: BudgetGridProps) {
+  // Separate budgeted and unbudgeted, sort by % spent (attention-needed first)
+  const budgetedCategories = categoryBudgets
+    .filter(b => b.budgeted > 0)
+    .sort((a, b) => {
+      const pctA = a.budgeted > 0 ? a.spent / a.budgeted : 0;
+      const pctB = b.budgeted > 0 ? b.spent / b.budgeted : 0;
+      return pctB - pctA;
+    });
   const unbudgetedCategories = categoryBudgets.filter(b => b.budgeted === 0);
 
   return (
@@ -31,18 +36,17 @@ export function BudgetGrid({ categoryBudgets, userId, currentMonth, onMutate }: 
       {budgetedCategories.length > 0 && (
         <div>
           <h2 className="text-lg font-semibold mb-4">Active Budgets</h2>
-          <StaggerContainer className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {budgetedCategories.map((budget) => (
-              <StaggerItem key={budget.categoryId}>
-                <BudgetCard
-                  {...budget}
-                  userId={userId}
-                  currentMonth={currentMonth}
-                  onMutate={onMutate}
-                />
-              </StaggerItem>
+              <BudgetCard
+                key={budget.categoryId}
+                {...budget}
+                userId={userId}
+                currentMonth={currentMonth}
+                onRefresh={onRefresh}
+              />
             ))}
-          </StaggerContainer>
+          </div>
         </div>
       )}
 
@@ -52,18 +56,17 @@ export function BudgetGrid({ categoryBudgets, userId, currentMonth, onMutate }: 
           <h2 className="text-lg font-semibold mb-4 text-muted-foreground">
             {budgetedCategories.length > 0 ? 'Add More Budgets' : 'Set Your First Budget'}
           </h2>
-          <StaggerContainer className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {unbudgetedCategories.map((budget) => (
-              <StaggerItem key={budget.categoryId}>
-                <BudgetCard
-                  {...budget}
-                  userId={userId}
-                  currentMonth={currentMonth}
-                  onMutate={onMutate}
-                />
-              </StaggerItem>
+              <BudgetCard
+                key={budget.categoryId}
+                {...budget}
+                userId={userId}
+                currentMonth={currentMonth}
+                onRefresh={onRefresh}
+              />
             ))}
-          </StaggerContainer>
+          </div>
         </div>
       )}
     </div>

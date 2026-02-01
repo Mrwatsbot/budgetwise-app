@@ -3,25 +3,10 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  Pencil, Check, X, 
-  Utensils, Car, ShoppingBag, Film, Zap, 
-  HeartPulse, Repeat, Sparkles, Package,
-  type LucideIcon 
-} from 'lucide-react';
+import { getBudgetBarStyle } from '@/lib/bar-colors';
+import { Pencil, Check, X } from 'lucide-react';
+import { getCategoryIcon } from '@/lib/category-icons';
 import { toast } from 'sonner';
-
-// Map icon names to Lucide components
-const iconMap: Record<string, LucideIcon> = {
-  'utensils': Utensils,
-  'car': Car,
-  'shopping-bag': ShoppingBag,
-  'film': Film,
-  'zap': Zap,
-  'heart-pulse': HeartPulse,
-  'repeat': Repeat,
-  'sparkles': Sparkles,
-};
 
 interface DemoBudgetCardProps {
   categoryId: string;
@@ -65,11 +50,10 @@ export function DemoBudgetCard({
     setEditing(false);
   };
 
-  // Get the icon component
-  const IconComponent = categoryIcon ? iconMap[categoryIcon] || Package : Package;
+  const IconComponent = getCategoryIcon(categoryIcon, categoryName);
 
   return (
-    <div className="glass-card rounded-xl p-5 transition-all hover:border-[#1a7a6d33]">
+    <div className="glass-card rounded-xl p-5 transition-all hover:border-[#1a7a6d4d]">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -81,7 +65,7 @@ export function DemoBudgetCard({
           >
             <IconComponent 
               className="w-5 h-5" 
-              style={{ color: categoryColor || '#a855f7' }} 
+              style={{ color: categoryColor || '#1a7a6d' }} 
             />
           </div>
           <div>
@@ -149,12 +133,12 @@ export function DemoBudgetCard({
             <span className="text-muted-foreground">${spent.toFixed(2)} spent</span>
             <span className="font-medium">${budgeted.toFixed(2)}</span>
           </div>
-          <div className="h-2 rounded-full bg-secondary overflow-hidden">
+          <div className="h-2 rounded-full bg-border/10 overflow-hidden progress-bar-container">
             <div
               className="h-full rounded-full transition-all"
               style={{
                 width: `${Math.min(percentage, 100)}%`,
-                backgroundColor: isOver ? '#ef4444' : categoryColor || '#a855f7',
+                ...getBudgetBarStyle(spent, budgeted),
               }}
             />
           </div>
@@ -173,7 +157,7 @@ export function DemoBudgetCard({
           <Button
             size="sm"
             variant="outline"
-            className="border-[#1a7a6d33] text-[#1a7a6d] hover:bg-[#1a7a6d1a]"
+            className="border-[#1a7a6d4d] text-[#1a7a6d] hover:bg-[#1a7a6d1a]"
             onClick={() => setEditing(true)}
           >
             Set Budget

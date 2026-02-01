@@ -31,13 +31,13 @@ const iconMap = {
 const typeColors = {
   warning: 'text-yellow-400',
   tip: 'text-blue-400',
-  opportunity: 'text-green-400',
+  opportunity: 'text-[#7aba5c]',
 };
 
 const typeBg = {
   warning: 'bg-yellow-500/10',
   tip: 'bg-blue-500/10',
-  opportunity: 'bg-green-500/10',
+  opportunity: 'bg-[#6db555]/10',
 };
 
 export function AIInsightsPanel({ insights, onAnalyze, onFindSavings }: AIInsightsPanelProps) {
@@ -64,7 +64,7 @@ export function AIInsightsPanel({ insights, onAnalyze, onFindSavings }: AIInsigh
     <div className="glass-card rounded-xl p-6">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#1a7a6d33] to-[#22a09033] border border-[#1a7a6d4d] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#1a7a6d33] to-[#146b5f33] border border-[#1a7a6d4d] flex items-center justify-center">
           <Sparkles className="w-5 h-5 text-[#1a7a6d]" />
         </div>
         <div>

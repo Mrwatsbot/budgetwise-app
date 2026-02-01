@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; font-family: -apple-system, system-ui, sans-serif; color: white; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 50px; }
+  h1 { font-size: 20px; font-weight: 500; color: #888; }
+  .sub { color: #444; font-size: 13px; margin-top: -30px; }
+  .row { display: flex; gap: 40px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  .label { color: #555; font-size: 11px; text-align: center; margin-top: 8px; }
+  .divider { border: none; border-top: 1px solid #1a1a1a; width: 500px; }
+  h2 { font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 0.1em; }
+</style>
+</head>
+<body>
+
+<h1>Thallo Logo v8 — Simplified Silhouette</h1>
+<p class="sub">~14 leaves (down from ~30), 3 olives, spiral curl preserved</p>
+
+<!-- SIZE TEST -->
+<div class="row">
+  <!-- Large on white -->
+  <div>
+    <div style="background:white;width:200px;height:200px;border-radius:24px;display:flex;align-items:center;justify-content:center;padding:24px">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#111">
+        <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <path d="M 10 92 C 11 86, 12 80, 14 74" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <g fill="currentColor"><path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/><path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/><path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/><path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/><path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/><path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/><path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/><path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/><path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/><path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/><path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/><path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/><path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/><path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/><circle cx="18" cy="74" r="2.8"/><circle cx="24" cy="64" r="2.5"/><circle cx="21" cy="69" r="2.3"/></g>
+      </svg>
+    </div>
+    <p class="label">200px on white</p>
+  </div>
+
+  <!-- Large on dark -->
+  <div>
+    <div style="background:#111;border:1px solid #2a2a2a;width:200px;height:200px;border-radius:24px;display:flex;align-items:center;justify-content:center;padding:24px">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white">
+        <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <path d="M 10 92 C 11 86, 12 80, 14 74" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <g fill="currentColor"><path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/><path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/><path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/><path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/><path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/><path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/><path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/><path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/><path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/><path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/><path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/><path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/><path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/><path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/><circle cx="18" cy="74" r="2.8"/><circle cx="24" cy="64" r="2.5"/><circle cx="21" cy="69" r="2.3"/></g>
+      </svg>
+    </div>
+    <p class="label">200px on dark</p>
+  </div>
+</div>
+
+<!-- Comparison with original -->
+<hr class="divider">
+<h2>Side-by-Side with Original</h2>
+<div class="row">
+  <div>
+    <div style="background:white;width:160px;height:160px;border-radius:16px;display:flex;align-items:center;justify-content:center;padding:16px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <p class="label">Original (~30 leaves)</p>
+  </div>
+  <div style="color:#444;font-size:24px">→</div>
+  <div>
+    <div style="background:white;width:160px;height:160px;border-radius:16px;display:flex;align-items:center;justify-content:center;padding:16px">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#111">
+        <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <path d="M 10 92 C 11 86, 12 80, 14 74" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <g fill="currentColor"><path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/><path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/><path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/><path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/><path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/><path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/><path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/><path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/><path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/><path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/><path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/><path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/><path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/><path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/><circle cx="18" cy="74" r="2.8"/><circle cx="24" cy="64" r="2.5"/><circle cx="21" cy="69" r="2.3"/></g>
+      </svg>
+    </div>
+    <p class="label">v8 (~14 leaves)</p>
+  </div>
+</div>
+
+<!-- Smaller sizes -->
+<hr class="divider">
+<h2>Scale Test</h2>
+<div class="row" style="gap:30px">
+  <div>
+    <div style="background:white;width:80px;height:80px;border-radius:16px;display:flex;align-items:center;justify-content:center;padding:12px">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#111">
+        <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <path d="M 10 92 C 11 86, 12 80, 14 74" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <g fill="currentColor"><path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/><path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/><path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/><path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/><path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/><path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/><path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/><path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/><path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/><path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/><path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/><path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/><path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/><path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/><circle cx="18" cy="74" r="2.8"/><circle cx="24" cy="64" r="2.5"/><circle cx="21" cy="69" r="2.3"/></g>
+      </svg>
+    </div>
+    <p class="label">80px</p>
+  </div>
+  <div>
+    <div style="background:white;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:6px">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#111">
+        <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <path d="M 10 92 C 11 86, 12 80, 14 74" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <g fill="currentColor"><path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/><path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/><path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/><path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/><path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/><path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/><path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/><path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/><path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/><path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/><path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/><path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/><path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/><path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/><circle cx="18" cy="74" r="2.8"/><circle cx="24" cy="64" r="2.5"/><circle cx="21" cy="69" r="2.3"/></g>
+      </svg>
+    </div>
+    <p class="label">48px</p>
+  </div>
+  <div>
+    <div style="background:white;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:4px">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#111">
+        <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <path d="M 10 92 C 11 86, 12 80, 14 74" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <g fill="currentColor"><path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/><path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/><path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/><path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/><path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/><path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/><path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/><path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/><path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/><path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/><path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/><path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/><path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/><path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/><circle cx="18" cy="74" r="2.8"/><circle cx="24" cy="64" r="2.5"/><circle cx="21" cy="69" r="2.3"/></g>
+      </svg>
+    </div>
+    <p class="label">32px</p>
+  </div>
+  <div>
+    <div style="background:white;width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;padding:1px">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#111">
+        <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <path d="M 10 92 C 11 86, 12 80, 14 74" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <g fill="currentColor"><path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/><path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/><path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/><path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/><path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/><path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/><path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/><path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/><path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/><path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/><path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/><path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/><path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/><path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/><circle cx="18" cy="74" r="2.8"/><circle cx="24" cy="64" r="2.5"/><circle cx="21" cy="69" r="2.3"/></g>
+      </svg>
+    </div>
+    <p class="label">16px</p>
+  </div>
+</div>
+
+<!-- Color variants -->
+<hr class="divider">
+<h2>Color Preview</h2>
+<div class="row" style="gap:20px">
+  <!-- Orange -->
+  <div>
+    <div style="background:linear-gradient(135deg,#e8922e,#d4800f);width:80px;height:80px;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:12px">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white">
+        <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M 10 92 C 11 86, 12 80, 14 74" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/><g fill="currentColor"><path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/><path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/><path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/><path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/><path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/><path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/><path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/><path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/><path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/><path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/><path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/><path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/><path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/><path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/><circle cx="18" cy="74" r="2.8"/><circle cx="24" cy="64" r="2.5"/><circle cx="21" cy="69" r="2.3"/></g>
+      </svg>
+    </div>
+    <p class="label">Orange</p>
+  </div>
+  <!-- Teal -->
+  <div>
+    <div style="background:linear-gradient(135deg,#1a7a6d,#146b5f);width:80px;height:80px;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:12px">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white">
+        <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M 10 92 C 11 86, 12 80, 14 74" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/><g fill="currentColor"><path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/><path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/><path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/><path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/><path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/><path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/><path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/><path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/><path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/><path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/><path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/><path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/><path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/><path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/><circle cx="18" cy="74" r="2.8"/><circle cx="24" cy="64" r="2.5"/><circle cx="21" cy="69" r="2.3"/></g>
+      </svg>
+    </div>
+    <p class="label">Teal</p>
+  </div>
+  <!-- Gold -->
+  <div>
+    <div style="background:linear-gradient(135deg,#b8860b,#9a7209);width:80px;height:80px;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:12px">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white">
+        <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M 10 92 C 11 86, 12 80, 14 74" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/><g fill="currentColor"><path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/><path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/><path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/><path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/><path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/><path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/><path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/><path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/><path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/><path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/><path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/><path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/><path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/><path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/><circle cx="18" cy="74" r="2.8"/><circle cx="24" cy="64" r="2.5"/><circle cx="21" cy="69" r="2.3"/></g>
+      </svg>
+    </div>
+    <p class="label">Gold</p>
+  </div>
+  <!-- Olive+Gold -->
+  <div>
+    <div style="background:linear-gradient(135deg,#6b7c3f,#556b2f);width:80px;height:80px;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:12px">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#f5d88c">
+        <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M 10 92 C 11 86, 12 80, 14 74" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/><g fill="currentColor"><path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/><path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/><path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/><path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/><path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/><path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/><path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/><path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/><path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/><path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/><path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/><path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/><path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/><path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/><circle cx="18" cy="74" r="2.8"/><circle cx="24" cy="64" r="2.5"/><circle cx="21" cy="69" r="2.3"/></g>
+      </svg>
+    </div>
+    <p class="label">Olive+Gold</p>
+  </div>
+  <!-- Navy+Orange -->
+  <div>
+    <div style="background:linear-gradient(135deg,#1e2d4a,#162340);width:80px;height:80px;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:12px">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:#e8922e">
+        <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M 10 92 C 11 86, 12 80, 14 74" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/><g fill="currentColor"><path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/><path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/><path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/><path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/><path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/><path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/><path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/><path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/><path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/><path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/><path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/><path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/><path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/><path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/><circle cx="18" cy="74" r="2.8"/><circle cx="24" cy="64" r="2.5"/><circle cx="21" cy="69" r="2.3"/></g>
+      </svg>
+    </div>
+    <p class="label">Navy+Orange</p>
+  </div>
+  <!-- Sage -->
+  <div>
+    <div style="background:linear-gradient(135deg,#5a7a5a,#4a6a4a);width:80px;height:80px;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:12px">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;color:white">
+        <path d="M 10 92 C 11 82, 14 72, 18 63 C 22 54, 28 45, 36 37 C 42 31, 50 26, 58 23 C 64 21, 70 20, 74 23 C 78 26, 78 31, 74 34 C 71 36, 68 35, 66 33 C 64 31, 64 28, 66 27 C 67 26, 68 27, 68 28" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M 10 92 C 11 86, 12 80, 14 74" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/><g fill="currentColor"><path d="M 13 82 Q 4 78 0 68 Q 10 74 13 82 Z"/><path d="M 17 72 Q 8 67 5 57 Q 13 63 17 72 Z"/><path d="M 23 61 Q 13 56 10 45 Q 18 52 23 61 Z"/><path d="M 30 51 Q 21 46 19 36 Q 26 43 30 51 Z"/><path d="M 38 42 Q 30 36 29 26 Q 35 33 38 42 Z"/><path d="M 48 33 Q 40 27 40 18 Q 45 25 48 33 Z"/><path d="M 57 26 Q 51 21 51 13 Q 55 19 57 26 Z"/><path d="M 15 78 Q 24 74 30 66 Q 22 72 15 78 Z"/><path d="M 20 67 Q 30 62 35 54 Q 27 60 20 67 Z"/><path d="M 27 56 Q 37 50 42 42 Q 34 49 27 56 Z"/><path d="M 34 47 Q 44 41 48 33 Q 41 40 34 47 Z"/><path d="M 43 38 Q 52 32 56 24 Q 49 31 43 38 Z"/><path d="M 52 30 Q 60 25 64 18 Q 58 24 52 30 Z"/><path d="M 62 24 Q 68 20 72 16 Q 67 21 62 24 Z"/><circle cx="18" cy="74" r="2.8"/><circle cx="24" cy="64" r="2.5"/><circle cx="21" cy="69" r="2.3"/></g>
+      </svg>
+    </div>
+    <p class="label">Sage</p>
+  </div>
+</div>
+
+<p style="color:#333;font-size:11px;margin-top:20px;text-align:center;max-width:500px">
+  ⚠️ This is my hand-coded approximation. If the shape still doesn't feel right, grab the final version from Recraft Pro ($25/mo, cancel after) and I'll colorize + integrate the real thing.
+</p>
+
+</body>
+</html>

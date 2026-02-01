@@ -21,37 +21,37 @@ export function IncomeOverview({ monthlyIncome, totalSpent, totalBudgeted }: Inc
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-            <Wallet className="w-5 h-5 text-green-400" />
+          <div className="w-10 h-10 rounded-lg bg-[#6db555]/20 flex items-center justify-center">
+            <Wallet className="w-5 h-5 text-[#7aba5c]" />
           </div>
           <div>
             <h2 className="text-lg font-semibold">Monthly Income</h2>
-            <p className="text-2xl font-bold text-green-400">${monthlyIncome.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-[#7aba5c]">${monthlyIncome.toLocaleString()}</p>
           </div>
         </div>
         <div className="text-right">
           <p className="text-sm text-muted-foreground">Safe to spend</p>
-          <p className={`text-xl font-bold ${remaining > 0 ? 'text-green-400' : 'text-red-400'}`}>
+          <p className={`text-xl font-bold ${remaining > 0 ? 'text-[#7aba5c]' : 'text-red-400'}`}>
             ${remaining.toLocaleString()}
           </p>
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="h-4 rounded-full bg-secondary overflow-hidden flex">
-        {/* Spent portion */}
+      {/* Progress Bar - Multi-section with semantic colors */}
+      <div className="h-4 rounded-full bg-border/10 overflow-hidden flex progress-bar-container">
+        {/* Spent - Amber */}
         <div
-          className="h-full bg-gradient-to-r from-[#1a7a6d] to-[#146b5f] transition-all"
+          className="h-full bg-[#1a7a6d] transition-all"
           style={{ width: `${Math.min(spentPercentage, 100)}%` }}
         />
-        {/* Budgeted but not spent */}
+        {/* Budgeted - Blue */}
         <div
-          className="h-full bg-[#1a7a6d4d] transition-all"
+          className="h-full bg-[#5b8fd9] transition-all"
           style={{ width: `${Math.max(0, Math.min(budgetedPercentage - spentPercentage, 100 - spentPercentage))}%` }}
         />
-        {/* Unallocated */}
+        {/* Unallocated - Green */}
         <div
-          className="h-full bg-secondary transition-all"
+          className="h-full bg-[#6db555] transition-all"
           style={{ width: `${Math.max(0, unallocatedPercentage)}%` }}
         />
       </div>
@@ -60,7 +60,7 @@ export function IncomeOverview({ monthlyIncome, totalSpent, totalBudgeted }: Inc
       <div className="grid grid-cols-3 gap-4 mt-4">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-[#1a7a6d]" />
+            <div className="w-3 h-3 rounded-full bg-[#1a7a6d]" /> {/* Spent - Amber */}
             <TrendingDown className="w-3.5 h-3.5 text-muted-foreground" />
           </div>
           <div>
@@ -71,7 +71,7 @@ export function IncomeOverview({ monthlyIncome, totalSpent, totalBudgeted }: Inc
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-[#1a7a6d4d]" />
+            <div className="w-3 h-3 rounded-full bg-[#5b8fd9]" /> {/* Budgeted - Blue */}
             <PiggyBank className="w-3.5 h-3.5 text-muted-foreground" />
           </div>
           <div>
@@ -82,7 +82,7 @@ export function IncomeOverview({ monthlyIncome, totalSpent, totalBudgeted }: Inc
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-secondary border border-border" />
+            <div className="w-3 h-3 rounded-full bg-[#6db555]" /> {/* Unallocated - Green */}
             <CircleDollarSign className="w-3.5 h-3.5 text-muted-foreground" />
           </div>
           <div>

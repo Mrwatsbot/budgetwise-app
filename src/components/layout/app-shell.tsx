@@ -1,17 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { ThalloLogo } from '@/components/ui/thallo-logo';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Receipt, 
   PiggyBank, 
-  Landmark,
   Settings, 
   Menu,
   LogOut,
-  Plus
+  Plus,
+  CreditCard,
+  Target,
+  Trophy,
+  Wallet,
+  Brain,
+  Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -25,12 +31,44 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { createClient } from '@/lib/supabase/client';
+import { MobileAppView } from '@/components/layout/mobile-app-view';
+// Ambient background is now pure CSS on body (globals.css) — no component needed
+
+const SWIPEABLE_PATHS = [
+  '/dashboard',
+  '/transactions',
+  '/budgets',
+  '/debts',
+  '/savings',
+  '/review',
+  '/coaching',
+  '/score',
+];
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 1023px)');
+    setIsMobile(mql.matches);
+    
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, []);
+
+  return isMobile;
+}
 
 const getNavigation = (isDemo: boolean) => [
   { name: 'Dashboard', href: isDemo ? '/demo' : '/dashboard', icon: LayoutDashboard },
   { name: 'Transactions', href: isDemo ? '/demo' : '/transactions', icon: Receipt },
-  { name: 'Budgets', href: isDemo ? '/demo' : '/budgets', icon: PiggyBank },
-  { name: 'Savings', href: isDemo ? '/demo' : '/savings', icon: Landmark },
+  { name: 'Budgets', href: isDemo ? '/demo' : '/budgets', icon: Wallet },
+  { name: 'Debts', href: isDemo ? '/demo' : '/debts', icon: CreditCard },
+  { name: 'Savings', href: isDemo ? '/demo' : '/savings', icon: PiggyBank },
+  { name: 'Review', href: isDemo ? '/demo' : '/review', icon: Sparkles },
+  { name: 'AI Coach', href: isDemo ? '/demo' : '/coaching', icon: Brain },
+  { name: 'Score', href: isDemo ? '/demo' : '/score', icon: Trophy },
   { name: 'Settings', href: isDemo ? '/demo' : '/settings', icon: Settings },
 ];
 
@@ -46,10 +84,14 @@ interface AppShellProps {
 export function AppShell({ children, user, isDemo = false }: AppShellProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const navigation = getNavigation(isDemo);
   const homeLink = isDemo ? '/demo' : '/dashboard';
+
+  const isSwipeablePage = !isDemo && SWIPEABLE_PATHS.includes(pathname);
+  const showMobileCube = isMobile && isSwipeablePage;
 
   const initials = user?.full_name
     ?.split(' ')
@@ -69,9 +111,9 @@ export function AppShell({ children, user, isDemo = false }: AppShellProps) {
   };
 
   return (
-    <div className="bg-background overflow-x-hidden">
+    <div className="overflow-x-hidden relative">
       {/* Mobile header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md lg:hidden">
+      <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md lg:hidden relative">
         <div className="flex h-14 items-center px-4">
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
@@ -84,9 +126,9 @@ export function AppShell({ children, user, isDemo = false }: AppShellProps) {
               <div className="flex h-14 items-center border-b border-border px-4">
                 <Link href={homeLink} className="flex items-center gap-2 font-semibold">
                   <div className="w-8 h-8 rounded-lg gradient-btn flex items-center justify-center">
-                    <PiggyBank className="h-4 w-4 text-white" />
+                    <ThalloLogo size="sm" />
                   </div>
-                  <span>BudgetWise</span>
+                  <span>Thallo</span>
                 </Link>
               </div>
               <nav className="flex flex-col gap-1 p-4">
@@ -116,9 +158,9 @@ export function AppShell({ children, user, isDemo = false }: AppShellProps) {
           <div className="flex flex-1 items-center justify-center">
             <Link href={homeLink} className="flex items-center gap-2 font-semibold">
               <div className="w-8 h-8 rounded-lg gradient-btn flex items-center justify-center">
-                <PiggyBank className="h-4 w-4 text-white" />
+                <ThalloLogo size="sm" />
               </div>
-              <span>BudgetWise</span>
+              <span>Thallo</span>
             </Link>
           </div>
 
@@ -126,7 +168,7 @@ export function AppShell({ children, user, isDemo = false }: AppShellProps) {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Avatar className="h-8 w-8">
-                  <AvatarFallback className="text-xs bg-[#1a7a6d33] text-[#1a7a6d]">{initials}</AvatarFallback>
+                  <AvatarFallback className="text-xs bg-[#1a7a6d33] text-[#2aaa9a]">{initials}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
@@ -155,13 +197,13 @@ export function AppShell({ children, user, isDemo = false }: AppShellProps) {
 
       <div className="flex min-h-screen">
         {/* Desktop sidebar */}
-        <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 border-r border-border bg-background">
+        <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 border-r border-border bg-background/95 backdrop-blur-sm">
           <div className="flex h-14 items-center border-b border-border px-6">
             <Link href={homeLink} className="flex items-center gap-2 font-semibold">
               <div className="w-8 h-8 rounded-lg gradient-btn flex items-center justify-center">
-                <PiggyBank className="h-4 w-4 text-white" />
+                <ThalloLogo size="sm" />
               </div>
-              <span>BudgetWise</span>
+              <span>Thallo</span>
             </Link>
           </div>
           
@@ -191,7 +233,7 @@ export function AppShell({ children, user, isDemo = false }: AppShellProps) {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-full justify-start gap-2 hover:bg-secondary">
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className="text-xs bg-[#1a7a6d33] text-[#1a7a6d]">{initials}</AvatarFallback>
+                    <AvatarFallback className="text-xs bg-[#1a7a6d33] text-[#2aaa9a]">{initials}</AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col items-start text-left">
                     <span className="text-sm font-medium">{user?.full_name || 'User'}</span>
@@ -219,13 +261,17 @@ export function AppShell({ children, user, isDemo = false }: AppShellProps) {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 lg:pl-64" style={{ minHeight: '100dvh' }}>
-          <div 
-            className="p-4 lg:p-6 lg:pb-6 max-w-6xl mx-auto"
-            style={{ paddingBottom: 'calc(8rem + env(safe-area-inset-bottom, 0px))' }}
-          >
-            {children}
-          </div>
+        <main className="flex-1 lg:pl-64 overflow-x-hidden" style={{ minHeight: '100dvh' }}>
+          {showMobileCube ? (
+            <MobileAppView initialPath={pathname} />
+          ) : (
+            <div 
+              className="p-4 lg:p-6 lg:pb-6 max-w-6xl mx-auto"
+              style={{ paddingBottom: 'calc(8rem + env(safe-area-inset-bottom, 0px))' }}
+            >
+              {children}
+            </div>
+          )}
         </main>
       </div>
 

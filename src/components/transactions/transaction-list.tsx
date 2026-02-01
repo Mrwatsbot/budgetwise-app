@@ -6,7 +6,8 @@ import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Edit, MoreHorizontal } from 'lucide-react';
+import { Trash2, Edit, MoreHorizontal, Package } from 'lucide-react';
+import { getCategoryIcon } from '@/lib/category-icons';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,10 +39,10 @@ interface Transaction {
 interface TransactionListProps {
   transactions: Transaction[];
   showAccount?: boolean;
-  onMutate?: () => void;
+  onRefresh?: () => void;
 }
 
-export function TransactionList({ transactions, showAccount = false, onMutate }: TransactionListProps) {
+export function TransactionList({ transactions, showAccount = false, onRefresh }: TransactionListProps) {
   const router = useRouter();
   const [deleting, setDeleting] = useState<string | null>(null);
 
@@ -59,8 +60,8 @@ export function TransactionList({ transactions, showAccount = false, onMutate }:
       if (error) throw error;
 
       toast.success('Transaction deleted');
-      if (onMutate) {
-        onMutate();
+      if (onRefresh) {
+        onRefresh();
       } else {
         router.refresh();
       }
@@ -139,9 +140,10 @@ export function TransactionList({ transactions, showAccount = false, onMutate }:
                           : '#94a3b820'
                       }}
                     >
-                      <span className="text-lg">
-                        {transaction.category?.icon || '📦'}
-                      </span>
+                      {(() => {
+                        const IconComponent = getCategoryIcon(transaction.category?.icon || null, transaction.category?.name);
+                        return <IconComponent className="w-5 h-5" style={{ color: transaction.category?.color || '#8a8279' }} />;
+                      })()}
                     </div>
 
                     {/* Details */}

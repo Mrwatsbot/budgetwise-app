@@ -101,21 +101,21 @@ export function OnboardingForm({ userId }: OnboardingFormProps) {
               onClick={() => handleTypeSelect(type.value)}
               className={cn(
                 'flex items-center gap-4 p-4 rounded-xl border transition-all text-left',
-                'hover:border-purple-500/50 hover:bg-purple-500/5',
+                'hover:border-[#1a7a6d80] hover:bg-[#1a7a6d0d]',
                 formData.type === type.value 
-                  ? 'border-purple-500/50 bg-purple-500/10' 
+                  ? 'border-[#1a7a6d80] bg-[#1a7a6d1a]' 
                   : 'border-border bg-secondary/30'
               )}
             >
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-indigo-500/20 border border-purple-500/30 flex items-center justify-center">
-                <type.icon className="h-6 w-6 text-purple-400" />
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#1a7a6d33] to-[#146b5f33] border border-[#1a7a6d4d] flex items-center justify-center">
+                <type.icon className="h-6 w-6 text-[#1a7a6d]" />
               </div>
               <div className="flex-1">
                 <p className="font-medium">{type.label}</p>
                 <p className="text-sm text-muted-foreground">{type.description}</p>
               </div>
               {formData.type === type.value && (
-                <Check className="h-5 w-5 text-purple-400" />
+                <Check className="h-5 w-5 text-[#1a7a6d]" />
               )}
             </button>
           ))}

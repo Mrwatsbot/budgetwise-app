@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getScoreBarStyle } from '@/lib/bar-colors';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -12,8 +13,15 @@ import {
   ChevronDown,
   ChevronUp,
   Lightbulb,
-  Trophy
+  Trophy,
+  Sprout,
+  Footprints,
+  Hammer,
+  Dumbbell,
+  Rocket,
+  Crown,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { FinancialHealthScore, ScoreBreakdown } from '@/lib/scoring/financial-health-score';
 
@@ -29,16 +37,16 @@ const levelColors = {
   2: 'from-yellow-500 to-yellow-600',
   3: 'from-blue-500 to-blue-600',
   4: 'from-[#1a7a6d] to-[#146b5f]',
-  5: 'from-green-500 to-emerald-500',
+  5: 'from-[#6db555] to-emerald-500',
 };
 
-const levelEmojis = {
-  0: '🌱',
-  1: '🚶',
-  2: '🏗️',
-  3: '💪',
-  4: '🚀',
-  5: '👑',
+const levelIcons: Record<number, LucideIcon> = {
+  0: Sprout,
+  1: Footprints,
+  2: Hammer,
+  3: Dumbbell,
+  4: Rocket,
+  5: Crown,
 };
 
 const factorIcons: Record<keyof ScoreBreakdown, typeof Target> = {
@@ -61,7 +69,7 @@ const factorNames: Record<keyof ScoreBreakdown, string> = {
 
 const pillarColors = {
   Trajectory: 'text-blue-400',
-  Behavior: 'text-green-400',
+  Behavior: 'text-[#7aba5c]',
   Position: 'text-yellow-400',
 };
 
@@ -69,7 +77,7 @@ export function FinancialHealthDisplay({ score, previousScore, animated = true }
   const [showBreakdown, setShowBreakdown] = useState(false);
   
   const change = previousScore !== undefined ? score.total - previousScore : 0;
-  const changeColor = change > 0 ? 'text-green-400' : change < 0 ? 'text-red-400' : 'text-muted-foreground';
+  const changeColor = change > 0 ? 'text-[#7aba5c]' : change < 0 ? 'text-red-400' : 'text-muted-foreground';
   
   // Calculate percentage for the ring
   const percentage = (score.total / 1000) * 100;
@@ -112,7 +120,7 @@ export function FinancialHealthDisplay({ score, previousScore, animated = true }
               <defs>
                 <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="#1a7a6d" />
-                  <stop offset="100%" stopColor="#22c55e" />
+                  <stop offset="100%" stopColor="#2aaa9a" />
                 </linearGradient>
               </defs>
             </svg>
@@ -135,7 +143,7 @@ export function FinancialHealthDisplay({ score, previousScore, animated = true }
             'px-4 py-2 rounded-full bg-gradient-to-r text-white font-medium flex items-center gap-2',
             levelColors[score.level as keyof typeof levelColors]
           )}>
-            <span>{levelEmojis[score.level as keyof typeof levelEmojis]}</span>
+            {(() => { const LevelIcon = levelIcons[score.level as keyof typeof levelIcons]; return LevelIcon ? <LevelIcon className="w-5 h-5" /> : null; })()}
             <span>{score.title}</span>
           </div>
           
@@ -148,7 +156,7 @@ export function FinancialHealthDisplay({ score, previousScore, animated = true }
       {/* Toggle Breakdown */}
       <button
         onClick={() => setShowBreakdown(!showBreakdown)}
-        className="w-full glass-card rounded-xl p-4 flex items-center justify-between hover:border-[#1a7a6d33] transition-colors"
+        className="w-full glass-card rounded-xl p-4 flex items-center justify-between hover:border-[#1a7a6d4d] transition-colors"
       >
         <span className="font-medium">Score Breakdown</span>
         {showBreakdown ? (
@@ -182,14 +190,13 @@ export function FinancialHealthDisplay({ score, previousScore, animated = true }
                 </div>
                 
                 {/* Progress bar */}
-                <div className="h-2 rounded-full bg-secondary overflow-hidden mb-2">
-                  <div 
-                    className={cn(
-                      'h-full rounded-full transition-all duration-500',
-                      pct >= 80 ? 'bg-green-500' : pct >= 50 ? 'bg-yellow-500' : 'bg-red-500'
-                    )}
-                    style={{ width: `${pct}%` }}
-                  />
+                <div className="h-2 rounded-full bg-border/10 overflow-hidden mb-2">
+                  {pct > 0 && (
+                    <div 
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ width: `${pct}%`, ...getScoreBarStyle(pct / 100) }}
+                    />
+                  )}
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -229,7 +236,7 @@ export function FinancialHealthDisplay({ score, previousScore, animated = true }
           <span className="font-medium">Not Like Credit Scores</span>
         </div>
         <p className="text-sm text-muted-foreground">
-          Unlike FICO, this score rewards <span className="text-green-400">paying off debt</span>, 
+          Unlike FICO, this score rewards <span className="text-[#7aba5c]">paying off debt</span>, 
           not having more credit. It measures <span className="text-[#1a7a6d]">your</span> financial 
           health, not how profitable you are to lenders.
         </p>

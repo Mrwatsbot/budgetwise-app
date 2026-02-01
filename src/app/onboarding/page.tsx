@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { OnboardingFormV2 } from './onboarding-form-v2';
+import { OnboardingForm } from './onboarding-form';
 
 export default async function OnboardingPage() {
   const supabase = await createClient();
@@ -29,13 +29,13 @@ export default async function OnboardingPage() {
       
       <div className="relative z-10 w-full max-w-lg">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Welcome to BudgetWise!</h1>
+          <h1 className="text-3xl font-bold mb-2">Welcome to Thallo!</h1>
           <p className="text-muted-foreground">
             Let's set up your first account to get started.
           </p>
         </div>
 
-        <OnboardingFormV2 userId={user.id} />
+        <OnboardingForm userId={user.id} />
       </div>
     </div>
   );

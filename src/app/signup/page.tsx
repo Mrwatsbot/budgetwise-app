@@ -60,8 +60,8 @@ export default function SignupPage() {
         <div className="absolute inset-0 bg-gradient-radial pointer-events-none" />
         <div className="relative z-10 w-full max-w-md">
           <div className="glass-card rounded-2xl p-8 text-center">
-            <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-8 h-8 text-green-400" />
+            <div className="w-16 h-16 rounded-full bg-[#6db555]/20 flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-8 h-8 text-[#7aba5c]" />
             </div>
             <h1 className="text-2xl font-bold mb-2">Check your email</h1>
             <p className="text-muted-foreground mb-6">
@@ -85,10 +85,11 @@ export default function SignupPage() {
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-10 h-10 rounded-xl gradient-btn flex items-center justify-center">
-            <PiggyBank className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 rounded-xl gradient-btn flex items-center justify-center p-1">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/thallo-logo-white.png" alt="Thallo" className="w-full h-full object-contain"  />
           </div>
-          <span className="text-xl font-bold">BudgetWise</span>
+          <span className="text-xl font-bold">Thallo</span>
         </Link>
 
         {/* Card */}
@@ -108,6 +109,7 @@ export default function SignupPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="bg-secondary/50 border-border"
+                autoComplete="name"
                 required
               />
             </div>
@@ -120,6 +122,7 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-secondary/50 border-border"
+                autoComplete="email"
                 required
               />
             </div>
@@ -132,6 +135,7 @@ export default function SignupPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="bg-secondary/50 border-border"
+                autoComplete="new-password"
                 minLength={8}
                 required
               />
@@ -192,14 +196,14 @@ export default function SignupPage() {
 
           <p className="text-xs text-muted-foreground text-center mt-4">
             By creating an account, you agree to our{' '}
-            <Link href="/terms" className="text-purple-400 hover:underline">Terms</Link>
+            <Link href="/terms" className="text-[#1a7a6d] hover:underline">Terms</Link>
             {' '}and{' '}
-            <Link href="/privacy" className="text-purple-400 hover:underline">Privacy Policy</Link>
+            <Link href="/privacy" className="text-[#1a7a6d] hover:underline">Privacy Policy</Link>
           </p>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             Already have an account?{' '}
-            <Link href="/login" className="text-purple-400 hover:text-purple-300 hover:underline">
+            <Link href="/login" className="text-[#1a7a6d] hover:text-[#22a090] hover:underline">
               Sign in
             </Link>
           </p>

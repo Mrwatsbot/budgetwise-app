@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; font-family: -apple-system, system-ui, sans-serif; color: white; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 50px; }
+  h1 { font-size: 20px; font-weight: 500; color: #888; }
+  .sub { color: #444; font-size: 13px; margin-top: -30px; }
+  .row { display: flex; gap: 30px; align-items: end; flex-wrap: wrap; justify-content: center; }
+  .label { color: #555; font-size: 11px; text-align: center; margin-top: 8px; }
+  .label2 { color: #444; font-size: 10px; text-align: center; }
+  .divider { border: none; border-top: 1px solid #1a1a1a; width: 600px; }
+  h2 { font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 0.1em; }
+  
+  /* CSS filter trick to colorize black silhouette */
+  .color-orange { filter: brightness(0) saturate(100%) invert(62%) sepia(85%) saturate(500%) hue-rotate(350deg) brightness(95%); }
+  .color-teal { filter: brightness(0) saturate(100%) invert(42%) sepia(40%) saturate(600%) hue-rotate(130deg) brightness(90%); }
+  .color-gold { filter: brightness(0) saturate(100%) invert(52%) sepia(90%) saturate(500%) hue-rotate(20deg) brightness(85%); }
+  .color-sage { filter: brightness(0) saturate(100%) invert(48%) sepia(20%) saturate(500%) hue-rotate(80deg) brightness(90%); }
+  .color-white { filter: brightness(0) invert(1); }
+</style>
+</head>
+<body>
+
+<h1>Recraft Silhouette — Real Size Test</h1>
+<p class="sub">Your actual image at every size that matters</p>
+
+<!-- RAW SIZE TEST on white -->
+<h2>On White Background — Does it read at small sizes?</h2>
+<div class="row" style="align-items:end">
+  <div>
+    <div style="background:white;width:140px;height:140px;border-radius:24px;display:flex;align-items:center;justify-content:center;padding:16px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <p class="label">App Icon (120px)</p>
+  </div>
+  <div>
+    <div style="background:white;width:80px;height:80px;border-radius:16px;display:flex;align-items:center;justify-content:center;padding:10px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <p class="label">64px</p>
+  </div>
+  <div>
+    <div style="background:white;width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:8px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <p class="label">Navbar (48px)</p>
+  </div>
+  <div>
+    <div style="background:white;width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;padding:3px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <p class="label">32px</p>
+  </div>
+  <div>
+    <div style="background:white;width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;padding:1px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <p class="label">Favicon (16px)</p>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SIMULATED BROWSER TAB -->
+<h2>Browser Tab Simulation</h2>
+<div style="background:#2b2b2b;border-radius:12px 12px 0 0;padding:0;width:600px;overflow:hidden">
+  <!-- Tab bar -->
+  <div style="background:#1e1e1e;display:flex;align-items:center;padding:8px 12px 0;gap:4px">
+    <!-- Active tab -->
+    <div style="background:#2b2b2b;border-radius:8px 8px 0 0;padding:8px 16px;display:flex;align-items:center;gap:8px;min-width:200px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" style="width:16px;height:16px;object-fit:contain">
+      <span style="font-size:12px;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Thallo — Your Money, Flourishing</span>
+      <span style="color:#666;font-size:11px;margin-left:auto;cursor:pointer">×</span>
+    </div>
+    <!-- Inactive tab -->
+    <div style="background:#1a1a1a;border-radius:8px 8px 0 0;padding:8px 16px;display:flex;align-items:center;gap:8px;min-width:140px">
+      <div style="width:16px;height:16px;background:#333;border-radius:3px"></div>
+      <span style="font-size:12px;color:#888">New Tab</span>
+    </div>
+  </div>
+  <!-- URL bar -->
+  <div style="padding:8px 12px">
+    <div style="background:#1e1e1e;border-radius:20px;padding:6px 16px;display:flex;align-items:center;gap:8px">
+      <span style="color:#666;font-size:12px">🔒</span>
+      <span style="color:#999;font-size:13px">usethallo.com</span>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- COLORIZED ON BRAND BACKGROUNDS -->
+<h2>Colorized — White icon on color backgrounds</h2>
+<div class="row">
+  <!-- Orange -->
+  <div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div style="background:linear-gradient(135deg,#e8922e,#d4800f);width:120px;height:120px;border-radius:24px;display:flex;align-items:center;justify-content:center;padding:16px">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+      </div>
+      <div style="display:flex;gap:8px;align-items:end">
+        <div style="background:linear-gradient(135deg,#e8922e,#d4800f);width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:6px">
+          <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+        </div>
+        <div style="background:linear-gradient(135deg,#e8922e,#d4800f);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:4px">
+          <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+        </div>
+        <div style="background:linear-gradient(135deg,#e8922e,#d4800f);width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;padding:2px">
+          <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+        </div>
+      </div>
+    </div>
+    <p class="label">Orange</p>
+  </div>
+  <!-- Teal -->
+  <div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div style="background:linear-gradient(135deg,#1a7a6d,#146b5f);width:120px;height:120px;border-radius:24px;display:flex;align-items:center;justify-content:center;padding:16px">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+      </div>
+      <div style="display:flex;gap:8px;align-items:end">
+        <div style="background:linear-gradient(135deg,#1a7a6d,#146b5f);width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:6px">
+          <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+        </div>
+        <div style="background:linear-gradient(135deg,#1a7a6d,#146b5f);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:4px">
+          <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+        </div>
+        <div style="background:linear-gradient(135deg,#1a7a6d,#146b5f);width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;padding:2px">
+          <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+        </div>
+      </div>
+    </div>
+    <p class="label">Teal</p>
+  </div>
+  <!-- Gold -->
+  <div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div style="background:linear-gradient(135deg,#b8860b,#9a7209);width:120px;height:120px;border-radius:24px;display:flex;align-items:center;justify-content:center;padding:16px">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+      </div>
+      <div style="display:flex;gap:8px;align-items:end">
+        <div style="background:linear-gradient(135deg,#b8860b,#9a7209);width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:6px">
+          <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+        </div>
+        <div style="background:linear-gradient(135deg,#b8860b,#9a7209);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:4px">
+          <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+        </div>
+        <div style="background:linear-gradient(135deg,#b8860b,#9a7209);width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;padding:2px">
+          <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+        </div>
+      </div>
+    </div>
+    <p class="label">Gold</p>
+  </div>
+  <!-- Navy -->
+  <div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div style="background:linear-gradient(135deg,#1e2d4a,#162340);width:120px;height:120px;border-radius:24px;display:flex;align-items:center;justify-content:center;padding:16px">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-orange" style="width:100%;height:100%;object-fit:contain">
+      </div>
+      <div style="display:flex;gap:8px;align-items:end">
+        <div style="background:linear-gradient(135deg,#1e2d4a,#162340);width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:6px">
+          <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-orange" style="width:100%;height:100%;object-fit:contain">
+        </div>
+        <div style="background:linear-gradient(135deg,#1e2d4a,#162340);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:4px">
+          <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-orange" style="width:100%;height:100%;object-fit:contain">
+        </div>
+        <div style="background:linear-gradient(135deg,#1e2d4a,#162340);width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;padding:2px">
+          <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-orange" style="width:100%;height:100%;object-fit:contain">
+        </div>
+      </div>
+    </div>
+    <p class="label">Navy+Orange</p>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- COLORED ICON ON DARK -->
+<h2>Colored Icon on Dark (No Background Box)</h2>
+<div class="row">
+  <div>
+    <div style="width:80px;height:80px;display:flex;align-items:center;justify-content:center;padding:8px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-orange" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <p class="label">Orange</p>
+  </div>
+  <div>
+    <div style="width:80px;height:80px;display:flex;align-items:center;justify-content:center;padding:8px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-teal" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <p class="label">Teal</p>
+  </div>
+  <div>
+    <div style="width:80px;height:80px;display:flex;align-items:center;justify-content:center;padding:8px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-gold" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <p class="label">Gold</p>
+  </div>
+  <div>
+    <div style="width:80px;height:80px;display:flex;align-items:center;justify-content:center;padding:8px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-sage" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <p class="label">Sage</p>
+  </div>
+  <div>
+    <div style="width:80px;height:80px;display:flex;align-items:center;justify-content:center;padding:8px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <p class="label">White</p>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- WORDMARK COMBOS -->
+<h2>Wordmark Combinations</h2>
+<div style="display:flex;flex-direction:column;gap:24px;align-items:center">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="background:linear-gradient(135deg,#e8922e,#d4800f);width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:5px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <span style="font-size:24px;font-weight:700;letter-spacing:-0.02em">Thallo</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="background:linear-gradient(135deg,#1a7a6d,#146b5f);width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:5px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <span style="font-size:24px;font-weight:700;letter-spacing:-0.02em">Thallo</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="background:linear-gradient(135deg,#b8860b,#9a7209);width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:5px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-white" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <span style="font-size:24px;font-weight:700;letter-spacing:-0.02em">Thallo</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="background:linear-gradient(135deg,#1e2d4a,#162340);width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:5px">
+      <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="color-orange" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <span style="font-size:24px;font-weight:700;letter-spacing:-0.02em">Thallo</span>
+  </div>
+</div>
+
+<p style="color:#333;font-size:11px;margin-top:30px;text-align:center;max-width:500px">
+  This is your actual Recraft image scaled and CSS-colorized. Check if the detail holds at favicon (16px) and 32px, or if we need fewer leaves.
+</p>
+
+</body>
+</html>

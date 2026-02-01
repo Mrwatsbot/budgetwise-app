@@ -1,0 +1,45 @@
+<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Thallo olive branch v7: refined from Recraft Option B structure -->
+  <!-- Sweeping arc bottom-left to upper-right, 7 leaves, 3 olives -->
+  
+  <g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Main curved stem - tapered feel via single graceful arc -->
+    <path d="M8 37 C9 32, 11 27, 14 23 C17 19, 21 14, 26 10 C29 7.5, 31 5.5, 33 4" 
+          stroke-width="1.5"/>
+    
+    <!-- LEFT/OUTER leaves (convex side, facing upper-left) -->
+    <!-- Leaf L1 - near tip, small -->
+    <path d="M30 7 C27.5 5.5, 25.5 3, 26.5 1 C28 3, 29.5 5, 30 7Z" 
+          stroke-width="0.9"/>
+    
+    <!-- Leaf L2 - upper -->
+    <path d="M25 12 C22 10, 19.5 7, 21 4.5 C22.5 7, 24 9.5, 25 12Z" 
+          stroke-width="0.9"/>
+    
+    <!-- Leaf L3 - middle, largest -->
+    <path d="M19 18.5 C15.5 16.5, 13 13, 14.5 10 C16 13, 18 16, 19 18.5Z" 
+          stroke-width="0.9"/>
+    
+    <!-- Leaf L4 - lower -->
+    <path d="M14 24 C11 22.5, 8.5 19.5, 9.5 17 C11 19.5, 13 22, 14 24Z" 
+          stroke-width="0.9"/>
+    
+    <!-- RIGHT/INNER leaves (concave side, facing lower-right) -->
+    <!-- Leaf R1 - upper -->
+    <path d="M28 9.5 C30.5 8, 33.5 7, 34 5 C33 7.5, 30.5 8.5, 28 9.5Z" 
+          stroke-width="0.9"/>
+    
+    <!-- Leaf R2 - middle -->
+    <path d="M22 15.5 C25 13.5, 28.5 12, 29.5 9.5 C28 12, 25 14, 22 15.5Z" 
+          stroke-width="0.9"/>
+    
+    <!-- Leaf R3 - lower -->
+    <path d="M16 22 C19.5 20, 23 18.5, 24 16 C22.5 18.5, 19 20, 16 22Z" 
+          stroke-width="0.9"/>
+  </g>
+  
+  <!-- Three olives - solid filled, clustered on inner curve -->
+  <circle cx="13" cy="27" r="1.7" fill="currentColor"/>
+  <circle cx="11" cy="24" r="1.5" fill="currentColor"/>
+  <circle cx="15" cy="24.5" r="1.4" fill="currentColor"/>
+</svg>

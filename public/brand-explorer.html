@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thallo — Brand Color Explorer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  
+  * { margin: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; font-family: 'Inter', -apple-system, system-ui, sans-serif; color: white; }
+  
+  .hero { text-align: center; padding: 60px 20px 40px; }
+  .hero h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+  .hero p { color: #555; font-size: 14px; }
+  
+  .section { padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+  .section-title { font-size: 13px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 24px; text-align: center; }
+  
+  .divider { border: none; border-top: 1px solid #1a1a1a; max-width: 800px; margin: 20px auto; }
+  
+  /* Logo colorization via CSS filters */
+  .inv { filter: brightness(0) invert(1); }
+  .c-orange { filter: brightness(0) saturate(100%) invert(62%) sepia(85%) saturate(500%) hue-rotate(350deg) brightness(95%); }
+  .c-teal { filter: brightness(0) saturate(100%) invert(40%) sepia(50%) saturate(600%) hue-rotate(130deg) brightness(85%); }
+  .c-gold { filter: brightness(0) saturate(100%) invert(52%) sepia(90%) saturate(500%) hue-rotate(20deg) brightness(85%); }
+  .c-sage { filter: brightness(0) saturate(100%) invert(48%) sepia(20%) saturate(500%) hue-rotate(80deg) brightness(90%); }
+
+  /* PALETTE CARDS */
+  .palettes { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+  .palette-card {
+    width: 280px; background: #111; border: 1px solid #1e1e1e; border-radius: 20px;
+    overflow: hidden; transition: transform 0.2s, border-color 0.2s;
+  }
+  .palette-card:hover { transform: translateY(-4px); border-color: #333; }
+  .palette-header { padding: 32px; display: flex; align-items: center; justify-content: center; }
+  .palette-header img { width: 72px; height: 72px; object-fit: contain; }
+  .palette-body { padding: 20px; }
+  .palette-name { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .palette-desc { color: #555; font-size: 12px; line-height: 1.5; margin-bottom: 16px; }
+  .swatch-row { display: flex; gap: 4px; margin-bottom: 6px; }
+  .swatch-row > div { flex: 1; height: 36px; border-radius: 8px; }
+  .swatch-labels { display: flex; gap: 4px; }
+  .swatch-labels > span { flex: 1; font-size: 9px; color: #444; text-align: center; }
+  
+  /* WORDMARK ROW */
+  .wordmark-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .wm-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 5px; flex-shrink: 0; }
+  .wm-icon img { width: 100%; height: 100%; object-fit: contain; }
+  .wm-text { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+  
+  /* MINI MOCKUP */
+  .mini-mockup { background: #0a0a0a; border: 1px solid #222; border-radius: 12px; padding: 16px; margin-top: 12px; }
+  .mini-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #1a1a1a; }
+  .mini-nav img { width: 24px; height: 24px; object-fit: contain; }
+  .mini-nav span { font-size: 14px; font-weight: 700; }
+  .mini-btn { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; color: white; text-align: center; margin-top: 8px; }
+  .mini-text { color: #666; font-size: 11px; line-height: 1.5; }
+  
+  /* SIZE ROW */
+  .sizes { display: flex; gap: 24px; align-items: end; justify-content: center; flex-wrap: wrap; }
+  .size-item { text-align: center; }
+  .size-label { color: #444; font-size: 10px; margin-top: 6px; }
+  
+  /* BROWSER TAB */
+  .browser-frame { background: #2b2b2b; border-radius: 12px 12px 0 0; width: 650px; margin: 0 auto; overflow: hidden; }
+  .tab-bar { background: #1e1e1e; display: flex; align-items: center; padding: 8px 12px 0; gap: 4px; }
+  .tab-active { background: #2b2b2b; border-radius: 8px 8px 0 0; padding: 8px 16px; display: flex; align-items: center; gap: 8px; }
+  .tab-active img { width: 16px; height: 16px; object-fit: contain; }
+  .tab-active span { font-size: 12px; color: #ccc; }
+  .tab-inactive { background: #1a1a1a; border-radius: 8px 8px 0 0; padding: 8px 16px; }
+  .tab-inactive span { font-size: 12px; color: #555; }
+  .url-bar { padding: 8px 12px; }
+  .url-inner { background: #1e1e1e; border-radius: 20px; padding: 6px 16px; color: #777; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Thallo Brand Explorer</h1>
+  <p>Color scheme options for the Thallo rebrand · Olive branch logo</p>
+</div>
+
+<!-- BROWSER TAB TEST -->
+<div class="section">
+  <p class="section-title">Browser Tab — Favicon Test</p>
+  <div class="browser-frame">
+    <div class="tab-bar">
+      <div class="tab-active">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png">
+        <span>Thallo — Your Money, Flourishing</span>
+      </div>
+      <div class="tab-inactive"><span style="color:#555">Gmail - Inbox</span></div>
+      <div class="tab-inactive"><span style="color:#555">GitHub</span></div>
+    </div>
+    <div class="url-bar">
+      <div class="url-inner">🔒 usethallo.com</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SCALE TEST -->
+<div class="section">
+  <p class="section-title">Scale Test — Does the detail hold?</p>
+  <div class="sizes">
+    <div class="size-item">
+      <div style="background:white;width:120px;height:120px;border-radius:24px;display:flex;align-items:center;justify-content:center;padding:16px">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" style="width:100%;height:100%;object-fit:contain">
+      </div>
+      <p class="size-label">120px · App Icon</p>
+    </div>
+    <div class="size-item">
+      <div style="background:white;width:64px;height:64px;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:8px">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" style="width:100%;height:100%;object-fit:contain">
+      </div>
+      <p class="size-label">64px</p>
+    </div>
+    <div class="size-item">
+      <div style="background:white;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:6px">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" style="width:100%;height:100%;object-fit:contain">
+      </div>
+      <p class="size-label">48px · Navbar</p>
+    </div>
+    <div class="size-item">
+      <div style="background:white;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:4px">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" style="width:100%;height:100%;object-fit:contain">
+      </div>
+      <p class="size-label">32px</p>
+    </div>
+    <div class="size-item">
+      <div style="background:white;width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;padding:1px">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" style="width:100%;height:100%;object-fit:contain">
+      </div>
+      <p class="size-label">16px · Favicon</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- PALETTE CARDS -->
+<div class="section">
+  <p class="section-title">Color Palettes</p>
+  <div class="palettes">
+
+    <!-- 1. WARM ORANGE (current) -->
+    <div class="palette-card">
+      <div class="palette-header" style="background:linear-gradient(135deg,#e8922e,#d4800f)">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="inv">
+      </div>
+      <div class="palette-body">
+        <div class="wordmark-row">
+          <div class="wm-icon" style="background:linear-gradient(135deg,#e8922e,#d4800f)">
+            <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="inv">
+          </div>
+          <span class="wm-text">Thallo</span>
+        </div>
+        <p class="palette-name" style="color:#e8922e">Warm Orange</p>
+        <p class="palette-desc">Current scheme. Energetic, approachable. Stands apart from the green/blue fintech crowd. Feels like action and warmth.</p>
+        <div class="swatch-row">
+          <div style="background:#e8922e"></div>
+          <div style="background:#c47520"></div>
+          <div style="background:#faf7f2;border:1px solid #333"></div>
+          <div style="background:#f0e6d6;border:1px solid #333"></div>
+          <div style="background:#1a1a1a"></div>
+        </div>
+        <div class="swatch-labels"><span>Primary</span><span>Dark</span><span>Surface</span><span>Cream</span><span>BG</span></div>
+        <div class="mini-mockup">
+          <div class="mini-nav">
+            <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-orange" style="width:20px;height:20px">
+            <span style="color:#e8922e">Thallo</span>
+          </div>
+          <p class="mini-text">Your finances are growing. You've saved <span style="color:#e8922e;font-weight:600">$2,340</span> this month.</p>
+          <div class="mini-btn" style="background:#e8922e">Get Started Free</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. DEEP TEAL -->
+    <div class="palette-card">
+      <div class="palette-header" style="background:linear-gradient(135deg,#1a7a6d,#146b5f)">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="inv">
+      </div>
+      <div class="palette-body">
+        <div class="wordmark-row">
+          <div class="wm-icon" style="background:linear-gradient(135deg,#1a7a6d,#146b5f)">
+            <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="inv">
+          </div>
+          <span class="wm-text">Thallo</span>
+        </div>
+        <p class="palette-name" style="color:#2aaa9a">Deep Teal</p>
+        <p class="palette-desc">Trust meets growth. Premium without being generic green. Calm authority, like a financial advisor you'd actually trust.</p>
+        <div class="swatch-row">
+          <div style="background:#1a7a6d"></div>
+          <div style="background:#146b5f"></div>
+          <div style="background:#f2f8f7;border:1px solid #333"></div>
+          <div style="background:#a8d5cf;border:1px solid #333"></div>
+          <div style="background:#0f1f1d"></div>
+        </div>
+        <div class="swatch-labels"><span>Primary</span><span>Dark</span><span>Surface</span><span>Light</span><span>BG</span></div>
+        <div class="mini-mockup">
+          <div class="mini-nav">
+            <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-teal" style="width:20px;height:20px">
+            <span style="color:#2aaa9a">Thallo</span>
+          </div>
+          <p class="mini-text">Your finances are growing. You've saved <span style="color:#2aaa9a;font-weight:600">$2,340</span> this month.</p>
+          <div class="mini-btn" style="background:#1a7a6d">Get Started Free</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. WARM GOLD -->
+    <div class="palette-card">
+      <div class="palette-header" style="background:linear-gradient(135deg,#b8860b,#9a7209)">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="inv">
+      </div>
+      <div class="palette-body">
+        <div class="wordmark-row">
+          <div class="wm-icon" style="background:linear-gradient(135deg,#b8860b,#9a7209)">
+            <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="inv">
+          </div>
+          <span class="wm-text">Thallo</span>
+        </div>
+        <p class="palette-name" style="color:#d4a017">Warm Gold</p>
+        <p class="palette-desc">Prosperity and Greek heritage. Classical luxury without being flashy. Olive oil, abundance, the original meaning of Thallo.</p>
+        <div class="swatch-row">
+          <div style="background:#b8860b"></div>
+          <div style="background:#9a7209"></div>
+          <div style="background:#faf8f0;border:1px solid #333"></div>
+          <div style="background:#e8d5a0;border:1px solid #333"></div>
+          <div style="background:#1a1610"></div>
+        </div>
+        <div class="swatch-labels"><span>Primary</span><span>Dark</span><span>Surface</span><span>Light</span><span>BG</span></div>
+        <div class="mini-mockup">
+          <div class="mini-nav">
+            <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-gold" style="width:20px;height:20px">
+            <span style="color:#d4a017">Thallo</span>
+          </div>
+          <p class="mini-text">Your finances are growing. You've saved <span style="color:#d4a017;font-weight:600">$2,340</span> this month.</p>
+          <div class="mini-btn" style="background:#b8860b">Get Started Free</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. SAGE GREEN -->
+    <div class="palette-card">
+      <div class="palette-header" style="background:linear-gradient(135deg,#5a7a5a,#4a6a4a)">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="inv">
+      </div>
+      <div class="palette-body">
+        <div class="wordmark-row">
+          <div class="wm-icon" style="background:linear-gradient(135deg,#5a7a5a,#4a6a4a)">
+            <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="inv">
+          </div>
+          <span class="wm-text">Thallo</span>
+        </div>
+        <p class="palette-name" style="color:#7a9a7a">Sage Green</p>
+        <p class="palette-desc">Growth, nature, spring — the most literal match to Thallo's meaning. Risk: could blend into Mint/YNAB territory.</p>
+        <div class="swatch-row">
+          <div style="background:#5a7a5a"></div>
+          <div style="background:#3d5a3d"></div>
+          <div style="background:#f5f7f3;border:1px solid #333"></div>
+          <div style="background:#c4d4b8;border:1px solid #333"></div>
+          <div style="background:#1a1f1a"></div>
+        </div>
+        <div class="swatch-labels"><span>Primary</span><span>Dark</span><span>Surface</span><span>Light</span><span>BG</span></div>
+        <div class="mini-mockup">
+          <div class="mini-nav">
+            <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-sage" style="width:20px;height:20px">
+            <span style="color:#7a9a7a">Thallo</span>
+          </div>
+          <p class="mini-text">Your finances are growing. You've saved <span style="color:#7a9a7a;font-weight:600">$2,340</span> this month.</p>
+          <div class="mini-btn" style="background:#5a7a5a">Get Started Free</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. NAVY + ORANGE -->
+    <div class="palette-card">
+      <div class="palette-header" style="background:linear-gradient(135deg,#1e2d4a,#162340)">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-orange">
+      </div>
+      <div class="palette-body">
+        <div class="wordmark-row">
+          <div class="wm-icon" style="background:linear-gradient(135deg,#1e2d4a,#162340)">
+            <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-orange">
+          </div>
+          <span class="wm-text">Thallo</span>
+        </div>
+        <p class="palette-name" style="color:#5577aa">Navy + Orange</p>
+        <p class="palette-desc">Maximum trust. Navy brings institutional weight, orange adds energy. Keeps your existing accent while adding depth.</p>
+        <div class="swatch-row">
+          <div style="background:#1e2d4a"></div>
+          <div style="background:#e8922e"></div>
+          <div style="background:#f5f7fa;border:1px solid #333"></div>
+          <div style="background:#ffd7a8;border:1px solid #333"></div>
+          <div style="background:#0f1826"></div>
+        </div>
+        <div class="swatch-labels"><span>Navy</span><span>Orange</span><span>Surface</span><span>Peach</span><span>BG</span></div>
+        <div class="mini-mockup">
+          <div class="mini-nav">
+            <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-orange" style="width:20px;height:20px">
+            <span style="color:#e8922e">Thallo</span>
+          </div>
+          <p class="mini-text">Your finances are growing. You've saved <span style="color:#e8922e;font-weight:600">$2,340</span> this month.</p>
+          <div class="mini-btn" style="background:#e8922e">Get Started Free</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. OLIVE + GOLD -->
+    <div class="palette-card">
+      <div class="palette-header" style="background:linear-gradient(135deg,#6b7c3f,#556b2f)">
+        <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-gold">
+      </div>
+      <div class="palette-body">
+        <div class="wordmark-row">
+          <div class="wm-icon" style="background:linear-gradient(135deg,#6b7c3f,#556b2f)">
+            <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-gold">
+          </div>
+          <span class="wm-text">Thallo</span>
+        </div>
+        <p class="palette-name" style="color:#a0b060">Olive + Gold</p>
+        <p class="palette-desc">Most "olive branch" of all options. Mediterranean earth tones. Warm, organic, unmistakably Thallo's story.</p>
+        <div class="swatch-row">
+          <div style="background:#6b7c3f"></div>
+          <div style="background:#d4a830"></div>
+          <div style="background:#faf8f0;border:1px solid #333"></div>
+          <div style="background:#e8dcc0;border:1px solid #333"></div>
+          <div style="background:#1a1c12"></div>
+        </div>
+        <div class="swatch-labels"><span>Olive</span><span>Gold</span><span>Surface</span><span>Cream</span><span>BG</span></div>
+        <div class="mini-mockup">
+          <div class="mini-nav">
+            <img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-sage" style="width:20px;height:20px">
+            <span style="color:#7a9a4a">Thallo</span>
+          </div>
+          <p class="mini-text">Your finances are growing. You've saved <span style="color:#d4a830;font-weight:600">$2,340</span> this month.</p>
+          <div class="mini-btn" style="background:linear-gradient(135deg,#6b7c3f,#556b2f)">Get Started Free</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- COLORED ICONS ON DARK -->
+<div class="section">
+  <p class="section-title">Logo Colored on Dark</p>
+  <div style="display:flex;gap:32px;justify-content:center;flex-wrap:wrap">
+    <div style="text-align:center">
+      <div style="width:72px;height:72px;padding:8px"><img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-orange" style="width:100%;height:100%;object-fit:contain"></div>
+      <p style="color:#444;font-size:10px">Orange</p>
+    </div>
+    <div style="text-align:center">
+      <div style="width:72px;height:72px;padding:8px"><img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-teal" style="width:100%;height:100%;object-fit:contain"></div>
+      <p style="color:#444;font-size:10px">Teal</p>
+    </div>
+    <div style="text-align:center">
+      <div style="width:72px;height:72px;padding:8px"><img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-gold" style="width:100%;height:100%;object-fit:contain"></div>
+      <p style="color:#444;font-size:10px">Gold</p>
+    </div>
+    <div style="text-align:center">
+      <div style="width:72px;height:72px;padding:8px"><img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="c-sage" style="width:100%;height:100%;object-fit:contain"></div>
+      <p style="color:#444;font-size:10px">Sage</p>
+    </div>
+    <div style="text-align:center">
+      <div style="width:72px;height:72px;padding:8px"><img src="please-remove-the-details-inside-of-the-leaves--ad.png" class="inv" style="width:100%;height:100%;object-fit:contain"></div>
+      <p style="color:#444;font-size:10px">White</p>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:40px 20px 60px">
+  <p style="color:#333;font-size:11px">Thallo Brand Explorer · Logo from Recraft · Colors are CSS-approximated</p>
+</div>
+
+</body>
+</html>

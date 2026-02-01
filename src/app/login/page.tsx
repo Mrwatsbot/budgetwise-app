@@ -54,10 +54,11 @@ export default function LoginPage() {
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-10 h-10 rounded-xl gradient-btn flex items-center justify-center">
-            <PiggyBank className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 rounded-xl gradient-btn flex items-center justify-center p-1">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/thallo-logo-white.png" alt="Thallo" className="w-full h-full object-contain"  />
           </div>
-          <span className="text-xl font-bold">BudgetWise</span>
+          <span className="text-xl font-bold">Thallo</span>
         </Link>
 
         {/* Card */}
@@ -77,6 +78,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-secondary/50 border-border"
+                autoComplete="email"
                 required
               />
             </div>
@@ -89,6 +91,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="bg-secondary/50 border-border"
+                autoComplete="current-password"
                 required
               />
             </div>
@@ -145,7 +148,7 @@ export default function LoginPage() {
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             Don't have an account?{' '}
-            <Link href="/signup" className="text-purple-400 hover:text-purple-300 hover:underline">
+            <Link href="/signup" className="text-[#1a7a6d] hover:text-[#22a090] hover:underline">
               Sign up
             </Link>
           </p>

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { PiggyBank, ArrowRight, Sparkles, TrendingUp, Shield } from 'lucide-react';
+import { ArrowRight, Sparkles, TrendingUp, Shield } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -11,21 +11,41 @@ export default function Home() {
       {/* Navigation */}
       <nav className="relative z-10 flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-xl gradient-btn flex items-center justify-center">
-            <PiggyBank className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1a7a6d] to-[#146b5f] flex items-center justify-center p-1">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src="/thallo-logo-white.png" 
+              alt="Thallo" 
+              className="w-full h-full object-contain"
+            />
           </div>
-          <span className="text-xl font-bold">BudgetWise</span>
+          <span className="text-xl font-bold">Thallo</span>
         </Link>
         <div className="flex items-center gap-4">
+          <Link href="/demo" className="hidden sm:block">
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+              Demo
+            </Button>
+          </Link>
+          <Link href="/pricing">
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+              Pricing
+            </Button>
+          </Link>
           <Link href="/login">
             <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
               Log in
             </Button>
           </Link>
-          <Link href="/signup">
+          <Link href="/signup" className="hidden sm:block">
             <Button className="gradient-btn border-0">
               Get Started
               <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+          </Link>
+          <Link href="/signup" className="sm:hidden">
+            <Button size="sm" className="gradient-btn border-0">
+              Sign Up
             </Button>
           </Link>
         </div>
@@ -36,7 +56,7 @@ export default function Home() {
         <div className="text-center max-w-3xl mx-auto">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-sm mb-8">
-            <Sparkles className="w-4 h-4 text-accent-purple" />
+            <Sparkles className="w-4 h-4 text-[#1a7a6d]" />
             <span className="text-muted-foreground">AI-Powered Budgeting</span>
           </div>
 
@@ -70,8 +90,8 @@ export default function Home() {
           {/* Feature Cards */}
           <div className="grid md:grid-cols-3 gap-6 text-left">
             <div className="glass-card p-6 rounded-2xl">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-indigo-500/20 border border-purple-500/30 flex items-center justify-center mb-4">
-                <Sparkles className="w-6 h-6 text-purple-400" />
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#1a7a6d33] to-[#146b5f33] border border-[#1a7a6d4d] flex items-center justify-center mb-4">
+                <Sparkles className="w-6 h-6 text-[#1a7a6d]" />
               </div>
               <h3 className="text-lg font-semibold mb-2">AI Categorization</h3>
               <p className="text-muted-foreground text-sm">
@@ -80,8 +100,8 @@ export default function Home() {
             </div>
 
             <div className="glass-card p-6 rounded-2xl">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-indigo-500/20 border border-purple-500/30 flex items-center justify-center mb-4">
-                <TrendingUp className="w-6 h-6 text-purple-400" />
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#1a7a6d33] to-[#146b5f33] border border-[#1a7a6d4d] flex items-center justify-center mb-4">
+                <TrendingUp className="w-6 h-6 text-[#1a7a6d]" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Debt Payoff Planner</h3>
               <p className="text-muted-foreground text-sm">
@@ -90,8 +110,8 @@ export default function Home() {
             </div>
 
             <div className="glass-card p-6 rounded-2xl">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-indigo-500/20 border border-purple-500/30 flex items-center justify-center mb-4">
-                <Shield className="w-6 h-6 text-purple-400" />
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#1a7a6d33] to-[#146b5f33] border border-[#1a7a6d4d] flex items-center justify-center mb-4">
+                <Shield className="w-6 h-6 text-[#1a7a6d]" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Privacy First</h3>
               <p className="text-muted-foreground text-sm">
@@ -105,7 +125,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-border py-8">
         <div className="max-w-6xl mx-auto px-6 text-center text-sm text-muted-foreground">
-          © 2026 BudgetWise. All rights reserved.
+          © 2026 Thallo. All rights reserved.
         </div>
       </footer>
     </div>
