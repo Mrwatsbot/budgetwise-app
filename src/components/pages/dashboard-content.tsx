@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, type ReactNode } from 'react';
 import { useDashboard } from '@/lib/hooks/use-data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,8 @@ import { DashboardLoading } from '@/components/layout/page-loading';
 import { InsightsPanel } from '@/components/ai/insights-panel';
 import { MonthlyPulse } from '@/components/dashboard/monthly-pulse';
 import { YearAtAGlance } from '@/components/dashboard/year-at-a-glance';
+import { DraggableDashboard, type Widget } from '@/components/dashboard/draggable-dashboard';
+import { useWidgetOrder } from '@/lib/hooks/use-widget-order';
 import { toast } from 'sonner';
 import { getBudgetHealthColor } from '@/lib/budget-health';
 
@@ -75,6 +77,136 @@ export function DashboardContent() {
     };
   });
 
+  const { orderedIds, setOrderedIds, saveOrder, discardChanges, resetOrder, hasChanges } = useWidgetOrder();
+
+  // Build widget sections as a map
+  const widgetSections: Record<string, ReactNode> = {
+    'monthly-pulse': hasIncome ? (
+      <MonthlyPulse
+        monthlyIncome={budgetedMonthlyIncome}
+        totalBudgeted={totalBudgeted}
+        monthlyExpenses={monthlyExpenses}
+        currentMonth={new Date().toISOString().split('T')[0]}
+        editingIncome={editingIncome}
+        setEditingIncome={setEditingIncome}
+        incomeValue={incomeValue}
+        setIncomeValue={setIncomeValue}
+        savingIncome={savingIncome}
+        handleSaveIncome={handleSaveIncome}
+        onBudgetAdjusted={refresh}
+        totalBalance={totalBalance}
+        accountCount={accounts?.length || 0}
+      />
+    ) : null,
+
+    'score-widget': scoreData ? (
+      <ScoreWidget
+        score={scoreData.score}
+        level={scoreData.level}
+        levelTitle={scoreData.levelTitle}
+        previousScore={scoreData.previousScore}
+        recentAchievements={recentAchievements}
+      />
+    ) : null,
+
+    'year-at-a-glance': monthlySummary && monthlySummary.length > 0 ? (
+      <YearAtAGlance monthlySummary={monthlySummary} ytdSurplus={ytdSurplus || 0} />
+    ) : null,
+
+    'budget-overview': (
+      <div className="glass-card rounded-xl p-5">
+        <div className="mb-4">
+          <h3 className="font-semibold text-base">Budget Overview</h3>
+          <p className="text-xs text-muted-foreground">Spending vs budget this month</p>
+        </div>
+        <div className="space-y-4">
+          {budgets && budgets.length > 0 ? budgets.map((budget: { name: string; icon: string; budgeted: number; spent: number; color: string }) => {
+            const percentage = (budget.spent / budget.budgeted) * 100;
+            const isOver = percentage > 100;
+            const BudgetIcon = getCategoryIcon(budget.icon, budget.name);
+            return (
+              <div key={budget.name} className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <BudgetIcon className="w-4 h-4" style={{ color: budget.color || '#1a7a6d' }} />
+                    <span className="font-medium">{budget.name}</span>
+                  </div>
+                  <span className={isOver ? 'text-red-500' : 'text-muted-foreground'}>
+                    ${budget.spent.toFixed(2)} / ${budget.budgeted}
+                  </span>
+                </div>
+                <div className="h-2 rounded-full bg-border/10 overflow-hidden progress-bar-container">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${Math.min(percentage, 100)}%`,
+                      backgroundColor: isOver
+                        ? '#ef4444'
+                        : getBudgetHealthColor(budget.spent, budget.budgeted),
+                    }}
+                  />
+                </div>
+              </div>
+            );
+          }) : (
+            <div className="text-center py-4">
+              <p className="text-muted-foreground mb-3">No budgets set yet</p>
+              <Button variant="outline" asChild>
+                <a href="/budgets">Set Up Budgets</a>
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+    ),
+
+    'recent-transactions': (
+      <div className="glass-card rounded-xl p-5">
+        <div className="mb-4">
+          <h3 className="font-semibold text-base">Recent Transactions</h3>
+          <p className="text-xs text-muted-foreground">Your latest activity</p>
+        </div>
+        {formattedTransactions.length > 0 ? (
+          <div className="space-y-4">
+            {formattedTransactions.map((transaction: { id: string; payee: string; amount: number; category: string; date: string }) => (
+              <div key={transaction.id} className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <span className="font-medium">{transaction.payee}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {transaction.category} • {transaction.date}
+                  </span>
+                </div>
+                <span className={transaction.amount > 0 ? 'text-[#7aba5c] font-medium' : 'font-medium'}>
+                  {transaction.amount > 0 ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-muted-foreground py-4">No transactions yet this month</p>
+        )}
+        <Button variant="outline" className="w-full mt-4 border-border/50" asChild>
+          <a href="/transactions">View All Transactions</a>
+        </Button>
+      </div>
+    ),
+
+    'insights': <InsightsPanel page="dashboard" />,
+  };
+
+  // Build ordered widget list, filtering out null/hidden widgets
+  const widgets: Widget[] = useMemo(() => {
+    return orderedIds
+      .filter(id => widgetSections[id] != null)
+      .map(id => ({ id, content: widgetSections[id]! }));
+  }, [orderedIds, hasIncome, scoreData, monthlySummary, budgets, formattedTransactions,
+      editingIncome, incomeValue, savingIncome, budgetedMonthlyIncome, totalBudgeted,
+      monthlyExpenses, totalBalance, accounts, recentAchievements, ytdSurplus]);
+
+  const handleReorder = (newOrder: string[]) => {
+    setOrderedIds(newOrder);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -98,120 +230,14 @@ export function DashboardContent() {
         </Button>
       </div>
 
-      {/* Monthly Pulse */}
-      {hasIncome && (
-        <MonthlyPulse
-          monthlyIncome={budgetedMonthlyIncome}
-          totalBudgeted={totalBudgeted}
-          monthlyExpenses={monthlyExpenses}
-          currentMonth={new Date().toISOString().split('T')[0]}
-          editingIncome={editingIncome}
-          setEditingIncome={setEditingIncome}
-          incomeValue={incomeValue}
-          setIncomeValue={setIncomeValue}
-          savingIncome={savingIncome}
-          handleSaveIncome={handleSaveIncome}
-          onBudgetAdjusted={refresh}
-          totalBalance={totalBalance}
-          accountCount={accounts?.length || 0}
-        />
-      )}
-
-      {/* Financial Health Score Widget */}
-      {scoreData && (
-        <ScoreWidget
-          score={scoreData.score}
-          level={scoreData.level}
-          levelTitle={scoreData.levelTitle}
-          previousScore={scoreData.previousScore}
-          recentAchievements={recentAchievements}
-        />
-      )}
-
-      {/* Year at a Glance */}
-      {monthlySummary && monthlySummary.length > 0 && (
-        <YearAtAGlance monthlySummary={monthlySummary} ytdSurplus={ytdSurplus || 0} />
-      )}
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Budget Overview */}
-        <div className="glass-card rounded-xl p-5">
-          <div className="mb-4">
-            <h3 className="font-semibold text-base">Budget Overview</h3>
-            <p className="text-xs text-muted-foreground">Spending vs budget this month</p>
-          </div>
-          <div className="space-y-4">
-            {budgets && budgets.length > 0 ? budgets.map((budget: { name: string; icon: string; budgeted: number; spent: number; color: string }) => {
-              const percentage = (budget.spent / budget.budgeted) * 100;
-              const isOver = percentage > 100;
-              const BudgetIcon = getCategoryIcon(budget.icon, budget.name);
-              return (
-                <div key={budget.name} className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <BudgetIcon className="w-4 h-4" style={{ color: budget.color || '#1a7a6d' }} />
-                      <span className="font-medium">{budget.name}</span>
-                    </div>
-                    <span className={isOver ? 'text-red-500' : 'text-muted-foreground'}>
-                      ${budget.spent.toFixed(2)} / ${budget.budgeted}
-                    </span>
-                  </div>
-                  <div className="h-2 rounded-full bg-border/10 overflow-hidden progress-bar-container">
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{
-                        width: `${Math.min(percentage, 100)}%`,
-                        backgroundColor: isOver
-                          ? '#ef4444'
-                          : getBudgetHealthColor(budget.spent, budget.budgeted),
-                      }}
-                    />
-                  </div>
-                </div>
-              );
-            }) : (
-              <div className="text-center py-4">
-                <p className="text-muted-foreground mb-3">No budgets set yet</p>
-                <Button variant="outline" asChild>
-                  <a href="/budgets">Set Up Budgets</a>
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Recent Transactions */}
-        <div className="glass-card rounded-xl p-5">
-          <div className="mb-4">
-            <h3 className="font-semibold text-base">Recent Transactions</h3>
-            <p className="text-xs text-muted-foreground">Your latest activity</p>
-          </div>
-          {formattedTransactions.length > 0 ? (
-            <div className="space-y-4">
-              {formattedTransactions.map((transaction: { id: string; payee: string; amount: number; category: string; date: string }) => (
-                <div key={transaction.id} className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="font-medium">{transaction.payee}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {transaction.category} • {transaction.date}
-                    </span>
-                  </div>
-                  <span className={transaction.amount > 0 ? 'text-[#7aba5c] font-medium' : 'font-medium'}>
-                    {transaction.amount > 0 ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-muted-foreground py-4">No transactions yet this month</p>
-          )}
-          <Button variant="outline" className="w-full mt-4 border-border/50" asChild>
-            <a href="/transactions">View All Transactions</a>
-          </Button>
-        </div>
-      </div>
-
-      <InsightsPanel page="dashboard" />
+      <DraggableDashboard
+        widgets={widgets}
+        onReorder={handleReorder}
+        hasChanges={hasChanges}
+        onSave={saveOrder}
+        onDiscard={discardChanges}
+        onReset={resetOrder}
+      />
     </div>
   );
 }

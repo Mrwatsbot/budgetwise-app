@@ -63,11 +63,14 @@ export function CubeNavigator({ faces, initialFace = 0, onFaceChange }: CubeNavi
   // Scroll to a specific face
   const scrollToFace = useCallback((index: number) => {
     if (!scrollRef.current || index < 0 || index >= totalFaces) return;
+    // Immediately update the active tab so the pill highlights right away
+    setCurrentFace(index);
+    onFaceChange?.(index);
     scrollRef.current.scrollTo({
       left: index * scrollRef.current.clientWidth,
       behavior: 'smooth',
     });
-  }, [totalFaces]);
+  }, [totalFaces, onFaceChange]);
 
   // Lock scroll position when dragging
   useEffect(() => {
