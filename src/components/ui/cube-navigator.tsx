@@ -252,8 +252,11 @@ export function CubeNavigator({ faces, initialFace = 0, onFaceChange }: CubeNavi
             className="min-w-full w-full snap-center shrink-0 overflow-hidden"
           >
             <div
-              className="w-full max-w-6xl mx-auto py-6 px-4 md:px-8 pb-6 will-change-transform"
-              style={{ transformOrigin: 'center top' }}
+              className="w-full max-w-6xl mx-auto py-6 px-4 md:px-8 will-change-transform"
+              style={{ 
+                transformOrigin: 'center top',
+                paddingBottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))',
+              }}
             >
               {face.content}
             </div>
