@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useDashboard } from '@/lib/hooks/use-data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +22,7 @@ export function DashboardContent() {
   const [editingIncome, setEditingIncome] = useState(false);
   const [incomeValue, setIncomeValue] = useState('');
   const [savingIncome, setSavingIncome] = useState(false);
+  const { orderedIds, setOrderedIds, saveOrder, discardChanges, resetOrder, hasChanges } = useWidgetOrder();
 
   if (isLoading || !data) {
     return <DashboardLoading />;
@@ -76,8 +77,6 @@ export function DashboardContent() {
       date: dateStr,
     };
   });
-
-  const { orderedIds, setOrderedIds, saveOrder, discardChanges, resetOrder, hasChanges } = useWidgetOrder();
 
   // Build widget sections as a map
   const widgetSections: Record<string, ReactNode> = {
@@ -195,13 +194,9 @@ export function DashboardContent() {
   };
 
   // Build ordered widget list, filtering out null/hidden widgets
-  const widgets: Widget[] = useMemo(() => {
-    return orderedIds
-      .filter(id => widgetSections[id] != null)
-      .map(id => ({ id, content: widgetSections[id]! }));
-  }, [orderedIds, hasIncome, scoreData, monthlySummary, budgets, formattedTransactions,
-      editingIncome, incomeValue, savingIncome, budgetedMonthlyIncome, totalBudgeted,
-      monthlyExpenses, totalBalance, accounts, recentAchievements, ytdSurplus]);
+  const widgets: Widget[] = orderedIds
+    .filter(id => widgetSections[id] != null)
+    .map(id => ({ id, content: widgetSections[id]! }));
 
   const handleReorder = (newOrder: string[]) => {
     setOrderedIds(newOrder);
