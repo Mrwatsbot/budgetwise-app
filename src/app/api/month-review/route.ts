@@ -316,7 +316,7 @@ export async function GET(request: Request) {
   ];
 
   // ====== CARD 7: NUDGE (AI-generated) ======
-  let nudge: { primary: { text: string; impact: string }; secondary: string[] } | null = null;
+  let nudge: { primary: { emoji: string; text: string; impact: string }; secondary: string[] } | null = null;
   
   if (!isFreeUser) {
     // Build a summary for AI
@@ -346,6 +346,7 @@ Top spending categories: ${trends.slice(0, 3).map(t => t.category).join(', ')}
       // Fallback nudge
       nudge = {
         primary: {
+          emoji: '💡',
           text: `Keep up the momentum! Your ${surplus > 0 ? 'surplus' : 'spending'} this month shows ${surplus > 0 ? 'discipline' : 'room for improvement'}.`,
           impact: 'Continue tracking to see patterns',
         },

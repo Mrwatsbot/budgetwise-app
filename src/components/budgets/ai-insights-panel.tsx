@@ -68,7 +68,7 @@ export function AIInsightsPanel({ insights, onAnalyze, onFindSavings }: AIInsigh
           <Sparkles className="w-5 h-5 text-[#1a7a6d]" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>AI Insights</h2>
+          <h2 className="text-lg font-semibold">AI Insights</h2>
           <p className="text-sm text-muted-foreground">Smart recommendations based on your spending</p>
         </div>
       </div>

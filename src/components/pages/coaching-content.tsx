@@ -129,7 +129,7 @@ export function CoachingContent() {
           <Brain className="w-6 h-6 text-[#1a7a6d]" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>AI Financial Coach</h1>
+          <h1 className="text-2xl font-bold">AI Financial Coach</h1>
           <p className="text-muted-foreground">Personalized analysis powered by AI</p>
         </div>
       </div>

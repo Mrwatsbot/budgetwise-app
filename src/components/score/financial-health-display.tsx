@@ -127,7 +127,7 @@ export function FinancialHealthDisplay({ score, previousScore, animated = true }
             
             {/* Score in center */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-4xl font-bold" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>{score.total}</span>
+              <span className="text-4xl font-bold">{score.total}</span>
               <span className="text-sm text-muted-foreground">/ 1000</span>
               {change !== 0 && (
                 <span className={cn('text-sm font-medium flex items-center gap-1', changeColor)}>

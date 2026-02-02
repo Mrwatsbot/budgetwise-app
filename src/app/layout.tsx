@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Instrument_Sans, JetBrains_Mono, DM_Sans } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono, DM_Serif_Display, DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const cormorantGaramond = Cormorant_Garamond({
-  variable: "--font-cormorant",
+const bricolageGrotesque = Bricolage_Grotesque({
+  variable: "--font-bricolage-grotesque",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
 });
 
 const instrumentSans = Instrument_Sans({
@@ -18,6 +18,12 @@ const jetBrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+});
+
+const dmSerifDisplay = DM_Serif_Display({
+  variable: "--font-dm-serif-display",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 const dmSans = DM_Sans({
@@ -39,7 +45,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${cormorantGaramond.variable} ${instrumentSans.variable} ${jetBrainsMono.variable} ${dmSans.variable} antialiased`}
+        className={`${bricolageGrotesque.variable} ${instrumentSans.variable} ${jetBrainsMono.variable} ${dmSerifDisplay.variable} ${dmSans.variable} antialiased`}
       >
         {children}
       </body>

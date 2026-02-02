@@ -69,14 +69,14 @@ export function MonthlyPulse({
     <div className="glass-card rounded-xl p-5 sm:p-6">
       {/* Header */}
       <div className="mb-5">
-        <h2 className="text-lg font-semibold mb-1" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>Monthly Pulse</h2>
+        <h2 className="text-lg font-semibold mb-1">Monthly Pulse</h2>
         <p className="text-sm text-muted-foreground">{new Date(currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
       </div>
 
       {/* Hero: Left to Spend */}
       <div className="mb-6">
         <p className="text-sm text-muted-foreground mb-2">Left to Spend</p>
-        <div className={`text-5xl font-bold tabular-nums mb-1 ${getLeftToSpendColor()}`} style={{ fontFamily: 'var(--font-cormorant, serif)' }}>
+        <div className={`text-5xl font-bold tabular-nums mb-1 ${getLeftToSpendColor()}`}>
           ${leftToSpend >= 0 ? leftToSpend.toLocaleString('en-US', { minimumFractionDigits: 2 }) : `-${Math.abs(leftToSpend).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
         </div>
         {leftToSpend < 0 && (

@@ -68,7 +68,7 @@ export function SavingsBudgetSection() {
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-[#7aba5c]" />
-          <h2 className="text-lg font-semibold" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>Savings & Investments</h2>
+          <h2 className="text-lg font-semibold">Savings & Investments</h2>
         </div>
       </div>
 

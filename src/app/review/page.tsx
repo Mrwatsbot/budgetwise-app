@@ -2,7 +2,7 @@
 
 import { useMonthReview } from '@/lib/hooks/use-data';
 import { useState, useEffect, useRef } from 'react';
-import { Lock, Sparkles, Target, Wallet, TrendingDown, Flame, Trophy, BarChart3, UtensilsCrossed, Lightbulb } from 'lucide-react';
+import { Lock, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
@@ -117,7 +117,7 @@ export default function MonthReviewPage() {
       <div className="fixed inset-0 bg-[#0c0f0e] flex items-center justify-center px-6">
         <div className="text-center max-w-md">
           <Sparkles className="w-16 h-16 text-[#2aaa9a] mx-auto mb-6" />
-          <h1 className="text-3xl  text-[#e8e6e1] mb-4" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>Not enough data yet</h1>
+          <h1 className="text-3xl  text-[#e8e6e1] mb-4" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>Not enough data yet</h1>
           <p className="text-[#8a9490] mb-8">
             Come back after your first full month of tracking to see your Month in Review!
           </p>
@@ -137,7 +137,7 @@ export default function MonthReviewPage() {
   return (
     <div className="fixed inset-0 bg-[#0c0f0e] overflow-hidden" style={{ fontFamily: 'var(--font-dm-sans, sans-serif)' }}>
       {/* Watermark */}
-      <div className="fixed top-5 left-6 text-[#1a7a6d66] text-lg z-50 tracking-wide" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>
+      <div className="fixed top-5 left-6 text-[#1a7a6d66] text-lg z-50 tracking-wide" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>
         thallo
       </div>
 
@@ -184,10 +184,10 @@ export default function MonthReviewPage() {
         }}>
           <div className="max-w-md mx-auto w-full">
             <div className="animate opacity-0 text-[#2aaa9a] text-[13px] uppercase tracking-[3px] font-medium mb-3">{month}</div>
-            <h1 className="animate opacity-0 text-[42px] leading-tight mb-10 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>
+            <h1 className="animate opacity-0 text-[42px] leading-tight mb-10 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>
               Month in<br/>Review
             </h1>
-            <div className="animate opacity-0 text-[72px] leading-none text-[#2aaa9a] mb-2 tracking-tight" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>
+            <div className="animate opacity-0 text-[72px] leading-none text-[#2aaa9a] mb-2 tracking-tight" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>
               ${headline.totalSpent.toLocaleString()}
             </div>
             <div className="animate opacity-0 text-[15px] text-[#8a9490] mb-8">total spent this month</div>
@@ -230,13 +230,13 @@ export default function MonthReviewPage() {
               {/* Blurred background */}
               <div className="filter blur-md opacity-30 select-none pointer-events-none">
                 <div className="text-[11px] uppercase tracking-[3px] text-[#1a7a6d] font-semibold mb-4">Your Wins</div>
-                <h2 className=" text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>
+                <h2 className=" text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>
                   You crushed it in<br/><span className="text-[#6db555]">6 out of 10</span> categories
                 </h2>
                 <div className="grid grid-cols-2 gap-3">
                   {[1, 2, 3, 4].map((i) => (
                     <div key={i} className="bg-[#ffffff08] border border-[#1a7a6d26] rounded-2xl p-5 text-center">
-                      <div className="mb-2"><Target className="w-8 h-8 text-[#1a7a6d] mx-auto" /></div>
+                      <div className="text-2xl mb-2">🎯</div>
                       <div className="text-2xl font-bold text-[#6db555] mb-1">6/10</div>
                       <div className="text-xs text-[#8a9490]">Categories on budget</div>
                     </div>
@@ -250,7 +250,7 @@ export default function MonthReviewPage() {
                   <div className="w-16 h-16 rounded-full bg-[#1a7a6d33] flex items-center justify-center mx-auto mb-6">
                     <Lock className="w-8 h-8 text-[#2aaa9a]" />
                   </div>
-                  <h3 className="text-2xl  text-[#e8e6e1] mb-3" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>Unlock your full Month in Review</h3>
+                  <h3 className="text-2xl  text-[#e8e6e1] mb-3" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>Unlock your full Month in Review</h3>
                   <p className="text-[#8a9490] mb-8 text-sm">
                     See your wins, trends, and AI insights with Thallo Plus
                   </p>
@@ -266,19 +266,19 @@ export default function MonthReviewPage() {
           ) : (
             <div className="max-w-md mx-auto w-full">
               <div className="animate opacity-0 text-[11px] uppercase tracking-[3px] text-[#1a7a6d] font-semibold mb-4">Your Wins</div>
-              <h2 className="animate opacity-0  text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>
+              <h2 className="animate opacity-0  text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>
                 You crushed it in<br/><span className="text-[#6db555]">{wins.categoriesOnBudget} out of {wins.totalCategories}</span> categories
               </h2>
               
               <div className="grid grid-cols-2 gap-3">
                 <div className="animate opacity-0 bg-[#ffffff08] border border-[#1a7a6d26] rounded-2xl p-5 text-center">
-                  <div className="mb-2"><Target className="w-8 h-8 text-[#1a7a6d] mx-auto" /></div>
+                  <div className="text-2xl mb-2">🎯</div>
                   <div className="text-2xl font-bold text-[#6db555] mb-1">{wins.categoriesOnBudget}/{wins.totalCategories}</div>
                   <div className="text-xs text-[#8a9490] leading-tight">Categories on or under budget</div>
                 </div>
                 
                 <div className="animate opacity-0 bg-[#ffffff08] border border-[#1a7a6d26] rounded-2xl p-5 text-center">
-                  <div className="mb-2"><Wallet className="w-8 h-8 text-[#1a7a6d] mx-auto" /></div>
+                  <div className="text-2xl mb-2">💰</div>
                   <div className="text-2xl font-bold text-[#6db555] mb-1">${wins.totalSavedVsBudget}</div>
                   <div className="text-xs text-[#8a9490] leading-tight">Saved vs. budgeted</div>
                 </div>
@@ -286,13 +286,13 @@ export default function MonthReviewPage() {
                 {wins.bestCategory && (
                   <>
                     <div className="animate opacity-0 bg-[#ffffff08] border border-[#1a7a6d26] rounded-2xl p-5 text-center">
-                      <div className="mb-2"><TrendingDown className="w-8 h-8 text-[#6db555] mx-auto" /></div>
+                      <div className="text-2xl mb-2">📉</div>
                       <div className="text-2xl font-bold text-[#6db555] mb-1">{wins.bestCategory.pctUnder}%</div>
                       <div className="text-xs text-[#8a9490] leading-tight">Under on {wins.bestCategory.name}</div>
                     </div>
                     
                     <div className="animate opacity-0 bg-[#ffffff08] border border-[#1a7a6d26] rounded-2xl p-5 text-center">
-                      <div className="mb-2"><Flame className="w-8 h-8 text-[#6db555] mx-auto" /></div>
+                      <div className="text-2xl mb-2">🔥</div>
                       <div className="text-2xl font-bold text-[#6db555] mb-1">{wins.surplusStreak} mo</div>
                       <div className="text-xs text-[#8a9490] leading-tight">Consecutive surplus months</div>
                     </div>
@@ -302,7 +302,7 @@ export default function MonthReviewPage() {
 
               {wins.bestCategory && (
                 <div className="animate opacity-0 bg-[#6db55515] border border-[#6db55533] rounded-2xl p-5 flex items-center gap-4 mt-3">
-                  <Trophy className="w-10 h-10 text-[#6db555]" />
+                  <div className="text-4xl">🏆</div>
                   <div>
                     <div className="text-lg font-bold text-[#e8e6e1] mb-1">Best: {wins.bestCategory.name}</div>
                     <div className="text-xs text-[#8a9490]">${wins.bestCategory.savedAmount} under budget — {wins.bestCategory.pctUnder}% savings</div>
@@ -322,7 +322,7 @@ export default function MonthReviewPage() {
             }}>
               <div className="max-w-md mx-auto w-full">
                 <div className="animate opacity-0 text-[11px] uppercase tracking-[3px] text-[#1a7a6d] font-semibold mb-4">Heads Up</div>
-                <h2 className="animate opacity-0  text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>
+                <h2 className="animate opacity-0  text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>
                   {surprises.overshoots.length > 0 ? (
                     <>
                       {surprises.overshoots[0].category.split(' ').slice(1).join(' ')} was your<br/>
@@ -377,7 +377,7 @@ export default function MonthReviewPage() {
             }}>
               <div className="max-w-md mx-auto w-full">
                 <div className="animate opacity-0 text-[11px] uppercase tracking-[3px] text-[#1a7a6d] font-semibold mb-4">Spending Trends</div>
-                <h2 className="animate opacity-0  text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>
+                <h2 className="animate opacity-0  text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>
                   How your categories<br/>moved over <span className="text-[#2aaa9a]">3 months</span>
                 </h2>
 
@@ -426,12 +426,12 @@ export default function MonthReviewPage() {
             }}>
               <div className="max-w-md mx-auto w-full">
                 <div className="animate opacity-0 text-[11px] uppercase tracking-[3px] text-[#1a7a6d] font-semibold mb-4">Money Flow</div>
-                <h2 className="animate opacity-0  text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>
+                <h2 className="animate opacity-0  text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>
                   Where your <span className="text-[#2aaa9a]">${flow.income.toLocaleString()}</span><br/>actually went
                 </h2>
 
                 <div className="animate opacity-0 text-center mb-6">
-                  <div className=" text-4xl text-[#2aaa9a] mb-1" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>${flow.income.toLocaleString()}</div>
+                  <div className=" text-4xl text-[#2aaa9a] mb-1" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>${flow.income.toLocaleString()}</div>
                   <div className="text-xs text-[#8a9490]">Monthly Income</div>
                 </div>
 
@@ -478,7 +478,7 @@ export default function MonthReviewPage() {
             }}>
               <div className="max-w-md mx-auto w-full text-center">
                 <div className="animate opacity-0 text-[11px] uppercase tracking-[3px] text-[#1a7a6d] font-semibold mb-4">Financial Health</div>
-                <h2 className="animate opacity-0  text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>
+                <h2 className="animate opacity-0  text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>
                   Your score this month
                 </h2>
 
@@ -505,7 +505,7 @@ export default function MonthReviewPage() {
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className=" text-5xl text-[#2aaa9a]" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>{score.current}</div>
+                    <div className=" text-5xl text-[#2aaa9a]" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>{score.current}</div>
                     <div className="text-xs text-[#8a9490]">out of 1000</div>
                   </div>
                 </div>
@@ -525,31 +525,26 @@ export default function MonthReviewPage() {
                 )}
 
                 <div className="animate opacity-0 text-left space-y-0">
-                  {score.factors.map((f: { name: string; description: string; impact: number }, i: number) => {
-                    const IconComponent = f.name === 'Budget Adherence' ? BarChart3 : f.name === 'Savings Rate' ? Wallet : UtensilsCrossed;
-                    const iconColor = f.impact > 0 ? "#6db555" : f.impact < 0 ? "#e05252" : "#2aaa9a";
-                    
-                    return (
-                      <div key={i} className="flex items-center gap-3 py-3 border-b border-[#ffffff0a]">
-                        <div className={cn(
-                          "w-8 h-8 rounded-lg flex items-center justify-center",
-                          f.impact > 0 ? "bg-[#6db55526]" : f.impact < 0 ? "bg-[#e0525226]" : "bg-[#ffffff0a]"
-                        )}>
-                          <IconComponent className="w-4 h-4" style={{ color: iconColor }} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-[#e8e6e1]">{f.name}</div>
-                          <div className="text-xs text-[#8a9490]">{f.description}</div>
-                        </div>
-                        <div className={cn(
-                          "text-sm font-semibold",
-                          f.impact > 0 ? "text-[#6db555]" : f.impact < 0 ? "text-[#e05252]" : "text-[#8a9490]"
-                        )}>
-                          {f.impact > 0 ? '+' : ''}{f.impact}
-                        </div>
+                  {score.factors.map((f: { name: string; description: string; impact: number }, i: number) => (
+                    <div key={i} className="flex items-center gap-3 py-3 border-b border-[#ffffff0a]">
+                      <div className={cn(
+                        "w-8 h-8 rounded-lg flex items-center justify-center text-base",
+                        f.impact > 0 ? "bg-[#6db55526]" : f.impact < 0 ? "bg-[#e0525226]" : "bg-[#ffffff0a]"
+                      )}>
+                        {f.name === 'Budget Adherence' ? '📊' : f.name === 'Savings Rate' ? '💰' : '🍽️'}
                       </div>
-                    );
-                  })}
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-[#e8e6e1]">{f.name}</div>
+                        <div className="text-xs text-[#8a9490]">{f.description}</div>
+                      </div>
+                      <div className={cn(
+                        "text-sm font-semibold",
+                        f.impact > 0 ? "text-[#6db555]" : f.impact < 0 ? "text-[#e05252]" : "text-[#8a9490]"
+                      )}>
+                        {f.impact > 0 ? '+' : ''}{f.impact}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -562,19 +557,19 @@ export default function MonthReviewPage() {
                 <div className="animate opacity-0 text-[11px] uppercase tracking-[3px] text-[#1a7a6d] font-semibold mb-4">
                   Your {new Date(new Date(data.monthStr).setMonth(new Date(data.monthStr).getMonth() + 1)).toLocaleDateString('en-US', { month: 'long' })} Game Plan
                 </div>
-                <h2 className="animate opacity-0  text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>
+                <h2 className="animate opacity-0  text-[32px] leading-tight mb-8 text-[#e8e6e1]" style={{ fontFamily: 'var(--font-dm-serif-display, serif)' }}>
                   One move to make<br/><span className="text-[#2aaa9a]">next month</span>
                 </h2>
 
                 {nudge ? (
                   <>
                     <div className="animate opacity-0 bg-[#1a7a6d14] border border-[#1a7a6d33] rounded-2xl p-7 mb-4">
-                      <div className="mb-4"><Lightbulb className="w-10 h-10 text-[#2aaa9a]" /></div>
+                      <div className="text-3xl mb-4">{nudge.primary.emoji}</div>
                       <div className="text-base leading-relaxed text-[#e8e6e1] mb-4">
                         {nudge.primary.text}
                       </div>
-                      <div className="text-[13px] text-[#2aaa9a] font-medium flex items-center gap-2">
-                        <Lightbulb className="w-4 h-4" /> {nudge.primary.impact}
+                      <div className="text-[13px] text-[#2aaa9a] font-medium">
+                        💡 {nudge.primary.impact}
                       </div>
                     </div>
 

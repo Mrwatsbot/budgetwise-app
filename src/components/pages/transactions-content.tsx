@@ -30,7 +30,7 @@ export function TransactionsContent() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>Transactions</h1>
+                <h1 className="text-2xl font-bold">Transactions</h1>
                 <p className="text-muted-foreground">
                   {transactions?.length || 0} transactions
                 </p>

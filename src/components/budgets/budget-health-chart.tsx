@@ -70,7 +70,7 @@ export function BudgetHealthChart({ categoryBudgets }: BudgetHealthChartProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>{currentMonth} Budget Health</h2>
+          <h2 className="text-lg font-semibold">{currentMonth} Budget Health</h2>
           <p className="text-sm text-muted-foreground">At-a-glance spending overview</p>
         </div>
         <div className={`px-4 py-2 rounded-lg ${healthStatus.bg} flex items-center gap-2`}>

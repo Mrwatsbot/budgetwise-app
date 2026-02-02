@@ -42,7 +42,7 @@ export function ScoreContent() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>Financial Health Score</h1>
+        <h1 className="text-2xl font-bold">Financial Health Score</h1>
         <p className="text-muted-foreground">Your 0-1,000 score with full breakdown</p>
       </div>
 

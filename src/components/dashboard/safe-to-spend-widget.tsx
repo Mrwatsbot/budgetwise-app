@@ -90,7 +90,7 @@ export function SafeToSpendWidget({
         {/* Amount display */}
         <div className="mb-4">
           <div className="flex items-baseline gap-2">
-            <span className={`text-4xl font-bold ${statusConfig.color}`} style={{ fontFamily: 'var(--font-cormorant, serif)' }}>
+            <span className={`text-4xl font-bold ${statusConfig.color}`}>
               ${safeToSpend.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
             </span>
             <span className="text-sm text-muted-foreground">

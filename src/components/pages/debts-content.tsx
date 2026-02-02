@@ -16,7 +16,7 @@ export function DebtsContent() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>Debts</h1>
+          <h1 className="text-2xl font-bold">Debts</h1>
           <p className="text-muted-foreground">Track and crush your debts</p>
         </div>
         <div className="flex gap-2">

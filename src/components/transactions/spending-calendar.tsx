@@ -201,7 +201,7 @@ export function SpendingCalendar({ transactions }: SpendingCalendarProps) {
               <ChevronLeft className="h-5 w-5" />
             </Button>
             <div className="text-center">
-              <h2 className="text-lg font-semibold" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>
+              <h2 className="text-lg font-semibold">
                 {MONTH_NAMES[currentMonth]} {currentYear}
               </h2>
               <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground mt-1">

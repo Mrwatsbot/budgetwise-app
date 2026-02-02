@@ -21,7 +21,7 @@ export function SavingsContent() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>Savings & Investments</h1>
+          <h1 className="text-2xl font-bold">Savings & Investments</h1>
           <p className="text-muted-foreground">Track your path to financial freedom</p>
         </div>
         <AddGoalDialog onRefresh={refresh} />

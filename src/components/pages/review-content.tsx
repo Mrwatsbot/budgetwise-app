@@ -25,7 +25,7 @@ export function ReviewContent() {
   return (
     <div className="space-y-6 max-w-lg mx-auto">
       <div>
-        <h1 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>Month in Review</h1>
+        <h1 className="text-2xl font-bold">Month in Review</h1>
         <p className="text-muted-foreground">{data?.month || 'Previous Month'}</p>
       </div>
 
@@ -46,7 +46,7 @@ export function ReviewContent() {
             <p className="text-xs text-[#1a7a6d] font-semibold uppercase tracking-wider mb-3">
               {data.month}
             </p>
-            <p className="text-4xl font-bold text-[#1a7a6d] mb-1" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>{fmt(data.headline.totalSpent)}</p>
+            <p className="text-4xl font-bold text-[#1a7a6d] mb-1">{fmt(data.headline.totalSpent)}</p>
             <p className="text-sm text-muted-foreground mb-4">total spent this month</p>
             <div className="flex justify-between py-3 border-t border-border">
               <span className="text-sm text-muted-foreground">Income</span>
@@ -95,7 +95,7 @@ export function ReviewContent() {
             <p className="text-xs text-[#1a7a6d] font-semibold uppercase tracking-wider mb-3">
               {data.month}
             </p>
-            <p className="text-4xl font-bold text-[#1a7a6d] mb-1" style={{ fontFamily: 'var(--font-cormorant, serif)' }}>{fmt(data.headline.totalSpent)}</p>
+            <p className="text-4xl font-bold text-[#1a7a6d] mb-1">{fmt(data.headline.totalSpent)}</p>
             <p className="text-sm text-muted-foreground mb-4">total spent this month</p>
             <div className="flex justify-between py-3 border-t border-border">
               <span className="text-sm text-muted-foreground">Income</span>
