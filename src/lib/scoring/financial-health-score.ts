@@ -76,6 +76,9 @@ export interface ScoreInput {
   budgetsOnTrack: number;
   totalBudgets: number;
   averageOverspendPercent: number; // avg % over budget on overspent categories
+
+  // Data maturity (months of transaction history)
+  dataMonths?: number; // 0 = brand new, 1 = first month, 3+ = full confidence
 }
 
 // ============================================================
@@ -295,7 +298,8 @@ function calculatePaymentConsistency(
   const totalBills = onTime + late1to30 + late31to60 + late61Plus;
   
   if (totalBills === 0) {
-    return { score: 200, maxScore, percentage: 100, detail: 'No bills tracked yet — set up tracking!', sublabel };
+    // No data = neutral score, not perfect. You have to earn it.
+    return { score: 100, maxScore, percentage: 50, detail: 'No bills tracked yet — add bills to build your score', sublabel };
   }
   
   // Weighted penalty system (industry-inspired by FICO severity tiers)
@@ -551,6 +555,30 @@ export function calculateFinancialHealthScore(input: ScoreInput): FinancialHealt
     emergencyBuffer: calculateEmergencyBuffer(input.liquidSavings, input.monthlyExpenses),
     debtToIncome: calculateDebtToIncome(input.currentDebts, input.monthlyIncome),
   };
+
+  // --- Cold-start confidence multiplier ---
+  // Behavior scores need time to be meaningful. One perfect month ≠ proven discipline.
+  // Ramp: month 1 = 60% credit, month 2 = 75%, month 3 = 90%, month 4+ = 100%
+  const dataMonths = input.dataMonths ?? 3; // default to full if not provided
+  const behaviorConfidence = dataMonths <= 0 ? 0.5 : Math.min(1.0, 0.5 + (dataMonths * 0.15));
+
+  // Apply confidence to behavior factors (scale toward neutral midpoint, not zero)
+  if (dataMonths < 4) {
+    const paymentMid = breakdown.paymentConsistency.maxScore * 0.5;
+    const budgetMid = breakdown.budgetDiscipline.maxScore * 0.5;
+    
+    breakdown.paymentConsistency.score = Math.round(
+      paymentMid + (breakdown.paymentConsistency.score - paymentMid) * behaviorConfidence
+    );
+    breakdown.paymentConsistency.percentage = (breakdown.paymentConsistency.score / breakdown.paymentConsistency.maxScore) * 100;
+    breakdown.paymentConsistency.detail += ` (${Math.round(behaviorConfidence * 100)}% confidence — builds over time)`;
+
+    breakdown.budgetDiscipline.score = Math.round(
+      budgetMid + (breakdown.budgetDiscipline.score - budgetMid) * behaviorConfidence
+    );
+    breakdown.budgetDiscipline.percentage = (breakdown.budgetDiscipline.score / breakdown.budgetDiscipline.maxScore) * 100;
+    breakdown.budgetDiscipline.detail += ` (${Math.round(behaviorConfidence * 100)}% confidence)`;
+  }
   
   const trajectoryScore = breakdown.wealthBuilding.score + breakdown.debtVelocity.score;
   const behaviorScore = breakdown.paymentConsistency.score + breakdown.budgetDiscipline.score;

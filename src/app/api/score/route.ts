@@ -274,6 +274,17 @@ export async function GET() {
     .filter((g: { type: string }) => LIQUID_TYPES.has(g.type))
     .reduce((sum: number, g: { current_amount: number }) => sum + (g.current_amount || 0), 0);
 
+  // --- Data maturity: how many months of transaction history? ---
+  const oldestTransaction = allTransactions.length > 0
+    ? allTransactions[allTransactions.length - 1]
+    : null;
+  let dataMonths = 1;
+  if (oldestTransaction) {
+    const oldest = new Date(oldestTransaction.date);
+    const diffMs = now.getTime() - oldest.getTime();
+    dataMonths = Math.max(1, Math.floor(diffMs / (30 * 24 * 60 * 60 * 1000)));
+  }
+
   // --- Build Score Input ---
   const scoreInput: ScoreInput = {
     monthlyIncome,
@@ -296,6 +307,7 @@ export async function GET() {
     budgetsOnTrack,
     totalBudgets: budgets.length,
     averageOverspendPercent: avgOverspendPct,
+    dataMonths,
   };
 
   // --- Calculate Score ---
