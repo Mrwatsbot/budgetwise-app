@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import { Playfair_Display, Source_Sans_3, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const bricolageGrotesque = Bricolage_Grotesque({
-  variable: "--font-bricolage-grotesque",
+const playfairDisplay = Playfair_Display({
+  variable: "--font-playfair-display",
   subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const instrumentSans = Instrument_Sans({
-  variable: "--font-instrument-sans",
+const sourceSans3 = Source_Sans_3({
+  variable: "--font-source-sans-3",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${bricolageGrotesque.variable} ${instrumentSans.variable} ${jetbrainsMono.variable} antialiased`}
+        className={`${playfairDisplay.variable} ${sourceSans3.variable} ${jetbrainsMono.variable} antialiased`}
       >
         {children}
       </body>

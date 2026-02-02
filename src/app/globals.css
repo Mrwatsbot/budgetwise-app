@@ -6,11 +6,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-instrument-sans);
+  --font-sans: var(--font-source-sans-3);
   --font-mono: var(--font-jetbrains-mono);
-  --font-display: var(--font-bricolage-grotesque);
-  --font-heading: var(--font-bricolage-grotesque);
-  --font-numbers: var(--font-bricolage-grotesque);
+  --font-display: var(--font-playfair-display);
+  --font-heading: var(--font-playfair-display);
+  --font-numbers: var(--font-source-sans-3);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);

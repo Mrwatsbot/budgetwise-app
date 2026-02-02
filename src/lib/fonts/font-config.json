@@ -1,6 +1,6 @@
 {
   "_comment": "Font Configuration — Change 'active' to any preset name, then run: node scripts/apply-fonts.mjs",
-  "active": "clean-modern",
+  "active": "premium-finance",
   "presets": {
     "clean-modern": {
       "display": "Bricolage Grotesque",

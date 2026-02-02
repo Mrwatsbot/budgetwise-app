@@ -45,7 +45,7 @@ console.log(`   Numbers:  ${preset.numbers || preset.display}`);
 // Helpers
 const toCssVar = (name) => name.toLowerCase().replace(/ /g, '-');
 const toImportName = (name) => name.replace(/ /g, '_');
-const toCamelCase = (name) => toCssVar(name).replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+const toCamelCase = (name) => toCssVar(name).replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
 
 // Get unique fonts
 const uniqueFonts = [...new Set([preset.display, preset.heading, preset.body, preset.mono, preset.numbers].filter(Boolean))];
