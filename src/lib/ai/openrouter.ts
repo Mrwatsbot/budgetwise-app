@@ -515,6 +515,9 @@ Return ONLY valid JSON with this structure:
   "allocations": [
     { "category_name": "exact category name from list", "category_id": "uuid-if-provided", "amount": number, "reasoning": "Brief explanation" }
   ],
+  "savings_goal_allocations": [
+    { "goal_name": "descriptive name", "goal_id": "uuid-from-savings-goals", "monthly_contribution": number, "reasoning": "Brief explanation" }
+  ],
   "summary": {
     "total_needs": number,
     "total_wants": number,
@@ -532,6 +535,7 @@ Rules:
 - Fixed expenses (rent, utilities, etc.) should match what the user provided
 - THE REMAINING 20% (or adjusted %) MUST GO TO SAVINGS/DEBT, NOT ADDITIONAL EXPENSES
 - Every provided category should get an allocation (even if $0)
+- If the user has savings goals with IDs, include savings_goal_allocations suggesting monthly contribution amounts for each goal (from the 20% savings portion). Use the exact goal IDs provided. If no savings goals exist, omit savings_goal_allocations or use an empty array.
 - Return ONLY the JSON, no markdown wrapping`,
       },
       {

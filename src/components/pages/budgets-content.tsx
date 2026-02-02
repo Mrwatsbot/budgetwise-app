@@ -1,6 +1,6 @@
 'use client';
 
-import { useBudgets } from '@/lib/hooks/use-data';
+import { useBudgets, useSavings } from '@/lib/hooks/use-data';
 import { BudgetGrid } from '@/components/budgets/budget-grid';
 import { BudgetListCompact } from '@/components/budgets/budget-list-compact';
 import { ListLoading } from '@/components/layout/page-loading';
@@ -8,12 +8,12 @@ import { InsightsPanel } from '@/components/ai/insights-panel';
 import { AutoBudgetDialog } from '@/components/budgets/auto-budget-dialog';
 import { BudgetTuneDialog } from '@/components/budgets/budget-tune-dialog';
 import { AffordCheckDialog } from '@/components/budgets/afford-check-dialog';
-import { SavingsBudgetSection } from '@/components/budgets/savings-budget-section';
 import { getBudgetHealthColor } from '@/lib/budget-health';
 import { getAllocationBarStyle } from '@/lib/bar-colors';
 
 export function BudgetsContent() {
   const { budgets, categories, spentByCategory, monthlyIncome, totalSavingsTarget, user, isLoading, refresh } = useBudgets();
+  const { goals: savingsGoals, isLoading: savingsLoading, refresh: refreshSavings } = useSavings();
 
   // Current month info — use local timezone (not UTC) to avoid server/client mismatch
   const now = new Date();
@@ -48,6 +48,20 @@ export function BudgetsContent() {
   const totalBudgeted = categoryBudgets.reduce((sum: number, b: { budgeted: number }) => sum + b.budgeted, 0);
   const totalSpent = categoryBudgets.reduce((sum: number, b: { spent: number }) => sum + b.spent, 0);
 
+  // Calculate savings totals (include in summary)
+  const totalSavingsMonthly = savingsGoals.reduce((sum: number, g: { monthly_contribution?: number }) => sum + (g.monthly_contribution || 0), 0);
+  const totalSavingsContributedThisMonth = savingsGoals.reduce((sum: number, g: { recent_contributions?: { amount: number; date: string }[] }) => {
+    const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+    const contributed = (g.recent_contributions || [])
+      .filter((c) => c.date >= monthStr)
+      .reduce((s: number, c) => s + c.amount, 0);
+    return sum + contributed;
+  }, 0);
+
+  // Grand totals including savings
+  const grandTotalBudgeted = totalBudgeted + totalSavingsMonthly;
+  const grandTotalSpent = totalSpent + totalSavingsContributedThisMonth;
+
   // Check if user has any budgets set
   const hasBudgets = categoryBudgets.some((b: { budgeted: number }) => b.budgeted > 0);
 
@@ -68,9 +82,9 @@ export function BudgetsContent() {
               {/* AI buttons */}
               <AutoBudgetDialog
                 currentMonth={currentMonthStr}
-                onApplied={refresh}
-                
-             />
+                onApplied={() => { refresh(); refreshSavings(); }}
+                savingsGoals={savingsGoals}
+              />
               {hasBudgets && (
                 <BudgetTuneDialog
                   currentMonth={currentMonthStr}
@@ -89,10 +103,10 @@ export function BudgetsContent() {
           {!hasBudgets && (
             <AutoBudgetDialog
               currentMonth={currentMonthStr}
-              onApplied={refresh}
+              onApplied={() => { refresh(); refreshSavings(); }}
               prominent
-              
-           />
+              savingsGoals={savingsGoals}
+            />
           )}
 
           {/* Summary Card */}
@@ -100,18 +114,21 @@ export function BudgetsContent() {
             <div className="grid grid-cols-3 gap-2 sm:gap-6">
               <div className="text-center min-w-0">
                 <p className="text-xs sm:text-sm text-muted-foreground">Budgeted</p>
-                <p className="text-base sm:text-xl font-bold truncate">${totalBudgeted.toFixed(2)}</p>
+                <p className="text-base sm:text-xl font-bold truncate">${grandTotalBudgeted.toFixed(2)}</p>
+                {totalSavingsMonthly > 0 && (
+                  <p className="text-[10px] text-muted-foreground/70 truncate">incl. ${totalSavingsMonthly.toFixed(0)} savings</p>
+                )}
               </div>
               <div className="text-center min-w-0 border-x border-border">
                 <p className="text-xs sm:text-sm text-muted-foreground">Spent</p>
-                <p className={`text-base sm:text-xl font-bold truncate ${totalSpent > totalBudgeted ? 'text-red-400' : 'text-[#7aba5c]'}`}>
-                  ${totalSpent.toFixed(2)}
+                <p className={`text-base sm:text-xl font-bold truncate ${grandTotalSpent > grandTotalBudgeted ? 'text-red-400' : 'text-[#7aba5c]'}`}>
+                  ${grandTotalSpent.toFixed(2)}
                 </p>
               </div>
               <div className="text-center min-w-0">
                 <p className="text-xs sm:text-sm text-muted-foreground">Remaining</p>
-                <p className={`text-base sm:text-xl font-bold truncate ${totalBudgeted - totalSpent < 0 ? 'text-red-400' : 'text-[#7aba5c]'}`}>
-                  ${(totalBudgeted - totalSpent).toFixed(2)}
+                <p className={`text-base sm:text-xl font-bold truncate ${grandTotalBudgeted - grandTotalSpent < 0 ? 'text-red-400' : 'text-[#7aba5c]'}`}>
+                  ${(grandTotalBudgeted - grandTotalSpent).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -142,7 +159,8 @@ export function BudgetsContent() {
               categoryBudgets={categoryBudgets}
               userId={user?.id || ''}
               currentMonth={currentMonthStr}
-              onRefresh={refresh}
+              onRefresh={() => { refresh(); refreshSavings(); }}
+              savingsGoals={savingsGoals}
             />
           </div>
           <div className="hidden lg:block">
@@ -150,12 +168,10 @@ export function BudgetsContent() {
               categoryBudgets={categoryBudgets}
               userId={user?.id || ''}
               currentMonth={currentMonthStr}
-              onRefresh={refresh}
+              onRefresh={() => { refresh(); refreshSavings(); }}
+              savingsGoals={savingsGoals}
             />
           </div>
-
-          {/* Savings & Investments Section */}
-          <SavingsBudgetSection />
 
           {/* AI Insights */}
           <InsightsPanel page="budgets" />

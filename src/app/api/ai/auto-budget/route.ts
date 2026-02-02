@@ -58,7 +58,7 @@ export async function POST(request: Request) {
         .eq('is_active', true)
         .eq('is_paid_off', false),
       (supabase.from as any)('savings_goals')
-        .select('name, monthly_contribution, target_amount, current_amount')
+        .select('id, name, monthly_contribution, target_amount, current_amount')
         .eq('user_id', user.id)
         .eq('is_active', true),
       (supabase.from as any)('categories')
@@ -98,8 +98,8 @@ export async function POST(request: Request) {
     // Savings goals as allocation targets for the 20% savings portion
     const savingsTargets = savings.length > 0
       ? savings.map(
-          (s: { name: string; monthly_contribution: number | null; target_amount: number | null }, i: number) =>
-            `  - Savings Goal ${i + 1}: contributes $${(s.monthly_contribution || 0).toFixed(2)}/mo`
+          (s: { id: string; name: string; monthly_contribution: number | null; target_amount: number | null; current_amount: number }, i: number) =>
+            `  - Savings Goal ${i + 1} (id: ${s.id}): currently $${(s.monthly_contribution || 0).toFixed(2)}/mo${s.target_amount ? `, target $${s.target_amount.toFixed(2)}, saved $${s.current_amount.toFixed(2)}` : ''}`
         ).join('\n')
       : '  (no savings goals set up yet)';
 
@@ -118,8 +118,8 @@ export async function POST(request: Request) {
 
     const savingsStr = savings.length > 0
       ? savings.map(
-          (s: { name: string; monthly_contribution: number | null; target_amount: number | null; current_amount: number }, i: number) =>
-            `  - Goal ${i + 1}: $${(s.monthly_contribution || 0).toFixed(2)}/mo, ${s.target_amount ? `target $${s.target_amount.toFixed(2)}` : 'no target'}, saved $${s.current_amount.toFixed(2)}`
+          (s: { id: string; name: string; monthly_contribution: number | null; target_amount: number | null; current_amount: number }, i: number) =>
+            `  - Goal ${i + 1} (id: ${s.id}): $${(s.monthly_contribution || 0).toFixed(2)}/mo, ${s.target_amount ? `target $${s.target_amount.toFixed(2)}` : 'no target'}, saved $${s.current_amount.toFixed(2)}`
         ).join('\n')
       : '  (no savings goals)';
 
@@ -167,7 +167,9 @@ IMPORTANT: Allocate the FULL monthly income across the categories above.
 ${hasSavingsCategories 
   ? 'Allocate ~20% of income to savings/investment categories (Savings, Emergency Fund, Investments, etc.) following the 50/30/20 rule.'
   : 'NOTE: No dedicated savings categories exist yet. Still follow 50/30/20 — allocate ~20% to the category most suitable for savings (e.g., "Other Expense" or similar) and strongly recommend the user create Savings/Emergency Fund categories for proper tracking.'}
-All allocations MUST sum to the monthly income — do NOT leave money unallocated.`;
+All allocations MUST sum to the monthly income — do NOT leave money unallocated.
+
+${savings.length > 0 ? `SAVINGS GOALS: The user has ${savings.length} savings goal(s) listed above with IDs. You MUST also suggest monthly_contribution amounts for each savings goal in the "savings_goal_allocations" field. These contributions should come from the ~20% savings portion of the budget. Use the goal IDs provided.` : ''}`;
 
     // Fetch BYOK key if applicable
     let apiKeyOverride: string | undefined;
@@ -249,7 +251,7 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    const { allocations, month } = body;
+    const { allocations, month, savings_goal_allocations } = body;
 
     if (!allocations || !Array.isArray(allocations) || allocations.length === 0) {
       return NextResponse.json({ error: 'Allocations are required' }, { status: 400 });
@@ -356,9 +358,32 @@ export async function PUT(request: Request) {
       }
     }
 
+    // Process savings goal allocations
+    let savingsUpdated = 0;
+    if (savings_goal_allocations && Array.isArray(savings_goal_allocations)) {
+      for (const sg of savings_goal_allocations) {
+        if (!sg.goal_id || sg.monthly_contribution === undefined) continue;
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { error: sgError } = await (supabase.from as any)('savings_goals')
+            .update({ monthly_contribution: sg.monthly_contribution, updated_at: new Date().toISOString() })
+            .eq('id', sg.goal_id)
+            .eq('user_id', user.id);
+          if (sgError) {
+            errors.push(`Savings goal ${sg.goal_id}: ${sgError.message}`);
+          } else {
+            savingsUpdated++;
+          }
+        } catch (sgErr) {
+          errors.push(`Savings goal ${sg.goal_id}: ${sgErr instanceof Error ? sgErr.message : 'unknown error'}`);
+        }
+      }
+    }
+
     return NextResponse.json({
-      success: results.length > 0,
+      success: results.length > 0 || savingsUpdated > 0,
       budgets_written: results.length,
+      savings_updated: savingsUpdated,
       budgets: results,
       skipped: skipped.length > 0 ? skipped : undefined,
       errors: errors.length > 0 ? errors : undefined,

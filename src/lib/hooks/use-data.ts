@@ -378,12 +378,13 @@ export async function requestBudgetTune() {
 
 export async function applyAutoBudget(
   allocations: { category_id: string | null; category_name?: string; amount: number }[],
-  month: string
+  month: string,
+  savingsGoalAllocations?: { goal_id: string; monthly_contribution: number }[]
 ) {
   const res = await fetch('/api/ai/auto-budget', {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ allocations, month }),
+    body: JSON.stringify({ allocations, month, savings_goal_allocations: savingsGoalAllocations }),
   });
   if (!res.ok) {
     const err = await res.json();
@@ -392,7 +393,7 @@ export async function applyAutoBudget(
   const data = await res.json();
   
   // Check if any budgets were actually written
-  if (data.budgets_written === 0) {
+  if (data.budgets_written === 0 && (data.savings_updated || 0) === 0) {
     const debugInfo = data.debug ? ` (received: ${data.debug.received}, categories: ${data.debug.validCategories})` : '';
     const skipInfo = data.skipped ? ` Skipped: ${data.skipped.join(', ')}` : '';
     const errInfo = data.errors ? ` Errors: ${data.errors.join('; ')}` : '';
@@ -400,6 +401,7 @@ export async function applyAutoBudget(
   }
   
   revalidateBudgets();
+  mutate('/api/savings');
   revalidateAll();
   return data;
 }

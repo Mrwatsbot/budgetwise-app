@@ -47,9 +47,17 @@ interface Allocation {
   reasoning: string;
 }
 
+interface SavingsGoalAllocation {
+  goal_name: string;
+  goal_id: string;
+  monthly_contribution: number;
+  reasoning: string;
+}
+
 interface BudgetResult {
   monthly_income: number;
   allocations: Allocation[];
+  savings_goal_allocations?: SavingsGoalAllocation[];
   summary: {
     total_needs: number;
     total_wants: number;
@@ -61,10 +69,20 @@ interface BudgetResult {
   notes: string;
 }
 
+interface SavingsGoalProp {
+  id: string;
+  name: string;
+  type: string;
+  monthly_contribution: number;
+  current_amount: number;
+  target_amount: number | null;
+}
+
 interface AutoBudgetDialogProps {
   currentMonth: string;
   onApplied?: () => void;
   prominent?: boolean;
+  savingsGoals?: SavingsGoalProp[];  // renamed internally to avoid collision with form state
 }
 
 type SavingsPriority = 'aggressive' | 'moderate' | 'relaxed';
@@ -109,7 +127,7 @@ const SAVINGS_GOAL_OPTIONS: { value: SavingsGoal; label: string; icon: typeof Pi
 // COMPONENT
 // ============================================================
 
-export function AutoBudgetDialog({ currentMonth, onApplied, prominent = false }: AutoBudgetDialogProps) {
+export function AutoBudgetDialog({ currentMonth, onApplied, prominent = false, savingsGoals: existingSavingsGoals = [] }: AutoBudgetDialogProps) {
   const isDemo = useIsDemo();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
@@ -250,7 +268,15 @@ export function AutoBudgetDialog({ currentMonth, onApplied, prominent = false }:
           amount: a.amount,
         }));
 
-      await applyAutoBudget(allocations, currentMonth);
+      // Prepare savings goal allocations
+      const savingsAllocations = (result.savings_goal_allocations || [])
+        .filter((s) => s.goal_id && s.monthly_contribution >= 0)
+        .map((s) => ({
+          goal_id: s.goal_id,
+          monthly_contribution: s.monthly_contribution,
+        }));
+
+      await applyAutoBudget(allocations, currentMonth, savingsAllocations.length > 0 ? savingsAllocations : undefined);
       onApplied?.();
       setOpen(false);
       resetForm();
@@ -704,6 +730,25 @@ export function AutoBudgetDialog({ currentMonth, onApplied, prominent = false }:
                             <p className="text-sm font-semibold ml-3 flex-shrink-0">{formatCurrency(alloc.amount)}</p>
                           </div>
                         ))}
+
+                      {/* Savings Goal Allocations */}
+                      {result.savings_goal_allocations && result.savings_goal_allocations.length > 0 && (
+                        <>
+                          <div className="flex items-center gap-2 pt-2 pb-1">
+                            <PiggyBank className="w-3.5 h-3.5 text-[#6db555]" />
+                            <p className="text-xs font-semibold text-[#6db555] uppercase tracking-wide">Savings Goals</p>
+                          </div>
+                          {result.savings_goal_allocations.map((sg, idx) => (
+                            <div key={`sg-${idx}`} className="flex items-center justify-between p-2.5 rounded-lg bg-[#6db555]/5 border border-[#6db555]/20">
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm font-medium truncate">{sg.goal_name}</p>
+                                <p className="text-[11px] text-muted-foreground truncate">{sg.reasoning}</p>
+                              </div>
+                              <p className="text-sm font-semibold ml-3 flex-shrink-0 text-[#6db555]">{formatCurrency(sg.monthly_contribution)}/mo</p>
+                            </div>
+                          ))}
+                        </>
+                      )}
                     </div>
 
                     {/* Notes */}

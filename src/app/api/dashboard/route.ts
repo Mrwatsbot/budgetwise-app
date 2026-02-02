@@ -36,7 +36,7 @@ export async function GET(request: Request) {
       .order('created_at', { ascending: false }),
     supabase
       .from('budgets')
-      .select('id, budgeted, category:categories(id, name, icon, color)')
+      .select('id, budgeted, category:categories(id, name, icon, color, type)')
       .eq('user_id', user.id)
       .eq('month', monthStr),
     // Latest score
@@ -182,13 +182,18 @@ export async function GET(request: Request) {
     });
   }
 
+  // Filter to expense-only budgets for the overview (exclude transfers, income, etc.)
+  const expenseBudgets = budgets.filter((b: { category: { type?: string } | null }) =>
+    !b.category?.type || b.category.type === 'expense'
+  );
+
   return NextResponse.json({
     accounts,
     totalBalance,
     monthlyIncome,
     monthlyExpenses,
     recentTransactions: transactions.slice(0, 5),
-    budgets: budgets.map((b: { budgeted: number; category: { id: string; name: string; icon: string | null; color: string | null } | null }) => ({
+    budgets: expenseBudgets.map((b: { budgeted: number; category: { id: string; name: string; icon: string | null; color: string | null } | null }) => ({
       name: b.category?.name || 'Unknown',
       icon: b.category?.icon || null,
       budgeted: b.budgeted,

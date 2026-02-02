@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { apiGuard } from '@/lib/api-guard';
 import { generateMonthlyNudge } from '@/lib/ai/openrouter';
+import { classifyCategory } from '@/lib/budget-groups';
 
 export async function GET(request: Request) {
   const guard = await apiGuard(60);
@@ -262,9 +263,7 @@ export async function GET(request: Request) {
   });
 
   // ====== CARD 5: FLOW (50/30/20) ======
-  // Classify spending into needs/wants/savings
-  const needsCategories = new Set(['Housing', 'Rent', 'Groceries', 'Utilities', 'Insurance', 'Transportation', 'Healthcare']);
-  
+  // Classify spending into needs/wants/savings using shared utility
   let needsAmount = 0;
   let wantsAmount = 0;
   let savingsAmount = 0;
@@ -281,16 +280,11 @@ export async function GET(request: Request) {
     
     if (!cat) {
       wantsAmount += amt; // Uncategorized = wants
-    } else if (cat.type === 'savings' || cat.type === 'investment') {
-      savingsAmount += amt;
-    } else if (cat.type === 'expense') {
-      if (needsCategories.has(cat.name)) {
-        needsAmount += amt;
-      } else {
-        wantsAmount += amt;
-      }
     } else {
-      wantsAmount += amt;
+      const group = classifyCategory(cat.name, cat.type);
+      if (group === 'needs') needsAmount += amt;
+      else if (group === 'savings') savingsAmount += amt;
+      else wantsAmount += amt;
     }
   });
   
