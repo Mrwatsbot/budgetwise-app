@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thallo - Refined Luxury</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #e8e8e8;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle linen texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            z-index: 0;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.05) 2px, rgba(255,255,255,.05) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,.05) 2px, rgba(255,255,255,.05) 4px);
+            background-size: 100px 100px;
+            pointer-events: none;
+        }
+
+        /* Fine grain overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.015;
+            z-index: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 60px;
+        }
+
+        /* Navigation */
+        nav {
+            padding: 32px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 48px;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .nav-links a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #1a7a6d;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 80px;
+        }
+
+        /* Typography Sample */
+        .type-sample {
+            padding: 60px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 2px;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 56px;
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .body-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 300;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.2px;
+        }
+
+        /* Dashboard Card */
+        .dashboard-card {
+            padding: 48px;
+            background: linear-gradient(135deg, rgba(26, 122, 109, 0.08) 0%, rgba(26, 122, 109, 0.02) 100%);
+            border: 1px solid rgba(26, 122, 109, 0.15);
+            border-radius: 2px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 42px;
+            font-weight: 500;
+            color: #ffffff;
+            margin-bottom: 32px;
+            letter-spacing: -0.5px;
+        }
+
+        .score-display {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
+
+        .score-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 96px;
+            font-weight: 400;
+            color: #1a7a6d;
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+
+        .score-max {
+            font-family: 'Inter', sans-serif;
+            font-size: 24px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .stat {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 16px;
+        }
+
+        .stat-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 500;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 16px 40px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #1a7a6d;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #216657;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-secondary:hover {
+            border-color: #1a7a6d;
+            color: #1a7a6d;
+        }
+
+        /* Footer Note */
+        .design-note {
+            text-align: center;
+            padding: 60px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .design-note-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: #1a7a6d;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .design-note-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 0.3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="logo">Thallo</div>
+            <div class="nav-links">
+                <a href="#">Dashboard</a>
+                <a href="#">Insights</a>
+                <a href="#">Goals</a>
+                <a href="#">Settings</a>
+            </div>
+        </nav>
+
+        <div class="content-grid">
+            <div class="type-sample">
+                <h1>Elegant Financial Clarity</h1>
+                <p class="body-text">
+                    Experience wealth management elevated to an art form. Every detail refined, 
+                    every insight presented with the sophistication it deserves. Your financial 
+                    health, delivered with timeless elegance and modern precision.
+                </p>
+                <div class="button-group">
+                    <button class="btn btn-primary">View Full Report</button>
+                    <button class="btn btn-secondary">Export Data</button>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-label">Monthly Overview</div>
+                <h2 class="card-title">Monthly Pulse</h2>
+                
+                <div class="score-display">
+                    <div class="score-number">87</div>
+                    <div class="score-max">/100</div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat">
+                        <div class="stat-label">Total Savings</div>
+                        <div class="stat-value">$12,847</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Budget Health</div>
+                        <div class="stat-value">Excellent</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">This Month</div>
+                        <div class="stat-value">$4,230</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Trend</div>
+                        <div class="stat-value">+12.3%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="design-note">
+            <div class="design-note-title">Refined Luxury</div>
+            <div class="design-note-text">
+                Cormorant Garamond × Inter • Subtle Linen Texture • Premium Banking Aesthetic
+            </div>
+        </div>
+    </div>
+</body>
+</html>
