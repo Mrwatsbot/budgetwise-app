@@ -79,6 +79,7 @@ export async function GET() {
   const [
     profileRes,
     debtsRes,
+    accountsRes,
     savingsGoalsRes,
     savingsContribRes,
     debtPaymentsRes,
@@ -91,6 +92,8 @@ export async function GET() {
   ] = await Promise.all([
     // Profile for income
     sb.from('profiles').select('*').eq('id', user.id).single(),
+    // User accounts (checking, savings, etc.)
+    sb.from('accounts').select('id, name, type, balance').eq('user_id', user.id),
     // Current debts
     sb.from('debts').select('*').eq('user_id', user.id).eq('is_active', true),
     // Savings goals
@@ -145,6 +148,7 @@ export async function GET() {
     .select('*')
     .order('sort_order');
 
+  const accounts = accountsRes.data || [];
   const debts = debtsRes.data || [];
   const savingsGoals = savingsGoalsRes.data || [];
   const savingsContributions = savingsContribRes.data || [];
@@ -282,12 +286,20 @@ export async function GET() {
   const avgOverspendPct = overspentCount > 0 ? totalOverspendPct / overspentCount : 0;
 
   // --- Emergency Buffer ---
-  // Count liquid savings: emergency funds, general savings, HYSA, custom goals
-  // Exclude retirement/brokerage (not easily accessible in an emergency)
-  const LIQUID_TYPES = new Set(['emergency', 'general', 'custom', 'hsa']);
-  const liquidSavings = savingsGoals
-    .filter((g: { type: string }) => LIQUID_TYPES.has(g.type))
+  // Count liquid savings from TWO sources:
+  // 1. Savings goals (emergency, general, custom, HSA)
+  // 2. Accounts (checking, savings, money_market — not investment/retirement)
+  const LIQUID_GOAL_TYPES = new Set(['emergency', 'general', 'custom', 'hsa']);
+  const goalLiquid = savingsGoals
+    .filter((g: { type: string }) => LIQUID_GOAL_TYPES.has(g.type))
     .reduce((sum: number, g: { current_amount: number }) => sum + (g.current_amount || 0), 0);
+
+  const LIQUID_ACCOUNT_TYPES = new Set(['checking', 'savings', 'money_market', 'cash']);
+  const accountLiquid = accounts
+    .filter((a: { type: string }) => LIQUID_ACCOUNT_TYPES.has(a.type))
+    .reduce((sum: number, a: { balance: number }) => sum + (a.balance || 0), 0);
+
+  const liquidSavings = goalLiquid + accountLiquid;
 
   // --- Data maturity: how many months of transaction history? ---
   const oldestTransaction = allTransactions.length > 0
