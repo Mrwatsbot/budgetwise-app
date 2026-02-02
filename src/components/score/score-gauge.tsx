@@ -51,36 +51,15 @@ export function ScoreGauge({ score, levelTitle, level, previousScore }: ScoreGau
             </linearGradient>
           </defs>
 
-          {/* Background ring — clearly muted */}
+          {/* Background ring — full circle outline */}
           <circle
             cx="100"
             cy="100"
             r={radius}
-            stroke="#1f1d1b"
+            stroke="#2a2724"
             strokeWidth="10"
             fill="none"
-            opacity="0.8"
           />
-
-          {/* Track marks for score tiers (subtle tick marks) */}
-          {[200, 400, 600, 750, 900].map((tierMark) => {
-            const angle = (tierMark / 1000) * 360 - 90;
-            const rad = (angle * Math.PI) / 180;
-            const innerR = radius - 6;
-            const outerR = radius + 6;
-            return (
-              <line
-                key={tierMark}
-                x1={100 + innerR * Math.cos(rad)}
-                y1={100 + innerR * Math.sin(rad)}
-                x2={100 + outerR * Math.cos(rad)}
-                y2={100 + outerR * Math.sin(rad)}
-                stroke="#3a3633"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            );
-          })}
 
           {/* Progress ring with glow */}
           <circle
