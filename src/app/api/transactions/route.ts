@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { apiGuard } from '@/lib/api-guard';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const guard = await apiGuard(60);
   if (guard.error) return guard.error;
   const { user, supabase } = guard;
+
+  // Pagination params
+  const url = new URL(request.url);
+  const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '100'), 1), 500);
+  const offset = Math.max(parseInt(url.searchParams.get('offset') || '0'), 0);
 
   const [categoriesRes, accountsRes, transactionsRes] = await Promise.all([
     supabase.from('categories').select('id, name, icon, type, color').order('sort_order'),
@@ -14,13 +19,18 @@ export async function GET() {
       .eq('user_id', user.id)
       .order('date', { ascending: false })
       .order('created_at', { ascending: false })
-      .limit(100),
+      .range(offset, offset + limit - 1),
   ]);
 
   return NextResponse.json({
     categories: categoriesRes.data || [],
     accounts: accountsRes.data || [],
     transactions: transactionsRes.data || [],
+    pagination: {
+      offset,
+      limit,
+      hasMore: (transactionsRes.data || []).length === limit,
+    },
     user: {
       id: user.id,
       email: user.email,

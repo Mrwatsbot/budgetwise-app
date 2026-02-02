@@ -39,17 +39,20 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Error creating link token:', error?.response?.data || error?.message || error);
     const plaidError = error?.response?.data;
-    return NextResponse.json(
-      { 
-        error: plaidError?.error_message || error?.message || 'Failed to create link token',
-        plaid_error_code: plaidError?.error_code,
-        debug: {
-          hasClientId: !!process.env.PLAID_CLIENT_ID,
-          hasSecret: !!process.env.PLAID_SECRET,
-          env: process.env.PLAID_ENV,
-        }
-      },
-      { status: 500 }
-    );
+    const responseBody: { error: string; plaid_error_code?: string; debug?: Record<string, unknown> } = {
+      error: plaidError?.error_message || 'Failed to create link token',
+      plaid_error_code: plaidError?.error_code,
+    };
+
+    // Only include debug info in non-production environments
+    if (process.env.NODE_ENV !== 'production') {
+      responseBody.debug = {
+        hasClientId: !!process.env.PLAID_CLIENT_ID,
+        hasSecret: !!process.env.PLAID_SECRET,
+        env: process.env.PLAID_ENV,
+      };
+    }
+
+    return NextResponse.json(responseBody, { status: 500 });
   }
 }

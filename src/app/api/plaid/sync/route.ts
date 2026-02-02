@@ -148,7 +148,11 @@ export async function POST(request: NextRequest) {
               user_id: user.id,
               account_id: defaultAccountId,
               plaid_transaction_id: txn.transaction_id,
-              amount: Math.abs(txn.amount), // Plaid uses negative for debits
+              // Plaid sign convention: positive = money leaving (debit/expense)
+              // App sign convention: negative = expense, positive = income
+              // So we negate: Plaid +50 (debit) → App -50 (expense)
+              //               Plaid -50 (credit) → App +50 (income)
+              amount: -txn.amount,
               payee_original: txn.merchant_name || txn.name || 'Unknown',
               payee_clean: txn.merchant_name || txn.name || 'Unknown',
               date: txn.date,
@@ -174,7 +178,7 @@ export async function POST(request: NextRequest) {
           
           const { error: updateError } = await (supabase.from as any)('transactions')
             .update({
-              amount: Math.abs(txn.amount),
+              amount: -txn.amount, // Negate Plaid sign convention
               payee_original: txn.merchant_name || txn.name || 'Unknown',
               payee_clean: txn.merchant_name || txn.name || 'Unknown',
               date: txn.date,

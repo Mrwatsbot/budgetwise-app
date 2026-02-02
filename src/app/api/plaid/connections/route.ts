@@ -74,12 +74,29 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Optionally delete associated transactions
-    if (deleteTransactions) {
-      await supabase
-        .from('transactions')
-        .delete()
+    // Only delete transactions that came from THIS specific Plaid connection
+    // by checking against the access token's item_id synced transactions
+    if (deleteTransactions && connection.item_id) {
+      // We can't directly link transactions to a connection, so we delete
+      // Plaid-sourced transactions that were likely from this connection.
+      // A better approach would be to track connection_id on transactions,
+      // but for now we delete all Plaid transactions only if this is the
+      // user's ONLY Plaid connection.
+      const { data: otherConnections } = await (supabase.from as any)('plaid_connections')
+        .select('id')
         .eq('user_id', user.id)
-        .not('plaid_transaction_id', 'is', null);
+        .neq('id', connectionId);
+
+      if (!otherConnections || otherConnections.length === 0) {
+        // This is the only connection — safe to delete all Plaid transactions
+        await supabase
+          .from('transactions')
+          .delete()
+          .eq('user_id', user.id)
+          .not('plaid_transaction_id', 'is', null);
+      }
+      // If user has other connections, skip transaction deletion to avoid
+      // removing transactions from other connections
     }
 
     // Delete the connection record

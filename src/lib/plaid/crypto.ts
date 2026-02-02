@@ -1,9 +1,14 @@
 import crypto from 'crypto';
 
-const ENCRYPTION_KEY = process.env.TOKEN_ENCRYPTION_KEY
-  ? Buffer.from(process.env.TOKEN_ENCRYPTION_KEY, 'hex')
-  : Buffer.alloc(32); // Fallback for build time — runtime calls will fail safely
 const ALGORITHM = 'aes-256-gcm';
+
+function getEncryptionKey(): Buffer {
+  const key = process.env.TOKEN_ENCRYPTION_KEY;
+  if (!key) {
+    throw new Error('TOKEN_ENCRYPTION_KEY environment variable is required for token encryption');
+  }
+  return Buffer.from(key, 'hex');
+}
 const IV_LENGTH = 12;
 const AUTH_TAG_LENGTH = 16;
 
@@ -14,7 +19,7 @@ const AUTH_TAG_LENGTH = 16;
  */
 export function encryptToken(plaintext: string): string {
   const iv = crypto.randomBytes(IV_LENGTH);
-  const cipher = crypto.createCipheriv(ALGORITHM, ENCRYPTION_KEY, iv);
+  const cipher = crypto.createCipheriv(ALGORITHM, getEncryptionKey(), iv);
   
   let encrypted = cipher.update(plaintext, 'utf8', 'hex');
   encrypted += cipher.final('hex');
@@ -42,7 +47,7 @@ export function decryptToken(encryptedToken: string): string {
   const authTag = Buffer.from(authTagHex, 'hex');
   const encrypted = Buffer.from(encryptedHex, 'hex');
   
-  const decipher = crypto.createDecipheriv(ALGORITHM, ENCRYPTION_KEY, iv);
+  const decipher = crypto.createDecipheriv(ALGORITHM, getEncryptionKey(), iv);
   decipher.setAuthTag(authTag);
   
   let decrypted = decipher.update(encrypted);

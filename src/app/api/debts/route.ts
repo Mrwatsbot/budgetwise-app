@@ -34,15 +34,55 @@ export async function GET() {
   return NextResponse.json(debtsWithPayments);
 }
 
+const VALID_DEBT_TYPES = [
+  'credit_card', 'cc_paid_monthly', 'mortgage', 'heloc', 'auto', 'student',
+  'personal', 'medical', 'business', 'payday', 'bnpl', 'zero_pct', 'secured', 'other',
+];
+
 export async function POST(request: NextRequest) {
   const guard = await apiGuard(30);
   if (guard.error) return guard.error;
   const { user, supabase } = guard;
 
   const body = await request.json();
+
+  // Whitelist allowed fields to prevent mass assignment
+  const { name, type, original_balance, current_balance, apr, minimum_payment,
+          monthly_payment, due_day, in_collections, notes, origination_date, term_months } = body;
+
+  if (!name || typeof name !== 'string' || name.trim().length === 0) {
+    return NextResponse.json({ error: 'Name is required' }, { status: 400 });
+  }
+  if (!type || !VALID_DEBT_TYPES.includes(type)) {
+    return NextResponse.json({ error: 'Valid debt type is required' }, { status: 400 });
+  }
+  if (current_balance === undefined || typeof current_balance !== 'number' || current_balance < 0) {
+    return NextResponse.json({ error: 'Current balance must be a non-negative number' }, { status: 400 });
+  }
+  if (due_day !== undefined && due_day !== null && (typeof due_day !== 'number' || due_day < 1 || due_day > 31)) {
+    return NextResponse.json({ error: 'Due day must be between 1 and 31' }, { status: 400 });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const insert: Record<string, any> = {
+    user_id: user.id,
+    name: name.trim(),
+    type,
+    current_balance,
+    original_balance: original_balance ?? current_balance,
+    apr: typeof apr === 'number' ? Math.max(0, apr) : 0,
+    minimum_payment: typeof minimum_payment === 'number' ? Math.max(0, minimum_payment) : 0,
+    monthly_payment: typeof monthly_payment === 'number' ? Math.max(0, monthly_payment) : 0,
+    in_collections: in_collections === true,
+  };
+  if (due_day !== undefined && due_day !== null) insert.due_day = due_day;
+  if (notes && typeof notes === 'string') insert.notes = notes.trim();
+  if (origination_date) insert.origination_date = origination_date;
+  if (typeof term_months === 'number' && term_months > 0) insert.term_months = term_months;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase.from as any)('debts')
-    .insert({ ...body, user_id: user.id })
+    .insert(insert)
     .select()
     .single();
 
