@@ -316,7 +316,7 @@ export async function GET(request: Request) {
   ];
 
   // ====== CARD 7: NUDGE (AI-generated) ======
-  let nudge: { primary: { emoji: string; text: string; impact: string }; secondary: string[] } | null = null;
+  let nudge: { primary: { text: string; impact: string }; secondary: string[] } | null = null;
   
   if (!isFreeUser) {
     // Build a summary for AI
