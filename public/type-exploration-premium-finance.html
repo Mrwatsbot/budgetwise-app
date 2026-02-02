@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thallo - Premium Finance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: #0a0a0a;
+            color: #e8e8e8;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle geometric texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.02;
+            z-index: 0;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.03) 35px, rgba(255,255,255,.03) 70px);
+            pointer-events: none;
+        }
+
+        /* Fine grain overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.02;
+            z-index: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 60px;
+        }
+
+        /* Navigation */
+        nav {
+            padding: 36px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 48px;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .nav-links a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #1a7a6d;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 80px;
+        }
+
+        /* Typography Sample */
+        .type-sample {
+            padding: 60px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 58px;
+            font-weight: 600;
+            line-height: 1.15;
+            margin-bottom: 28px;
+            color: #ffffff;
+            letter-spacing: -1px;
+        }
+
+        .body-text {
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 17px;
+            font-weight: 400;
+            line-height: 1.65;
+            color: rgba(255, 255, 255, 0.75);
+            letter-spacing: 0.1px;
+        }
+
+        /* Dashboard Card */
+        .dashboard-card {
+            padding: 52px;
+            background: linear-gradient(135deg, rgba(26, 122, 109, 0.09) 0%, rgba(26, 122, 109, 0.03) 100%);
+            border: 1px solid rgba(26, 122, 109, 0.18);
+            border-radius: 3px;
+            backdrop-filter: blur(12px);
+        }
+
+        .card-label {
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.55);
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 46px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 36px;
+            letter-spacing: -1px;
+        }
+
+        .score-display {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 44px;
+        }
+
+        .score-number {
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 108px;
+            font-weight: 600;
+            color: #1a7a6d;
+            line-height: 1;
+            letter-spacing: -3px;
+            font-feature-settings: 'tnum' 1;
+        }
+
+        .score-max {
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 26px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.45);
+            font-feature-settings: 'tnum' 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .stat {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 18px;
+        }
+
+        .stat-label {
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.55);
+            margin-bottom: 10px;
+            letter-spacing: 0.2px;
+        }
+
+        .stat-value {
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 32px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            font-feature-settings: 'tnum' 1;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 42px;
+        }
+
+        .btn {
+            padding: 17px 42px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #1a7a6d;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(26, 122, 109, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: #216657;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(26, 122, 109, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .btn-secondary:hover {
+            border-color: #1a7a6d;
+            color: #1a7a6d;
+            background: rgba(26, 122, 109, 0.05);
+        }
+
+        /* Footer Note */
+        .design-note {
+            text-align: center;
+            padding: 60px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .design-note-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 600;
+            color: #1a7a6d;
+            margin-bottom: 14px;
+            letter-spacing: -0.3px;
+        }
+
+        .design-note-text {
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.55);
+            letter-spacing: 0.2px;
+        }
+
+        .design-note-mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 8px;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="logo">Thallo</div>
+            <div class="nav-links">
+                <a href="#">Dashboard</a>
+                <a href="#">Insights</a>
+                <a href="#">Goals</a>
+                <a href="#">Settings</a>
+            </div>
+        </nav>
+
+        <div class="content-grid">
+            <div class="type-sample">
+                <h1>Private Wealth Management</h1>
+                <p class="body-text">
+                    Authoritative financial intelligence presented with precision and elegance. 
+                    Experience wealth management that combines traditional gravitas with modern 
+                    data clarity. Every number matters, every insight is actionable, and every 
+                    detail reflects your commitment to financial excellence.
+                </p>
+                <div class="button-group">
+                    <button class="btn btn-primary">View Full Report</button>
+                    <button class="btn btn-secondary">Export Data</button>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-label">Monthly Overview</div>
+                <h2 class="card-title">Monthly Pulse</h2>
+                
+                <div class="score-display">
+                    <div class="score-number">87</div>
+                    <div class="score-max">/100</div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat">
+                        <div class="stat-label">Total Savings</div>
+                        <div class="stat-value">$12,847</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Budget Health</div>
+                        <div class="stat-value">Excellent</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">This Month</div>
+                        <div class="stat-value">$4,230</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Trend</div>
+                        <div class="stat-value">+12.3%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="design-note">
+            <div class="design-note-title">Premium Finance</div>
+            <div class="design-note-text">
+                Playfair Display × Source Sans 3 • Authoritative Serif + Data-Crisp Sans
+            </div>
+            <div class="design-note-mono">font-feature-settings: 'tnum' 1;</div>
+        </div>
+    </div>
+</body>
+</html>
