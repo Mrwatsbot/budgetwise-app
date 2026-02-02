@@ -1,0 +1,225 @@
+{
+  "_comment": "Font Configuration — Change 'active' to any preset name, then run: node scripts/apply-fonts.mjs",
+  "active": "clean-modern",
+  "presets": {
+    "clean-modern": {
+      "display": "Bricolage Grotesque",
+      "heading": "Bricolage Grotesque",
+      "body": "Instrument Sans",
+      "mono": "JetBrains Mono",
+      "numbers": "Bricolage Grotesque",
+      "displayWeights": [
+        "200",
+        "300",
+        "400",
+        "500",
+        "600",
+        "700",
+        "800"
+      ],
+      "headingWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "bodyWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "monoWeights": [
+        "400",
+        "500",
+        "600"
+      ]
+    },
+    "refined-luxury": {
+      "display": "Cormorant Garamond",
+      "heading": "Cormorant Garamond",
+      "body": "Instrument Sans",
+      "mono": "JetBrains Mono",
+      "numbers": "DM Sans",
+      "displayWeights": [
+        "300",
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "headingWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "bodyWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "monoWeights": [
+        "400",
+        "500",
+        "600"
+      ],
+      "numbersWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ]
+    },
+    "modern-editorial": {
+      "display": "Space Grotesk",
+      "heading": "Space Grotesk",
+      "body": "IBM Plex Sans",
+      "mono": "IBM Plex Mono",
+      "numbers": "Space Grotesk",
+      "displayWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "headingWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "bodyWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "monoWeights": [
+        "400",
+        "500",
+        "600"
+      ]
+    },
+    "warm-approachable": {
+      "display": "DM Sans",
+      "heading": "DM Sans",
+      "body": "Manrope",
+      "mono": "JetBrains Mono",
+      "numbers": "DM Sans",
+      "displayWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "headingWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "bodyWeights": [
+        "400",
+        "500",
+        "600",
+        "700",
+        "800"
+      ],
+      "monoWeights": [
+        "400",
+        "500",
+        "600"
+      ]
+    },
+    "bold-technical": {
+      "display": "DM Sans",
+      "heading": "DM Sans",
+      "body": "DM Sans",
+      "mono": "JetBrains Mono",
+      "numbers": "JetBrains Mono",
+      "displayWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "headingWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "bodyWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "monoWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ]
+    },
+    "premium-finance": {
+      "display": "Playfair Display",
+      "heading": "Playfair Display",
+      "body": "Source Sans 3",
+      "mono": "JetBrains Mono",
+      "numbers": "Source Sans 3",
+      "displayWeights": [
+        "400",
+        "500",
+        "600",
+        "700",
+        "800"
+      ],
+      "headingWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "bodyWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "monoWeights": [
+        "400",
+        "500",
+        "600"
+      ]
+    },
+    "elegant-minimal": {
+      "display": "Libre Baskerville",
+      "heading": "Libre Baskerville",
+      "body": "Inter",
+      "mono": "JetBrains Mono",
+      "numbers": "Inter",
+      "displayWeights": [
+        "400",
+        "700"
+      ],
+      "headingWeights": [
+        "400",
+        "700"
+      ],
+      "bodyWeights": [
+        "400",
+        "500",
+        "600",
+        "700"
+      ],
+      "monoWeights": [
+        "400",
+        "500",
+        "600"
+      ]
+    }
+  }
+}
