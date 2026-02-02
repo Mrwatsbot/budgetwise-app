@@ -57,6 +57,14 @@
 h1, h2 { font-family: var(--font-display); }
 h3, h4, h5, h6 { font-family: var(--font-heading); }
 
+/* Large bold numbers / hero values — auto-apply display font.
+   Covers text-lg+ with font-bold/font-semibold (the pattern used
+   for dollar amounts, scores, and stat numbers across the app).
+   Uses :where() for zero specificity so explicit font-mono etc. still wins. */
+:where(.text-6xl, .text-5xl, .text-4xl, .text-3xl, .text-2xl, .text-xl, .text-lg):where(.font-bold, .font-semibold) {
+  font-family: var(--font-display);
+}
+
 /* ============================================================
    THALLO DESIGN SYSTEM — Deep Teal, Premium, Trustworthy
    ============================================================ */
