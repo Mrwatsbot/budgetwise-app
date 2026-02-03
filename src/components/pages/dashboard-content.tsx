@@ -13,11 +13,13 @@ import { InsightsPanel } from '@/components/ai/insights-panel';
 import { MonthlyPulse } from '@/components/dashboard/monthly-pulse';
 import { YearAtAGlance } from '@/components/dashboard/year-at-a-glance';
 import { RecurringChargesWidget } from '@/components/dashboard/recurring-charges';
+import { SpendingPredictions } from '@/components/dashboard/spending-predictions';
 import { DraggableDashboard, type Widget } from '@/components/dashboard/draggable-dashboard';
 import { useWidgetOrder } from '@/lib/hooks/use-widget-order';
 import { toast } from 'sonner';
 import { getBudgetHealthColor } from '@/lib/budget-health';
 import { PlaidStatusBanner } from '@/components/dashboard/plaid-status-banner';
+import { generateBudgetAlerts, getDismissedAlerts } from '@/lib/budget-alerts';
 
 export function DashboardContent() {
   const { data, isLoading, refresh } = useDashboard();
@@ -26,6 +28,7 @@ export function DashboardContent() {
   const [incomeValue, setIncomeValue] = useState('');
   const [savingIncome, setSavingIncome] = useState(false);
   const { orderedIds, setOrderedIds, saveOrder, discardChanges, resetOrder, hasChanges } = useWidgetOrder();
+  const [alertCount, setAlertCount] = useState(0);
 
   if (isLoading || !data) {
     return <DashboardLoading />;
@@ -117,12 +120,37 @@ export function DashboardContent() {
       <YearAtAGlance monthlySummary={monthlySummary} ytdSurplus={ytdSurplus || 0} />
     ) : null,
 
-    'budget-overview': (
-      <div className="glass-card rounded-xl p-5">
-        <div className="mb-4">
-          <h3 className="font-semibold text-base">Budget Overview</h3>
-          <p className="text-xs text-muted-foreground">Spending vs budget this month</p>
-        </div>
+    'budget-overview': (() => {
+      // Calculate alerts for the notification dot
+      const categoryBudgets = budgets.map((b: any) => ({
+        categoryId: b.id,
+        categoryName: b.name,
+        budgeted: b.budgeted,
+        spent: b.spent,
+        rollover_amount: b.rollover_amount || 0,
+      }));
+      const dismissedAlerts = getDismissedAlerts();
+      const alerts = generateBudgetAlerts(categoryBudgets, dismissedAlerts);
+      const criticalCount = alerts.filter(a => a.type === 'overspent' || a.type === 'danger').length;
+      
+      return (
+        <div className="glass-card rounded-xl p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-base">Budget Overview</h3>
+              {alerts.length > 0 && (
+                <div className="relative">
+                  <div className={`h-2 w-2 rounded-full ${criticalCount > 0 ? 'bg-red-400' : 'bg-amber-400'} animate-pulse`} />
+                  {alerts.length > 1 && (
+                    <span className={`absolute -top-1 -right-1 text-[10px] font-bold ${criticalCount > 0 ? 'text-red-400' : 'text-amber-400'}`}>
+                      {alerts.length}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">Spending vs budget this month</p>
+          </div>
         <div className="space-y-4">
           {budgets && budgets.length > 0 ? budgets.map((budget: { name: string; icon: string; budgeted: number; spent: number; color: string }) => {
             const percentage = (budget.spent / budget.budgeted) * 100;
@@ -162,9 +190,12 @@ export function DashboardContent() {
           )}
         </div>
       </div>
-    ),
+      );
+    })(),
 
     'recurring-charges': <RecurringChargesWidget />,
+
+    'spending-predictions': <SpendingPredictions />,
 
     'recent-transactions': (
       <div className="glass-card rounded-xl p-5">

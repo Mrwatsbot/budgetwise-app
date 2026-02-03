@@ -31,6 +31,7 @@ import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifi
 import { useDragState } from '@/lib/contexts/drag-context';
 import { getBudgetBarStyle } from '@/lib/bar-colors';
 import { BUDGET_GROUPS, GROUP_ORDER, classifyCategory, type BudgetGroupKey } from '@/lib/budget-groups';
+import { calculatePaceIndicator } from '@/lib/pace-helpers';
 
 interface CategoryBudget {
   categoryId: string;
@@ -341,6 +342,7 @@ export function BudgetListCompact({ categoryBudgets, userId, currentMonth, onRef
     const Icon = getCategoryIcon(budget.categoryIcon, budget.categoryName);
     const percentage = budget.budgeted > 0 ? (budget.spent / budget.budgeted) * 100 : 0;
     const isOver = percentage > 100;
+    const paceIndicator = calculatePaceIndicator(budget.spent, budget.budgeted, currentMonth);
 
     return (
       <div ref={setNodeRef} style={style} className="relative pb-1">
@@ -361,17 +363,24 @@ export function BudgetListCompact({ categoryBudgets, userId, currentMonth, onRef
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             <div className="text-right">
-              <span className={`text-sm font-semibold ${isOver ? 'text-red-400' : ''}`}>
-                $<AnimatedNumber value={budget.spent} format="integer" />
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {' / $'}<AnimatedNumber value={budget.budgeted} format="integer" />
-                {budget.rollover_amount !== 0 && budget.rollover_amount !== undefined && (
-                  <span className={budget.rollover_amount > 0 ? 'text-green-400' : 'text-red-400'}>
-                    {' ('}{budget.rollover_amount > 0 ? '+' : ''}{budget.rollover_amount.toFixed(0)})
+              <div className="flex flex-col items-end">
+                <span className={`text-sm font-semibold ${isOver ? 'text-red-400' : ''}`}>
+                  $<AnimatedNumber value={budget.spent} format="integer" />
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {' / $'}<AnimatedNumber value={budget.budgeted} format="integer" />
+                  {budget.rollover_amount !== 0 && budget.rollover_amount !== undefined && (
+                    <span className={budget.rollover_amount > 0 ? 'text-green-400' : 'text-red-400'}>
+                      {' ('}{budget.rollover_amount > 0 ? '+' : ''}{budget.rollover_amount.toFixed(0)})
+                    </span>
+                  )}
+                </span>
+                {!isOver && paceIndicator && (
+                  <span className={`text-[10px] ${paceIndicator.isOverPace ? 'text-orange-400' : 'text-[#7aba5c]'}`}>
+                    {paceIndicator.text}
                   </span>
                 )}
-              </span>
+              </div>
             </div>
             <Button
               variant="ghost"
@@ -405,6 +414,7 @@ export function BudgetListCompact({ categoryBudgets, userId, currentMonth, onRef
     const totalAvailable = budget.budgeted + (budget.rollover_amount || 0);
     const percentage = totalAvailable > 0 ? (budget.spent / totalAvailable) * 100 : 0;
     const isOver = percentage > 100;
+    const paceIndicator = calculatePaceIndicator(budget.spent, budget.budgeted, currentMonth);
 
     return (
       <div className="flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-secondary/50 transition-colors relative">
@@ -414,17 +424,24 @@ export function BudgetListCompact({ categoryBudgets, userId, currentMonth, onRef
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <div className="text-right">
-            <span className={`text-sm font-semibold ${isOver ? 'text-red-400' : ''}`}>
-              $<AnimatedNumber value={budget.spent} format="integer" />
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {' / $'}<AnimatedNumber value={budget.budgeted} format="integer" />
-              {budget.rollover_amount !== 0 && budget.rollover_amount !== undefined && (
-                <span className={budget.rollover_amount > 0 ? 'text-green-400' : 'text-red-400'}>
-                  {' ('}{budget.rollover_amount > 0 ? '+' : ''}{budget.rollover_amount.toFixed(0)})
+            <div className="flex flex-col items-end">
+              <span className={`text-sm font-semibold ${isOver ? 'text-red-400' : ''}`}>
+                $<AnimatedNumber value={budget.spent} format="integer" />
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {' / $'}<AnimatedNumber value={budget.budgeted} format="integer" />
+                {budget.rollover_amount !== 0 && budget.rollover_amount !== undefined && (
+                  <span className={budget.rollover_amount > 0 ? 'text-green-400' : 'text-red-400'}>
+                    {' ('}{budget.rollover_amount > 0 ? '+' : ''}{budget.rollover_amount.toFixed(0)})
+                  </span>
+                )}
+              </span>
+              {!isOver && paceIndicator && (
+                <span className={`text-[10px] ${paceIndicator.isOverPace ? 'text-orange-400' : 'text-[#7aba5c]'}`}>
+                  {paceIndicator.text}
                 </span>
               )}
-            </span>
+            </div>
           </div>
           <Button
             variant="ghost"

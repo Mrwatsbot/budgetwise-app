@@ -12,6 +12,7 @@ import { getCategoryIcon } from '@/lib/category-icons';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { getBudgetBarStyle } from '@/lib/bar-colors';
+import { calculatePaceIndicator } from '@/lib/pace-helpers';
 
 interface BudgetCardProps {
   categoryId: string;
@@ -301,11 +302,23 @@ export function BudgetCard({
               }}
             />
           </div>
-          {isOver && (
-            <p className="text-xs text-red-400">
-              {percentage.toFixed(0)}% of budget used
-            </p>
-          )}
+          {(() => {
+            const paceIndicator = calculatePaceIndicator(spent, budgeted, currentMonth);
+            if (isOver) {
+              return (
+                <p className="text-xs text-red-400">
+                  {percentage.toFixed(0)}% of budget used
+                </p>
+              );
+            } else if (paceIndicator) {
+              return (
+                <p className={`text-xs ${paceIndicator.isOverPace ? 'text-orange-400' : 'text-[#7aba5c]'}`}>
+                  {paceIndicator.text}
+                </p>
+              );
+            }
+            return null;
+          })()}
         </div>
       ) : (
         /* No Budget Set */
