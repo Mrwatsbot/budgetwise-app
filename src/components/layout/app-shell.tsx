@@ -33,6 +33,7 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import { prefetchAllData } from '@/lib/hooks/use-data';
 import { MobileAppView } from '@/components/layout/mobile-app-view';
+import { ChatWidget } from '@/components/chat/chat-widget';
 // Ambient background is now pure CSS on body (globals.css) — no component needed
 
 const SWIPEABLE_PATHS = [
@@ -287,13 +288,16 @@ export function AppShell({ children, user, isDemo = false }: AppShellProps) {
 
       {/* Mobile FAB for quick add */}
       {!isDemo && (
-        <Link href="/transactions" className="fixed bottom-4 right-4 lg:hidden">
+        <Link href="/transactions" className="fixed bottom-4 right-4 lg:hidden z-40">
           <Button size="lg" className="h-14 w-14 rounded-full shadow-lg gradient-btn border-0">
             <Plus className="h-6 w-6 text-white" />
             <span className="sr-only">Add transaction</span>
           </Button>
         </Link>
       )}
+
+      {/* AI Chat Widget — authenticated users only */}
+      {!isDemo && <ChatWidget />}
     </div>
   );
 }
