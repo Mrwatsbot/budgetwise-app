@@ -53,6 +53,9 @@ function findCategoryMatch(plaidCategories: string[] | null | undefined, userCat
 }
 
 export async function POST(request: NextRequest) {
+  let connectionIdForError: string | null = null;
+  let itemIdForError: string | null = null;
+  
   try {
     const supabase = await createClient();
     
@@ -64,6 +67,10 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { connection_id, item_id } = body;
+    
+    // Store for error handling
+    connectionIdForError = connection_id || null;
+    itemIdForError = item_id || null;
 
     // Get connections to sync
     let connectionsQuery = (supabase.from as any)('plaid_connections')
@@ -302,9 +309,40 @@ export async function POST(request: NextRequest) {
       code: error.error_code,
       // DO NOT log full error object (may contain sensitive data)
     });
+
+    // Update connection status if it's a Plaid error
+    const plaidErrorCode = error?.response?.data?.error_code;
+    if (plaidErrorCode && (connectionIdForError || itemIdForError)) {
+      try {
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+          let updateQuery = (supabase.from as any)('plaid_connections')
+            .update({
+              status: 'error',
+              error_code: plaidErrorCode,
+            })
+            .eq('user_id', user.id);
+
+          if (connectionIdForError) {
+            updateQuery = updateQuery.eq('id', connectionIdForError);
+          } else if (itemIdForError) {
+            updateQuery = updateQuery.eq('item_id', itemIdForError);
+          }
+
+          await updateQuery;
+        }
+      } catch (updateError) {
+        console.error('Failed to update connection status:', updateError);
+      }
+    }
     
     return NextResponse.json(
-      { error: 'Failed to sync transactions' },
+      { 
+        error: 'Failed to sync transactions',
+        plaid_error_code: plaidErrorCode,
+      },
       { status: 500 }
     );
   }

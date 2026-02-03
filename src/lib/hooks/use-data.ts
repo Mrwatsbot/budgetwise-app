@@ -66,6 +66,20 @@ export function useTransactions() {
   };
 }
 
+export function usePlaidStatus() {
+  const { data, error, isLoading, mutate: refresh } = useSWR('/api/plaid/status', fetcher, {
+    ...SWR_CONFIG,
+    refreshInterval: 60000, // Refresh every minute to catch status changes
+  });
+  return {
+    connections: data?.connections || [],
+    hasIssues: data?.hasIssues || false,
+    error,
+    isLoading,
+    refresh,
+  };
+}
+
 // Helper: get current month string in user's local timezone (YYYY-MM-DD)
 function getLocalMonthStr() {
   const now = new Date();

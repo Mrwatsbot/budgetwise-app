@@ -57,14 +57,11 @@ export async function GET(request: Request) {
       .select('monthly_contribution')
       .eq('user_id', user.id)
       .eq('is_active', true),
-    // Plaid connections (last synced)
+    // Plaid connections (all, with status)
     (supabase.from as any)('plaid_connections')
-      .select('last_synced_at')
+      .select('id, institution_id, institution_name, status, last_synced_at, error_code, created_at')
       .eq('user_id', user.id)
-      .eq('status', 'active')
-      .order('last_synced_at', { ascending: false })
-      .limit(1)
-      .maybeSingle(),
+      .order('created_at', { ascending: false }),
     // Yearly transactions (just amount + date for monthly summaries)
     supabase
       .from('transactions')
@@ -207,7 +204,8 @@ export async function GET(request: Request) {
     recentAchievements,
     monthlySummary,
     ytdSurplus: Math.round(runningTotal * 100) / 100,
-    plaidLastSynced: plaidRes.data?.last_synced_at || null,
+    plaidLastSynced: plaidRes.data?.[0]?.last_synced_at || null,
+    plaidConnections: plaidRes.data || [],
     user: {
       email: user.email,
       full_name: user.user_metadata?.full_name || user.email?.split('@')[0],

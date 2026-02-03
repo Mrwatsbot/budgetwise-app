@@ -79,15 +79,27 @@ export function TransactionList({ transactions, categories = [], showAccount = f
     
     setDeleting(id);
     try {
-      const supabase = createClient();
-      const { error } = await supabase
-        .from('transactions')
-        .delete()
-        .eq('id', id);
+      const response = await fetch(`/api/transactions/${id}`, {
+        method: 'DELETE',
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to delete');
+      }
 
-      toast.success('Transaction deleted');
+      // Show toast with undo button
+      toast.success('Transaction deleted', {
+        duration: 8000,
+        action: {
+          label: 'Undo',
+          onClick: () => handleUndo(id),
+        },
+        classNames: {
+          actionButton: 'bg-teal-600 hover:bg-teal-700 text-white',
+        },
+      });
+
       if (onRefresh) {
         onRefresh();
       } else {
@@ -110,12 +122,16 @@ export function TransactionList({ transactions, categories = [], showAccount = f
     if (!transaction) return;
 
     try {
-      const supabase = createClient();
-      const { error } = await (supabase.from as any)('transactions')
-        .update({ category_id: categoryId })
-        .eq('id', transactionId);
+      const response = await fetch(`/api/transactions/${transactionId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category_id: categoryId }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to update');
+      }
 
       // Get the new category name
       const newCategory = categories.find(c => c.id === categoryId);
@@ -130,7 +146,18 @@ export function TransactionList({ transactions, categories = [], showAccount = f
         setRuleDialogOpen(true);
       }
 
-      toast.success('Category updated');
+      // Show toast with undo button
+      toast.success('Category updated', {
+        duration: 8000,
+        action: {
+          label: 'Undo',
+          onClick: () => handleUndo(transactionId),
+        },
+        classNames: {
+          actionButton: 'bg-teal-600 hover:bg-teal-700 text-white',
+        },
+      });
+
       setEditing(null);
       if (onRefresh) {
         onRefresh();
@@ -139,6 +166,30 @@ export function TransactionList({ transactions, categories = [], showAccount = f
       }
     } catch (error: any) {
       toast.error(error.message || 'Failed to update category');
+    }
+  };
+
+  const handleUndo = async (transactionId: string) => {
+    try {
+      const response = await fetch('/api/transactions/undo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transaction_id: transactionId }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to undo');
+      }
+
+      toast.success('Change undone');
+      if (onRefresh) {
+        onRefresh();
+      } else {
+        router.refresh();
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to undo');
     }
   };
 

@@ -108,6 +108,15 @@ export interface Transaction {
   account?: Account;
 }
 
+export interface TransactionHistory {
+  id: string;
+  transaction_id: string;
+  user_id: string;
+  action: 'create' | 'update' | 'delete';
+  previous_data: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface Budget {
   id: string;
   user_id: string;
@@ -375,6 +384,7 @@ export interface Database {
       accounts: { Row: Account; Insert: Partial<Account>; Update: Partial<Account> };
       categories: { Row: Category; Insert: Partial<Category>; Update: Partial<Category> };
       transactions: { Row: Transaction; Insert: Partial<Transaction>; Update: Partial<Transaction> };
+      transaction_history: { Row: TransactionHistory; Insert: Partial<TransactionHistory>; Update: never };
       budgets: { Row: Budget; Insert: Partial<Budget>; Update: Partial<Budget> };
       payee_rules: { Row: PayeeRule; Insert: Partial<PayeeRule>; Update: Partial<PayeeRule> };
       ai_usage: { Row: AIUsage; Insert: Partial<AIUsage>; Update: never };

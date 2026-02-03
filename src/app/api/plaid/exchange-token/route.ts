@@ -60,23 +60,50 @@ export async function POST(request: NextRequest) {
     // Encrypt the access token
     const encryptedAccessToken = encryptToken(accessToken);
 
-    // Store connection in database
-    const { error: dbError } = await (supabase.from as any)('plaid_connections')
-      .insert({
-        user_id: user.id,
-        institution_id: institutionId,
-        institution_name: institutionName,
-        item_id: itemId,
-        encrypted_access_token: encryptedAccessToken,
-        status: 'active',
-      });
+    // Check if this is a reconnection (existing item_id)
+    const { data: existingConnection } = await (supabase.from as any)('plaid_connections')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('item_id', itemId)
+      .maybeSingle();
 
-    if (dbError) {
-      console.error('Database error:', dbError);
-      return NextResponse.json(
-        { error: 'Failed to save connection' },
-        { status: 500 }
-      );
+    if (existingConnection) {
+      // Update existing connection (reconnection)
+      const { error: dbError } = await (supabase.from as any)('plaid_connections')
+        .update({
+          encrypted_access_token: encryptedAccessToken,
+          status: 'active',
+          error_code: null,
+          institution_name: institutionName, // Update in case it changed
+        })
+        .eq('id', existingConnection.id);
+
+      if (dbError) {
+        console.error('Database error:', dbError);
+        return NextResponse.json(
+          { error: 'Failed to update connection' },
+          { status: 500 }
+        );
+      }
+    } else {
+      // Insert new connection
+      const { error: dbError } = await (supabase.from as any)('plaid_connections')
+        .insert({
+          user_id: user.id,
+          institution_id: institutionId,
+          institution_name: institutionName,
+          item_id: itemId,
+          encrypted_access_token: encryptedAccessToken,
+          status: 'active',
+        });
+
+      if (dbError) {
+        console.error('Database error:', dbError);
+        return NextResponse.json(
+          { error: 'Failed to save connection' },
+          { status: 500 }
+        );
+      }
     }
 
     // Trigger initial sync (fire and forget - don't wait)

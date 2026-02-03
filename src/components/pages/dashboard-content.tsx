@@ -17,6 +17,7 @@ import { DraggableDashboard, type Widget } from '@/components/dashboard/draggabl
 import { useWidgetOrder } from '@/lib/hooks/use-widget-order';
 import { toast } from 'sonner';
 import { getBudgetHealthColor } from '@/lib/budget-health';
+import { PlaidStatusBanner } from '@/components/dashboard/plaid-status-banner';
 
 export function DashboardContent() {
   const { data, isLoading, refresh } = useDashboard();
@@ -30,7 +31,7 @@ export function DashboardContent() {
     return <DashboardLoading />;
   }
 
-  const { totalBalance, monthlyIncome, monthlyExpenses, recentTransactions, budgets, totalBudgeted, totalSavingsTarget, user, accounts, budgetedMonthlyIncome, payFrequency, nextPayDate, scoreData, recentAchievements, plaidLastSynced, monthlySummary, ytdSurplus } = data;
+  const { totalBalance, monthlyIncome, monthlyExpenses, recentTransactions, budgets, totalBudgeted, totalSavingsTarget, user, accounts, budgetedMonthlyIncome, payFrequency, nextPayDate, scoreData, recentAchievements, plaidLastSynced, monthlySummary, ytdSurplus, plaidConnections } = data;
   const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   const hasIncome = budgetedMonthlyIncome > 0;
 
@@ -208,8 +209,43 @@ export function DashboardContent() {
     setOrderedIds(newOrder);
   };
 
+  // Process Plaid connections to detect issues
+  const now = Date.now();
+  const STALE_THRESHOLD_MS = 24 * 60 * 60 * 1000; // 24 hours
+  const plaidConnectionsWithIssues = (plaidConnections || []).map((conn: any) => {
+    const lastSynced = conn.last_synced_at ? new Date(conn.last_synced_at).getTime() : 0;
+    const hoursSinceSync = lastSynced ? Math.floor((now - lastSynced) / (1000 * 60 * 60)) : null;
+    
+    let issue = null;
+    if (conn.status !== 'active') {
+      issue = {
+        type: 'error' as const,
+        connectionId: conn.id,
+        institutionName: conn.institution_name,
+        message: `${conn.institution_name} connection lost. Tap to reconnect.`,
+        errorCode: conn.error_code,
+      };
+    } else if (lastSynced && (now - lastSynced) > STALE_THRESHOLD_MS) {
+      const days = Math.floor(hoursSinceSync! / 24);
+      issue = {
+        type: 'stale' as const,
+        connectionId: conn.id,
+        institutionName: conn.institution_name,
+        message: `Last synced ${days > 1 ? `${days} days` : `${hoursSinceSync} hours`} ago. Tap to sync now.`,
+        hoursSinceSync,
+      };
+    }
+
+    return { ...conn, issue };
+  });
+
   return (
     <div className="space-y-6">
+      {/* Plaid Status Banner */}
+      {plaidConnectionsWithIssues.length > 0 && (
+        <PlaidStatusBanner connections={plaidConnectionsWithIssues} onRefresh={refresh} />
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-display font-bold">Dashboard</h1>
