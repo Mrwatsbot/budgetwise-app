@@ -260,13 +260,52 @@ export function AutoBudgetDialog({ currentMonth, onApplied, prominent = false, s
     setError(null);
 
     try {
+      // Fetch real categories from the DB so we can resolve AI names → real IDs
+      let realCategories: { id: string; name: string; type: string }[] = [];
+      try {
+        const catRes = await fetch('/api/budgets?month=' + currentMonth);
+        if (catRes.ok) {
+          const catData = await catRes.json();
+          realCategories = catData.categories || [];
+        }
+      } catch { /* fallback to server-side resolution */ }
+
+      // Build lookup maps for client-side resolution
+      const catByExactName = new Map(realCategories.map(c => [c.name.toLowerCase().trim(), c.id]));
+      
+      // Fuzzy match: find best category by checking if name contains/is contained
+      const fuzzyResolve = (aiName: string): string | null => {
+        const needle = aiName.toLowerCase().trim();
+        // Exact match first
+        if (catByExactName.has(needle)) return catByExactName.get(needle)!;
+        // Check if AI name contains a real category name or vice versa
+        for (const [realName, realId] of catByExactName) {
+          if (needle.includes(realName) || realName.includes(needle)) return realId;
+        }
+        // Word overlap: find category with most matching words
+        const aiWords = needle.split(/[\s&,/]+/).filter(w => w.length > 2);
+        let bestMatch: { id: string; score: number } | null = null;
+        for (const [realName, realId] of catByExactName) {
+          const realWords = realName.split(/[\s&,/]+/).filter(w => w.length > 2);
+          const overlap = aiWords.filter(w => realWords.some(rw => rw.includes(w) || w.includes(rw))).length;
+          if (overlap > 0 && (!bestMatch || overlap > bestMatch.score)) {
+            bestMatch = { id: realId, score: overlap };
+          }
+        }
+        return bestMatch?.id || null;
+      };
+
       const allocations = result.allocations
         .filter((a) => (a.category_id || a.category_name) && a.amount > 0)
-        .map((a) => ({
-          category_id: a.category_id || null,
-          category_name: a.category_name,
-          amount: a.amount,
-        }));
+        .map((a) => {
+          // Always resolve by name first (AI IDs are unreliable)
+          const resolvedId = a.category_name ? fuzzyResolve(a.category_name) : null;
+          return {
+            category_id: resolvedId || a.category_id || null,
+            category_name: a.category_name,
+            amount: a.amount,
+          };
+        });
 
       // Prepare savings goal allocations
       const savingsAllocations = (result.savings_goal_allocations || [])

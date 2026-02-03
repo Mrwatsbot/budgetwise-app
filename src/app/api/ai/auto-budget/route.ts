@@ -260,12 +260,35 @@ export async function PUT(request: Request) {
       .select('id, name, type')
       .order('sort_order');
     
+    const categoryList = (allCategories || []) as { id: string; name: string; type: string }[];
     const categoryByName = new Map(
-      (allCategories || []).map((c: { id: string; name: string }) => [c.name.toLowerCase().trim(), c.id])
+      categoryList.map((c) => [c.name.toLowerCase().trim(), c.id])
     );
     const validCategoryIds = new Set(
-      (allCategories || []).map((c: { id: string }) => c.id)
+      categoryList.map((c) => c.id)
     );
+
+    // Fuzzy resolver: exact → contains → word overlap
+    const fuzzyResolveCategory = (aiName: string): string | null => {
+      const needle = aiName.toLowerCase().trim();
+      // 1. Exact match
+      if (categoryByName.has(needle)) return categoryByName.get(needle)!;
+      // 2. Contains match (either direction)
+      for (const [realName, realId] of categoryByName) {
+        if (needle.includes(realName) || realName.includes(needle)) return realId;
+      }
+      // 3. Word overlap scoring
+      const aiWords = needle.split(/[\s&,/]+/).filter(w => w.length > 2);
+      let bestMatch: { id: string; score: number } | null = null;
+      for (const [realName, realId] of categoryByName) {
+        const realWords = realName.split(/[\s&,/]+/).filter(w => w.length > 2);
+        const overlap = aiWords.filter(w => realWords.some(rw => rw.includes(w) || w.includes(rw))).length;
+        if (overlap > 0 && (!bestMatch || overlap > bestMatch.score)) {
+          bestMatch = { id: realId, score: overlap };
+        }
+      }
+      return bestMatch?.id || null;
+    };
 
     // Upsert each budget allocation
     const results = [];
@@ -288,9 +311,9 @@ export async function PUT(request: Request) {
         categoryId = null; // AI hallucinated an invalid ID — fall back to name
       }
       
-      // Fall back to name lookup
+      // Fall back to fuzzy name lookup
       if (!categoryId && alloc.category_name) {
-        categoryId = categoryByName.get(alloc.category_name.toLowerCase().trim()) || null;
+        categoryId = fuzzyResolveCategory(alloc.category_name);
         if (!categoryId) resolvedBy = 'FAILED';
         else if (resolvedBy !== 'name-fallback (invalid id)') resolvedBy = 'name-lookup';
       }
