@@ -58,9 +58,10 @@ export function BudgetsContent() {
     return sum + contributed;
   }, 0);
 
-  // Grand totals including savings
-  const grandTotalBudgeted = totalBudgeted + totalSavingsMonthly;
-  const grandTotalSpent = totalSpent + totalSavingsContributedThisMonth;
+  // Savings comes FROM income, not on top of it
+  // The summary cards show expense budgets only; savings shown separately in allocation bar
+  const grandTotalBudgeted = totalBudgeted;
+  const grandTotalSpent = totalSpent;
 
   // Check if user has any budgets set
   const hasBudgets = categoryBudgets.some((b: { budgeted: number }) => b.budgeted > 0);
@@ -116,7 +117,7 @@ export function BudgetsContent() {
                 <p className="text-xs sm:text-sm text-muted-foreground">Budgeted</p>
                 <p className="text-base sm:text-xl font-display font-bold truncate">${grandTotalBudgeted.toFixed(2)}</p>
                 {totalSavingsMonthly > 0 && (
-                  <p className="text-[10px] text-muted-foreground/70 truncate">incl. ${totalSavingsMonthly.toFixed(0)} savings</p>
+                  <p className="text-[10px] text-muted-foreground/70 truncate">+ ${totalSavingsMonthly.toFixed(0)} savings</p>
                 )}
               </div>
               <div className="text-center min-w-0 border-x border-border">

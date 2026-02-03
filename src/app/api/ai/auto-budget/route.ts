@@ -163,13 +163,14 @@ ${categoryList}
 User's savings goals in Thallo:
 ${savingsTargets}
 
-IMPORTANT: Allocate the FULL monthly income across the categories above. 
-${hasSavingsCategories 
-  ? 'Allocate ~20% of income to savings/investment categories (Savings, Emergency Fund, Investments, etc.) following the 50/30/20 rule.'
-  : 'NOTE: No dedicated savings categories exist yet. Still follow 50/30/20 — allocate ~20% to the category most suitable for savings (e.g., "Other Expense" or similar) and strongly recommend the user create Savings/Emergency Fund categories for proper tracking.'}
-All allocations MUST sum to the monthly income — do NOT leave money unallocated.
+IMPORTANT: The expense category allocations + savings goal contributions MUST sum to the monthly income. Do NOT allocate the full income to expense categories and then add savings on top — savings comes FROM the income.
 
-${savings.length > 0 ? `SAVINGS GOALS: The user has ${savings.length} savings goal(s) listed above with IDs. You MUST also suggest monthly_contribution amounts for each savings goal in the "savings_goal_allocations" field. These contributions should come from the ~20% savings portion of the budget. Use the goal IDs provided.` : ''}`;
+Follow the 50/30/20 rule: ~50% needs, ~30% wants, ~20% savings/debt.
+${hasSavingsCategories 
+  ? 'Allocate the ~20% savings portion to savings/investment categories (Savings, Emergency Fund, Investments, etc.).'
+  : 'NOTE: No dedicated savings categories exist yet. Allocate ~20% to the category most suitable for savings (e.g., "Other Expense" or similar) and strongly recommend the user create Savings/Emergency Fund categories for proper tracking.'}
+
+${savings.length > 0 ? `SAVINGS GOALS: The user has ${savings.length} savings goal(s) listed above with IDs. You MUST also suggest monthly_contribution amounts for each savings goal in the "savings_goal_allocations" field. These contributions are PART OF (not in addition to) the ~20% savings portion. The expense category allocations + savings goal contributions together must equal the monthly income.` : 'All expense category allocations MUST sum to the monthly income — do NOT leave money unallocated.'}`;
 
     // Fetch BYOK key if applicable
     let apiKeyOverride: string | undefined;
