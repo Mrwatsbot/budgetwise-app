@@ -11,6 +11,7 @@ import { AffordCheckDialog } from '@/components/budgets/afford-check-dialog';
 import { TransferDialog } from '@/components/budgets/transfer-dialog';
 import { getBudgetHealthColor } from '@/lib/budget-health';
 import { getAllocationBarStyle } from '@/lib/bar-colors';
+import { BudgetAlertsBanner } from '@/components/budgets/budget-alerts-banner';
 
 export function BudgetsContent() {
   const { budgets, categories, spentByCategory, monthlyIncome, totalSavingsTarget, user, isLoading, refresh } = useBudgets();
@@ -167,6 +168,11 @@ export function BudgetsContent() {
               </div>
             )}
           </div>
+
+          {/* Budget Alerts */}
+          {hasBudgets && (
+            <BudgetAlertsBanner categoryBudgets={categoryBudgets} />
+          )}
 
           {/* Move Money — above budget categories */}
           {hasBudgets && (
