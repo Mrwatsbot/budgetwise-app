@@ -30,7 +30,6 @@ export function TourTooltip({
   position,
   targetRect,
 }: TourTooltipProps) {
-  // Calculate tooltip position based on target element and placement
   const getTooltipStyle = (): React.CSSProperties => {
     if (position === 'center' || !targetRect) {
       return {
@@ -40,51 +39,56 @@ export function TourTooltip({
       };
     }
 
-    const gap = 16; // Gap between target and tooltip
-    let style: React.CSSProperties = {};
+    const gap = 16;
+    const maxWidth = 384; // max-w-md = 28rem = 448px, but be conservative
+    const vw = typeof window !== 'undefined' ? window.innerWidth : 1024;
+    const vh = typeof window !== 'undefined' ? window.innerHeight : 768;
+
+    // Center of target
+    const targetCenterX = targetRect.left + targetRect.width / 2;
+
+    // Clamp horizontal position to stay on screen
+    const clampLeft = (rawLeft: number) => {
+      return Math.max(12, Math.min(rawLeft, vw - maxWidth - 12));
+    };
 
     switch (position) {
-      case 'top':
-        style = {
-          bottom: `${window.innerHeight - targetRect.top + gap}px`,
-          left: `${targetRect.left + targetRect.width / 2}px`,
-          transform: 'translateX(-50%)',
-        };
-        break;
       case 'bottom':
-        style = {
+        return {
           top: `${targetRect.top + targetRect.height + gap}px`,
-          left: `${targetRect.left + targetRect.width / 2}px`,
-          transform: 'translateX(-50%)',
+          left: `${clampLeft(targetCenterX - maxWidth / 2)}px`,
         };
-        break;
+      case 'top':
+        return {
+          bottom: `${vh - targetRect.top + gap}px`,
+          left: `${clampLeft(targetCenterX - maxWidth / 2)}px`,
+        };
       case 'left':
-        style = {
-          top: `${targetRect.top + targetRect.height / 2}px`,
-          right: `${window.innerWidth - targetRect.left + gap}px`,
-          transform: 'translateY(-50%)',
+        return {
+          top: `${Math.max(12, targetRect.top + targetRect.height / 2 - 100)}px`,
+          right: `${vw - targetRect.left + gap}px`,
         };
-        break;
       case 'right':
-        style = {
-          top: `${targetRect.top + targetRect.height / 2}px`,
+        return {
+          top: `${Math.max(12, targetRect.top + targetRect.height / 2 - 100)}px`,
           left: `${targetRect.left + targetRect.width + gap}px`,
-          transform: 'translateY(-50%)',
         };
-        break;
+      default:
+        return {
+          top: `${targetRect.top + targetRect.height + gap}px`,
+          left: `${clampLeft(targetCenterX - maxWidth / 2)}px`,
+        };
     }
-
-    return style;
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95, y: position === 'top' ? 10 : -10 }}
+      initial={{ opacity: 0, scale: 0.95, y: position === 'top' ? 10 : position === 'bottom' ? -10 : 0 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="fixed z-[10000] bg-zinc-900/95 backdrop-blur-xl border border-[#1a7a6d] rounded-xl shadow-2xl max-w-md pointer-events-auto"
-      style={getTooltipStyle()}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      className="fixed z-[10002] bg-zinc-900/95 backdrop-blur-xl border border-[#1a7a6d] rounded-xl shadow-2xl pointer-events-auto"
+      style={{ ...getTooltipStyle(), maxWidth: '384px', width: 'calc(100vw - 24px)' }}
     >
       {/* Header with step counter */}
       <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-[#1a7a6d33]">
@@ -106,7 +110,7 @@ export function TourTooltip({
       {/* Content */}
       <div className="px-5 py-4">
         {step.title && (
-          <h3 className="text-lg font-display font-semibold text-[#e8eded] mb-2">
+          <h3 className="text-lg font-semibold text-[#e8eded] mb-2">
             {step.title}
           </h3>
         )}
@@ -138,7 +142,7 @@ export function TourTooltip({
             size="sm"
             className="text-[#8aaba6] hover:text-[#e8eded] hover:bg-[#1a7a6d22]"
           >
-            Skip Tour
+            Skip
           </Button>
 
           <Button

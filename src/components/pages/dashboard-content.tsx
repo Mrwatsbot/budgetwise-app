@@ -87,23 +87,25 @@ export function DashboardContent() {
   // Build widget sections as a map
   const widgetSections: Record<string, ReactNode> = {
     'monthly-pulse': hasIncome ? (
-      <MonthlyPulse
-        monthlyIncome={budgetedMonthlyIncome}
-        totalBudgeted={totalBudgeted}
-        monthlyExpenses={monthlyExpenses}
-        currentMonth={new Date().toISOString().split('T')[0]}
-        editingIncome={editingIncome}
-        setEditingIncome={setEditingIncome}
-        incomeValue={incomeValue}
-        setIncomeValue={setIncomeValue}
-        savingIncome={savingIncome}
-        handleSaveIncome={handleSaveIncome}
-        onBudgetAdjusted={refresh}
-        totalBalance={totalBalance}
-        accountCount={accounts?.length || 0}
-        payFrequency={payFrequency}
-        nextPayDate={nextPayDate}
-      />
+      <div data-tour="income-section">
+        <MonthlyPulse
+          monthlyIncome={budgetedMonthlyIncome}
+          totalBudgeted={totalBudgeted}
+          monthlyExpenses={monthlyExpenses}
+          currentMonth={new Date().toISOString().split('T')[0]}
+          editingIncome={editingIncome}
+          setEditingIncome={setEditingIncome}
+          incomeValue={incomeValue}
+          setIncomeValue={setIncomeValue}
+          savingIncome={savingIncome}
+          handleSaveIncome={handleSaveIncome}
+          onBudgetAdjusted={refresh}
+          totalBalance={totalBalance}
+          accountCount={accounts?.length || 0}
+          payFrequency={payFrequency}
+          nextPayDate={nextPayDate}
+        />
+      </div>
     ) : null,
 
     'score-widget': (liveScore || scoreData) ? (
@@ -121,7 +123,8 @@ export function DashboardContent() {
     ) : null,
 
     'budget-overview': (() => {
-      // Calculate alerts for the notification dot
+      // Calculate alerts for the notification dot  
+      /* data-tour="allocation-bar" is on the wrapper below */
       const categoryBudgets = budgets.map((b: any) => ({
         categoryId: b.id,
         categoryName: b.name,
@@ -134,7 +137,7 @@ export function DashboardContent() {
       const criticalCount = alerts.filter(a => a.type === 'overspent' || a.type === 'danger').length;
       
       return (
-        <div className="glass-card rounded-xl p-5">
+        <div data-tour="allocation-bar" className="glass-card rounded-xl p-5">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-base">Budget Overview</h3>
