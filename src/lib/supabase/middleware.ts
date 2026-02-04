@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { logger } from '@/lib/logger';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -33,12 +34,27 @@ export async function updateSession(request: NextRequest) {
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  
+  try {
+    const response = await supabase.auth.getUser();
+    user = response.data.user;
+  } catch (error) {
+    // If auth check fails (network error, token refresh failure, etc.),
+    // log the error but don't redirect to login
+    // Let the request proceed and let client-side handle session recovery
+    logger.error('Auth middleware error - allowing request to proceed', {
+      path: request.nextUrl.pathname,
+      error: error instanceof Error ? error : String(error),
+    });
+    
+    // Return the response without auth check
+    // Client-side session recovery will handle this
+    return supabaseResponse;
+  }
 
   // Protected routes - redirect to login if not authenticated
-  const protectedPaths = ['/dashboard', '/transactions', '/budgets', '/debts', '/savings', '/score', '/settings', '/onboarding', '/api/debts', '/api/dashboard', '/api/transactions', '/api/budgets', '/api/ai'];
+  const protectedPaths = ['/dashboard', '/transactions', '/budgets', '/debts', '/savings', '/score', '/settings', '/onboarding', '/reports', '/review', '/coaching', '/creator', '/api/debts', '/api/dashboard', '/api/transactions', '/api/budgets', '/api/ai', '/api/reports', '/api/chat', '/api/predictions', '/api/recurring', '/api/category-rules', '/api/stripe'];
   const isProtectedPath = protectedPaths.some(path => 
     request.nextUrl.pathname.startsWith(path)
   );

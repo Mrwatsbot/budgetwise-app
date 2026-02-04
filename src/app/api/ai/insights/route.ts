@@ -1,3 +1,4 @@
+export const maxDuration = 60;
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generatePageInsights } from '@/lib/ai/openrouter';
@@ -15,7 +16,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const rl = rateLimit(user.id, 10);
+    const rl = await rateLimit(user.id, 10);
     if (!rl.success) {
       return NextResponse.json(
         { error: 'Too many requests' },
@@ -70,7 +71,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const rl = rateLimit(user.id, 10);
+    const rl = await rateLimit(user.id, 10);
     if (!rl.success) {
       return NextResponse.json(
         { error: 'Too many requests' },
@@ -169,6 +170,8 @@ export async function POST(request: NextRequest) {
       insights,
       generated_at: new Date().toISOString(),
       stale: false,
+      model: response.model,
+      estimatedCost: response.estimatedCost,
     });
   } catch (error) {
     console.error('AI insights POST error:', error);

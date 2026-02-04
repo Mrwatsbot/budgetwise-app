@@ -11,6 +11,7 @@ interface SubComponent {
   score: number;
   max: number;
   detail: string;
+  tip?: string; // Optional tip if scoring low
 }
 
 interface PillarCardProps {
@@ -20,6 +21,7 @@ interface PillarCardProps {
   max: number;
   color: string; // e.g. 'blue', 'emerald', 'amber'
   subComponents: SubComponent[];
+  upsideText?: string; // e.g. "+40 pts available if you hit budget this week"
 }
 
 const PILLAR_DESCRIPTIONS: Record<string, string> = {
@@ -56,7 +58,7 @@ function MiniProgress({ value, max }: { value: number; max: number; color: strin
   );
 }
 
-export function PillarCard({ name, icon: Icon, score, max, color, subComponents }: PillarCardProps) {
+export function PillarCard({ name, icon: Icon, score, max, color, subComponents, upsideText }: PillarCardProps) {
   const colorTextMap: Record<string, string> = {
     blue: 'text-blue-400',
     emerald: 'text-emerald-400',
@@ -107,18 +109,56 @@ export function PillarCard({ name, icon: Icon, score, max, color, subComponents 
           {/* Main pillar progress bar — visually distinct */}
           <MainProgressBar value={score} max={max} color={color} />
 
+          {/* Reachable upside — turns dashboard into action list */}
+          {upsideText && (
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="text-[10px] font-semibold text-emerald-400">▲</span>
+              <p className="text-[10px] text-emerald-400/80 font-medium leading-snug">
+                {upsideText}
+              </p>
+            </div>
+          )}
+
           {/* Divider + sub-components — indented to feel nested */}
           <div className="border-t border-border/30 pt-3 ml-1 space-y-3">
             <p className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">Breakdown</p>
-            {subComponents.map((sub) => (
-              <div key={sub.name} className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">{sub.name}</span>
-                  <span className="font-medium tabular-nums">{sub.score}/{sub.max}</span>
+            {subComponents.map((sub) => {
+              const percentage = sub.max > 0 ? (sub.score / sub.max) * 100 : 0;
+              const isLowScore = percentage < 70;
+              
+              return (
+                <div key={sub.name} className="space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-muted-foreground">{sub.name}</span>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button 
+                            className="inline-flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
+                            aria-label={`Information about ${sub.name}`}
+                          >
+                            <Info className="w-3 h-3" />
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="max-w-[280px] text-xs leading-relaxed p-3">
+                          <p className="font-medium mb-1">{sub.name}</p>
+                          <p className="text-muted-foreground">{sub.detail}</p>
+                          {isLowScore && sub.tip && (
+                            <p className="mt-2 text-amber-400 text-[11px]">
+                              💡 {sub.tip}
+                            </p>
+                          )}
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <span className="font-medium tabular-nums">{sub.score}/{sub.max}</span>
+                  </div>
+                  <MiniProgress value={sub.score} max={sub.max} color={color} />
+                  {/* Show detail string below progress bar */}
+                  <p className="text-[10px] text-muted-foreground/70 leading-snug">{sub.detail}</p>
                 </div>
-                <MiniProgress value={sub.score} max={sub.max} color={color} />
-              </div>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>

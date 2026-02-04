@@ -68,9 +68,10 @@ interface SavingsGoal {
 interface GoalCardProps {
   goal: SavingsGoal;
   onRefresh?: () => void;
+  isInvestment?: boolean;
 }
 
-export function GoalCard({ goal, onRefresh }: GoalCardProps) {
+export function GoalCard({ goal, onRefresh, isInvestment = false }: GoalCardProps) {
   const [contributeOpen, setContributeOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [contribAmount, setContribAmount] = useState('');
@@ -92,6 +93,9 @@ export function GoalCard({ goal, onRefresh }: GoalCardProps) {
   const percentage = hasTarget
     ? Math.min(100, (goal.current_amount / goal.target_amount!) * 100)
     : 0;
+  
+  // For investments, show a subtle growth indicator if monthly contribution exists
+  const showProgressBar = hasTarget && !isInvestment;
 
   const handleContribute = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -164,11 +168,11 @@ export function GoalCard({ goal, onRefresh }: GoalCardProps) {
 
   return (
     <>
-      <div className="glass-card rounded-xl p-5 transition-all hover:border-[#1a7a6d4d]">
+      <div className={`glass-card rounded-xl p-5 transition-all ${isInvestment ? 'hover:border-blue-400/30' : 'hover:border-[#1a7a6d4d]'}`}>
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
-            <GoalIcon className="w-5 h-5 text-[#1a7a6d]" />
+            <GoalIcon className={`w-5 h-5 ${isInvestment ? 'text-blue-400' : 'text-[#1a7a6d]'}`} />
             <h3 className="font-semibold truncate">{goal.name}</h3>
           </div>
           <DropdownMenu>
@@ -194,13 +198,22 @@ export function GoalCard({ goal, onRefresh }: GoalCardProps) {
           </DropdownMenu>
         </div>
 
-        {/* Current Amount */}
-        <p className="text-2xl font-display font-bold mb-2">
-          ${goal.current_amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-        </p>
+        {/* Current Amount - more prominent for investments */}
+        {isInvestment ? (
+          <div className="mb-3">
+            <p className="text-xs text-muted-foreground mb-1">Balance</p>
+            <p className="text-3xl font-bold text-[#7aba5c]">
+              ${goal.current_amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            </p>
+          </div>
+        ) : (
+          <p className="text-2xl font-bold mb-2">
+            ${goal.current_amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          </p>
+        )}
 
-        {/* Progress bar if target exists */}
-        {hasTarget && (
+        {/* Progress bar for goals with targets (not investments) */}
+        {showProgressBar && (
           <div className="mb-3">
             <div className="flex justify-between text-xs text-muted-foreground mb-1">
               <span>{percentage.toFixed(0)}% of goal</span>
@@ -218,19 +231,27 @@ export function GoalCard({ goal, onRefresh }: GoalCardProps) {
         {/* Monthly contribution badge */}
         {goal.monthly_contribution > 0 && (
           <Badge variant="secondary" className="text-xs mb-3">
-            ${goal.monthly_contribution.toLocaleString('en-US', { minimumFractionDigits: 2 })}/mo
+            {isInvestment ? '💰 ' : ''}${goal.monthly_contribution.toLocaleString('en-US', { minimumFractionDigits: 2 })}/mo
           </Badge>
+        )}
+
+        {/* Growth indicator for investments (subtle) */}
+        {isInvestment && goal.monthly_contribution > 0 && (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+            <TrendingUp className="w-3 h-3 text-green-400" />
+            <span>Growing with monthly contributions</span>
+          </div>
         )}
 
         {/* Add Contribution button */}
         <Button
           size="sm"
           variant="outline"
-          className="w-full border-[#6db555]/30 text-[#7aba5c] hover:bg-[#6db555]/10 mt-1"
+          className={`w-full ${isInvestment ? 'border-blue-400/30 text-blue-400 hover:bg-blue-400/10' : 'border-[#6db555]/30 text-[#7aba5c] hover:bg-[#6db555]/10'} mt-1`}
           onClick={() => setContributeOpen(true)}
         >
           <Plus className="mr-2 h-4 w-4" />
-          Add Contribution
+          {isInvestment ? 'Add Contribution' : 'Add Contribution'}
         </Button>
       </div>
 

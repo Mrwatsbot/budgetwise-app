@@ -1,3 +1,4 @@
+export const maxDuration = 60;
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { callAI } from '@/lib/ai/openrouter';
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const rl = rateLimit(user.id, 10);
+    const rl = await rateLimit(user.id, 10);
     if (!rl.success) {
       return NextResponse.json(
         { error: 'Too many requests' },
@@ -104,6 +105,9 @@ Rules:
       return NextResponse.json({
         error: 'Could not identify product',
         raw: result.content,
+        model: result.model,
+        usage: result.usage,
+        estimatedCost: result.estimatedCost,
       }, { status: 422 });
     }
 
@@ -122,6 +126,9 @@ Rules:
     return NextResponse.json({
       success: true,
       data: extracted,
+      model: result.model,
+      usage: result.usage,
+      estimatedCost: result.estimatedCost,
     });
   } catch (error) {
     console.error('Product scan error:', error);

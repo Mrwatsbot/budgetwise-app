@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
   const { user, supabase } = guard;
 
   // Rate limit: 5 exports per minute
-  const rateLimitResult = rateLimit(user.id, 5, 60 * 1000);
+  const rateLimitResult = await rateLimit(user.id, 5, 60 * 1000);
   if (!rateLimitResult.success) {
     return NextResponse.json(
       { 

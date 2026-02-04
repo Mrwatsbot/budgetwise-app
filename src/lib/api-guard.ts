@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { rateLimit } from '@/lib/rate-limit';
+import { logger } from '@/lib/logger';
 
 /**
  * API Guard: Auth check + rate limiting in one call.
@@ -16,6 +17,10 @@ export async function apiGuard(rateLimitPerMinute: number = 60) {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
+    logger.warn('API request unauthorized', {
+      statusCode: 401,
+    });
+    
     return {
       error: NextResponse.json(
         { error: 'Unauthorized' },
@@ -26,8 +31,14 @@ export async function apiGuard(rateLimitPerMinute: number = 60) {
     };
   }
 
-  const rl = rateLimit(user.id, rateLimitPerMinute);
+  const rl = await rateLimit(user.id, rateLimitPerMinute);
   if (!rl.success) {
+    logger.warn('Rate limit exceeded', {
+      userId: user.id,
+      limit: rl.limit,
+      statusCode: 429,
+    });
+    
     return {
       error: NextResponse.json(
         { error: 'Too many requests', retryAfter: Math.ceil((rl.reset - Date.now()) / 1000) },

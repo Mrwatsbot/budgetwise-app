@@ -1,71 +1,90 @@
-// Simple in-memory rate limiter using Map
-// Key: `${identifier}:${window}` → { count, resetAt }
-// This is per-instance (Vercel serverless), so it's a best-effort limiter
-// For production, use Upstash Redis or Vercel KV
+/**
+ * Edge Rate Limiter (Upstash Redis)
+ *
+ * Uses Upstash Redis with a sliding-window algorithm for low-latency
+ * rate limiting (~1ms per check vs ~50ms with Supabase writes).
+ * Falls back to allowing all requests if Upstash env vars aren't set.
+ */
 
-interface RateLimitResult {
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+
+export interface RateLimitResult {
   success: boolean;
   limit: number;
   remaining: number;
   reset: number; // Unix timestamp
 }
 
-const cache = new Map<string, { count: number; resetAt: number }>();
+// Cache Ratelimit instances by config key to avoid re-creating them
+const limiters = new Map<string, Ratelimit>();
 
-// Periodic cleanup to prevent memory leaks (every 5 minutes)
-let lastCleanup = Date.now();
-const CLEANUP_INTERVAL = 5 * 60 * 1000;
+function getLimiter(limit: number, windowMs: number): Ratelimit | null {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-function cleanup() {
-  const now = Date.now();
-  if (now - lastCleanup < CLEANUP_INTERVAL) return;
-  lastCleanup = now;
-  for (const [key, value] of cache.entries()) {
-    if (value.resetAt < now) {
-      cache.delete(key);
-    }
-  }
+  if (!url || !token) return null;
+
+  const key = `${limit}:${windowMs}`;
+  let limiter = limiters.get(key);
+  if (limiter) return limiter;
+
+  const redis = new Redis({ url, token });
+
+  // Convert windowMs to the closest duration string for Upstash
+  const windowSeconds = Math.ceil(windowMs / 1000);
+  limiter = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(limit, `${windowSeconds} s`),
+    analytics: false,
+    prefix: 'rl',
+  });
+
+  limiters.set(key, limiter);
+  return limiter;
 }
 
-export function rateLimit(
-  identifier: string,     // user ID or IP
-  limit: number = 60,     // max requests
-  windowMs: number = 60 * 1000 // per minute
-): RateLimitResult {
-  cleanup();
+/**
+ * Rate limit a user for a specific endpoint.
+ * @param identifier - User ID or IP address
+ * @param limit - Maximum requests allowed
+ * @param windowMs - Time window in milliseconds
+ * @returns RateLimitResult with success status and metadata
+ */
+export async function rateLimit(
+  identifier: string,
+  limit: number = 60,
+  windowMs: number = 60 * 1000 // 1 minute default
+): Promise<RateLimitResult> {
+  try {
+    const limiter = getLimiter(limit, windowMs);
 
-  const now = Date.now();
-  const key = `${identifier}:${windowMs}`;
-  const entry = cache.get(key);
+    if (!limiter) {
+      // Upstash not configured — fail open (allow request)
+      return {
+        success: true,
+        limit,
+        remaining: limit - 1,
+        reset: Date.now() + windowMs,
+      };
+    }
 
-  if (!entry || entry.resetAt < now) {
-    // New window
-    const resetAt = now + windowMs;
-    cache.set(key, { count: 1, resetAt });
+    const result = await limiter.limit(identifier);
+
+    return {
+      success: result.success,
+      limit: result.limit,
+      remaining: result.remaining,
+      reset: result.reset,
+    };
+  } catch (error) {
+    // On any unexpected error, fail open
+    console.error('Rate limit error:', error);
     return {
       success: true,
       limit,
       remaining: limit - 1,
-      reset: resetAt,
+      reset: Date.now() + windowMs,
     };
   }
-
-  // Existing window
-  entry.count++;
-
-  if (entry.count > limit) {
-    return {
-      success: false,
-      limit,
-      remaining: 0,
-      reset: entry.resetAt,
-    };
-  }
-
-  return {
-    success: true,
-    limit,
-    remaining: Math.max(0, limit - entry.count),
-    reset: entry.resetAt,
-  };
 }

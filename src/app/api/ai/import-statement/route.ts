@@ -1,3 +1,4 @@
+export const maxDuration = 60;
 import { NextRequest, NextResponse } from 'next/server';
 import { apiGuard } from '@/lib/api-guard';
 import { getUserTier, checkRateLimit } from '@/lib/ai/rate-limiter';

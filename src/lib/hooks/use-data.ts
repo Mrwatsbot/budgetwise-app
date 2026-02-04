@@ -1,7 +1,71 @@
 import useSWR, { mutate } from 'swr';
 
+// ============================================================
+// PERSISTENT SWR CACHE — localStorage-backed fallback
+// ============================================================
+
+const CACHE_KEY = 'thallo-swr-cache';
+const CACHE_TTL = 1000 * 60 * 30; // 30 min max staleness
+
+interface CacheEntry {
+  data: unknown;
+  ts: number; // timestamp when cached
+}
+
+/**
+ * Read localStorage and return an SWR-compatible fallback object.
+ * Used by SWRConfig's `fallback` prop — provides initial data
+ * for every key so hooks skip loading state on page refresh.
+ */
+export function getSwrFallback(): Record<string, unknown> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return {};
+    const parsed: Record<string, CacheEntry> = JSON.parse(raw);
+    const fallback: Record<string, unknown> = {};
+    const now = Date.now();
+    for (const [key, entry] of Object.entries(parsed)) {
+      if (entry && entry.data !== undefined && now - entry.ts < CACHE_TTL) {
+        fallback[key] = entry.data;
+      }
+    }
+    return fallback;
+  } catch {
+    localStorage.removeItem(CACHE_KEY);
+    return {};
+  }
+}
+
+/**
+ * Persist a single API response to localStorage.
+ * Called by SWRConfig's onSuccess.
+ */
+export function persistResult(key: string, data: unknown) {
+  if (typeof window === 'undefined') return;
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    const store: Record<string, CacheEntry> = raw ? JSON.parse(raw) : {};
+    store[key] = { data, ts: Date.now() };
+    localStorage.setItem(CACHE_KEY, JSON.stringify(store));
+  } catch {
+    // Storage full or unavailable — silently skip
+  }
+}
+
+/** Clear persisted cache (call on logout) */
+export function clearPersistedCache() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(CACHE_KEY);
+  }
+}
+
+// ============================================================
+// FETCHER
+// ============================================================
+
 // Global fetcher — all SWR hooks use this
-const fetcher = async (url: string) => {
+export const fetcher = async (url: string) => {
   const res = await fetch(url);
   if (!res.ok) {
     if (res.status === 401) {
@@ -632,6 +696,25 @@ export function useMonthReview(month?: string) {
       revalidateOnFocus: false,
       dedupingInterval: 300000, // 5 min - month reviews don't change often
     }
+  );
+  return {
+    data,
+    error,
+    isLoading,
+    refresh,
+  };
+}
+
+export function useReports() {
+  const monthStr = getLocalMonthStr();
+  const { data, error, isLoading, mutate: refresh } = useSWR(
+    `/api/reports?month=${monthStr}`,
+    fetcher,
+    {
+      ...SWR_CONFIG,
+      revalidateOnFocus: false,
+      dedupingInterval: 30000, // 30s dedup — reports are read-heavy
+    },
   );
   return {
     data,

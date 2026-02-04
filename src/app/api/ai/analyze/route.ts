@@ -1,3 +1,4 @@
+export const maxDuration = 60;
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { analyzeSpending, findSavings, debtStrategy, budgetSuggestions, scoreCoach } from '@/lib/ai/openrouter';
@@ -21,7 +22,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const rl = rateLimit(user.id, 10);
+    const rl = await rateLimit(user.id, 10);
     if (!rl.success) {
       return NextResponse.json(
         { error: 'Too many requests' },

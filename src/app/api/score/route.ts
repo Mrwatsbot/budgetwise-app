@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { apiGuard } from '@/lib/api-guard';
-import type { DebtType as ScoringDebtType, ScoreInput } from '@/lib/scoring/financial-health-score';
+import type { DebtType as ScoringDebtType, ScoreInput, LatePaymentEntry } from '@/lib/scoring/financial-health-score';
 import { calculateFinancialHealthScore } from '@/lib/scoring/financial-health-score';
 
 // Map database debt types to scoring engine types
@@ -78,7 +78,6 @@ export async function GET() {
   // Parallel fetch all data needed for scoring
   const [
     profileRes,
-    accountsRes,
     debtsRes,
     savingsGoalsRes,
     savingsContribRes,
@@ -90,65 +89,62 @@ export async function GET() {
     achievementsRes,
     streaksRes,
   ] = await Promise.all([
-    // Profile for income
-    sb.from('profiles').select('*').eq('id', user.id).single(),
-    // User accounts (checking, savings, etc.)
-    sb.from('accounts').select('id, name, type, balance').eq('user_id', user.id),
-    // Current debts
-    sb.from('debts').select('*').eq('user_id', user.id).eq('is_active', true),
-    // Savings goals
-    sb.from('savings_goals').select('*').eq('user_id', user.id).eq('is_active', true),
+    // Profile for income and household_type
+    sb.from('profiles').select('id, monthly_income, household_type').eq('id', user.id).single(),
+    // Current debts - fields needed for scoring (including minimum_payment & term_months as fallbacks)
+    sb.from('debts').select('id, type, current_balance, monthly_payment, minimum_payment, apr, in_collections, term_months').eq('user_id', user.id).eq('is_active', true),
+    // Savings goals - only fields needed
+    sb.from('savings_goals').select('id, type, current_amount, monthly_contribution').eq('user_id', user.id).eq('is_active', true),
     // Savings contributions last 3 months
     sb.from('savings_contributions')
-      .select('*')
+      .select('amount, date')
       .eq('user_id', user.id)
       .gte('date', threeMonthsAgoStr)
       .order('date', { ascending: false }),
     // Debt payments last 3 months
     sb.from('debt_payments')
-      .select('*')
+      .select('debt_id, amount, is_extra, date')
       .eq('user_id', user.id)
       .gte('date', threeMonthsAgoStr)
       .order('date', { ascending: false }),
-    // Bill payments (all time for consistency calc, but last 12 months is reasonable)
+    // Bill payments - only status needed
     sb.from('bill_payments')
-      .select('*')
+      .select('status, due_date')
       .eq('user_id', user.id)
       .order('due_date', { ascending: false })
       .limit(200),
     // Budgets for current month
     sb.from('budgets')
-      .select('id, budgeted, category_id')
+      .select('category_id, budgeted')
       .eq('user_id', user.id)
       .eq('month', monthStr),
     // Transactions for current month (for budget discipline + expenses)
     sb.from('transactions')
-      .select('id, amount, category_id, date')
+      .select('amount, category_id, date')
       .eq('user_id', user.id)
       .gte('date', threeMonthsAgoStr)
       .order('date', { ascending: false }),
-    // Score history (last 30)
+    // Score history (last 30) - only fields needed for UI
     sb.from('score_history')
-      .select('*')
+      .select('total_score, level, trajectory_score, behavior_score, position_score, scored_at')
       .eq('user_id', user.id)
       .order('scored_at', { ascending: false })
       .limit(30),
-    // Achievements
+    // Achievements - specific fields
     sb.from('user_achievements')
-      .select('*, achievement:achievement_definitions(*)')
+      .select('id, unlocked_at, achievement:achievement_definitions(id, name, icon, description)')
       .eq('user_id', user.id),
-    // Streaks
+    // Streaks - only essential fields
     sb.from('streaks')
-      .select('*')
+      .select('id, streak_type, current_count, longest_count, last_activity_date')
       .eq('user_id', user.id),
   ]);
 
   // Also fetch achievement definitions (for locked ones)
   const achievementDefsRes = await sb.from('achievement_definitions')
-    .select('*')
+    .select('id, name, icon, description, tier, sort_order')
     .order('sort_order');
 
-  const accounts = accountsRes.data || [];
   const debts = debtsRes.data || [];
   const savingsGoals = savingsGoalsRes.data || [];
   const savingsContributions = savingsContribRes.data || [];
@@ -162,10 +158,7 @@ export async function GET() {
   const achievementDefs = achievementDefsRes.data || [];
 
   // --- Calculate Monthly Income ---
-  // Priority: this month's income txns → 3-month avg txns → profile's monthly_income
-  const profile = profileRes.data;
-  const profileIncome = profile?.monthly_income || 0;
-
+  // Priority: this month's income transactions → 3-month avg → profile monthly_income
   const thisMonthTransactions = allTransactions.filter(
     (t: { date: string }) => t.date >= monthStr
   );
@@ -176,76 +169,101 @@ export async function GET() {
   const totalIncome3Mo = allTransactions
     .filter((t: { amount: number }) => t.amount > 0)
     .reduce((sum: number, t: { amount: number }) => sum + t.amount, 0);
-  const avgIncome3Mo = totalIncome3Mo / 3;
-
-  // Use transaction-based income if available, otherwise fall back to profile
-  const monthlyIncome = incomeThisMonth > 0
-    ? incomeThisMonth
-    : avgIncome3Mo > 0
-      ? avgIncome3Mo
-      : profileIncome;
+  const profileMonthlyIncome = profileRes.data?.monthly_income || 0;
+  const monthlyIncome = incomeThisMonth > 0 
+    ? incomeThisMonth 
+    : totalIncome3Mo > 0 
+      ? totalIncome3Mo / 3 
+      : profileMonthlyIncome;
 
   // --- Calculate Monthly Expenses ---
   const totalExpenses3Mo = allTransactions
     .filter((t: { amount: number }) => t.amount < 0)
     .reduce((sum: number, t: { amount: number }) => sum + Math.abs(t.amount), 0);
-  // If few transactions, estimate from debts + a reasonable baseline
-  const txnBasedExpenses = totalExpenses3Mo / 3;
-  const totalDebtPmts = debts.reduce((sum: number, d: { monthly_payment: number }) => sum + (d.monthly_payment || 0), 0);
-  const monthlyExpenses = txnBasedExpenses > totalDebtPmts
-    ? txnBasedExpenses
-    : Math.max(totalDebtPmts, monthlyIncome * 0.6); // At least debt payments or 60% of income
+  const monthlyExpenses = totalExpenses3Mo / 3;
 
   // --- Wealth Building Rate ---
-  // Use monthly_contribution from savings goals (what user says they contribute)
-  // PLUS actual contributions logged in last 3 months as a cross-check
-  const goalContribByType: Record<string, number> = {};
-  savingsGoals.forEach((g: { type: string; monthly_contribution: number }) => {
-    const type = g.type || 'general';
-    goalContribByType[type] = (goalContribByType[type] || 0) + (g.monthly_contribution || 0);
-  });
-
-  // Also factor in actual logged contributions (averaged over 3 months)
-  const totalLoggedContrib = savingsContributions.reduce(
+  const totalSavingsContrib = savingsContributions.reduce(
     (sum: number, c: { amount: number }) => sum + (c.amount || 0), 0
   );
-  const monthlyAvgLoggedContrib = totalLoggedContrib / 3;
-
-  // For each category, use the HIGHER of: goal's monthly_contribution or actual logged average
-  // This way, if user set up goals but hasn't logged contributions yet, we still count it
-  const cashSavings = Math.max(
-    (goalContribByType['emergency'] || 0) + (goalContribByType['general'] || 0) + (goalContribByType['custom'] || 0),
-    monthlyAvgLoggedContrib
-  );
-  const retirement401k = goalContribByType['retirement_401k'] || 0;
-  const ira = goalContribByType['ira'] || 0;
-  const investments = goalContribByType['brokerage'] || 0;
-  const hsa = (goalContribByType['hsa'] || 0) + (goalContribByType['education_529'] || 0);
-
   const totalExtraDebtPayments = debtPayments
     .filter((p: { is_extra: boolean }) => p.is_extra)
     .reduce((sum: number, p: { amount: number }) => sum + (p.amount || 0), 0);
+  const monthlyAvgSavingsContrib = totalSavingsContrib / 3;
   const monthlyAvgExtraDebt = totalExtraDebtPayments / 3;
 
   // --- Debt entries for scoring ---
-  const currentDebtEntries = debts.map((d: { type: string; current_balance: number; monthly_payment: number; apr: number; in_collections: boolean }) => ({
-    type: (DB_TO_SCORING_TYPE[d.type] || 'personal') as ScoringDebtType,
-    balance: d.current_balance || 0,
-    monthlyPayment: d.monthly_payment || 0,
-    apr: d.apr || 0,
-    inCollections: d.in_collections || false,
-  }));
+  // P0 Fix: Prevent cc_paid_monthly loophole. If a credit card type is "cc_paid_monthly" 
+  // but carries a revolving balance, it should be scored as regular "credit_card" (1.5× weight).
+  // cc_paid_monthly (0.0×) is ONLY for cards where the statement balance is paid in full.
+  // A card with a current_balance > 0 and monthly_payment < current_balance is revolving.
+  // Default term assumptions by debt type (months) for estimating payments when not provided
+  // Based on typical loan terms: mortgage=360, student=120, auto=72, personal=48, etc.
+  const DEFAULT_TERM_BY_TYPE: Record<string, number> = {
+    mortgage: 360,
+    heloc: 240,
+    student: 120,
+    student_federal: 120,
+    student_private: 120,
+    auto: 72,
+    personal: 48,
+    medical: 60,
+    credit_card: 36,
+    bnpl: 12,
+    payday: 3,
+    business: 60,
+    other: 60,
+  };
+
+  const currentDebtEntries = debts.map((d: { type: string; current_balance: number; monthly_payment: number; minimum_payment: number; apr: number; in_collections: boolean; term_months: number | null }) => {
+    let scoringType = (DB_TO_SCORING_TYPE[d.type] || 'personal') as ScoringDebtType;
+    
+    // If classified as cc_paid_monthly but carries a balance, reclassify as revolving credit card
+    if (scoringType === 'cc_paid_monthly' && (d.current_balance || 0) > 0) {
+      scoringType = 'credit_card';
+    }
+    
+    // Payment fallback chain: monthly_payment → minimum_payment → estimate from balance/term
+    let payment = d.monthly_payment || 0;
+    if (payment === 0 && d.minimum_payment) {
+      payment = d.minimum_payment;
+    }
+    if (payment === 0 && (d.current_balance || 0) > 0) {
+      // Estimate using term_months if available, otherwise use type-specific default
+      const termMonths = d.term_months || DEFAULT_TERM_BY_TYPE[d.type] || 60;
+      payment = (d.current_balance || 0) / termMonths;
+    }
+    
+    return {
+      type: scoringType,
+      balance: d.current_balance || 0,
+      monthlyPayment: payment,
+      apr: d.apr || 0,
+      inCollections: d.in_collections || false,
+    };
+  });
 
   // For 3-month-ago debt snapshot, we estimate from payments
   // Use current debts but add back the payments made in last 3 months
-  const debtsThreeMonthsAgo = debts.map((d: { id: string; type: string; current_balance: number; monthly_payment: number; apr: number; in_collections: boolean }) => {
+  const debtsThreeMonthsAgo = debts.map((d: { id: string; type: string; current_balance: number; monthly_payment: number; minimum_payment: number; apr: number; in_collections: boolean; term_months: number | null }) => {
     const paymentsForDebt = debtPayments
       .filter((p: { debt_id: string }) => p.debt_id === d.id)
       .reduce((sum: number, p: { amount: number }) => sum + (p.amount || 0), 0);
+    
+    // Same payment fallback chain
+    let payment = d.monthly_payment || 0;
+    if (payment === 0 && d.minimum_payment) {
+      payment = d.minimum_payment;
+    }
+    if (payment === 0 && (d.current_balance || 0) > 0) {
+      const termMonths = d.term_months || DEFAULT_TERM_BY_TYPE[d.type] || 60;
+      payment = (d.current_balance || 0) / termMonths;
+    }
+    
     return {
       type: (DB_TO_SCORING_TYPE[d.type] || 'personal') as ScoringDebtType,
       balance: (d.current_balance || 0) + paymentsForDebt,
-      monthlyPayment: d.monthly_payment || 0,
+      monthlyPayment: payment,
       apr: d.apr || 0,
       inCollections: d.in_collections || false,
     };
@@ -258,6 +276,31 @@ export async function GET() {
   const late61Plus = billPayments.filter((p: { status: string }) =>
     p.status === 'late_61_plus' || p.status === 'missed'
   ).length;
+
+  // H5: Build late payment history with recency for time-decay scoring
+  // Each late payment gets a monthsAgo value based on due_date
+  const latePaymentHistory = billPayments
+    .filter((p: { status: string }) => p.status !== 'on_time' && p.status !== 'pending')
+    .map((p: { status: string; due_date: string }) => {
+      const dueDate = new Date(p.due_date);
+      const monthsAgo = Math.max(0, Math.round(
+        (now.getTime() - dueDate.getTime()) / (30.44 * 24 * 60 * 60 * 1000)
+      ));
+      
+      let tier: 'late1to30' | 'late31to60' | 'late61to90' | 'late91to120' | 'late120Plus';
+      switch (p.status) {
+        case 'late_1_30': tier = 'late1to30'; break;
+        case 'late_31_60': tier = 'late31to60'; break;
+        case 'late_61_90': tier = 'late61to90'; break;
+        case 'late_91_120': tier = 'late91to120'; break;
+        case 'late_120_plus': tier = 'late120Plus'; break;
+        case 'late_61_plus': tier = 'late61to90'; break; // legacy
+        case 'missed': tier = 'late120Plus'; break; // missed = worst tier
+        default: tier = 'late1to30'; break;
+      }
+      
+      return { tier, monthsAgo };
+    });
 
   // --- Budget Discipline ---
   const spentByCategory: Record<string, number> = {};
@@ -285,42 +328,101 @@ export async function GET() {
 
   const avgOverspendPct = overspentCount > 0 ? totalOverspendPct / overspentCount : 0;
 
-  // --- Emergency Buffer ---
-  // Count liquid savings from TWO sources:
-  // 1. Savings goals (emergency, general, custom, HSA)
-  // 2. Accounts (checking, savings, money_market — not investment/retirement)
-  const LIQUID_GOAL_TYPES = new Set(['emergency', 'general', 'custom', 'hsa']);
-  const goalLiquid = savingsGoals
-    .filter((g: { type: string }) => LIQUID_GOAL_TYPES.has(g.type))
-    .reduce((sum: number, g: { current_amount: number }) => sum + (g.current_amount || 0), 0);
-
-  const LIQUID_ACCOUNT_TYPES = new Set(['checking', 'savings', 'money_market', 'cash']);
-  const accountLiquid = accounts
-    .filter((a: { type: string }) => LIQUID_ACCOUNT_TYPES.has(a.type))
-    .reduce((sum: number, a: { balance: number }) => sum + (a.balance || 0), 0);
-
-  const liquidSavings = goalLiquid + accountLiquid;
-
-  // --- Data maturity: how many months of transaction history? ---
-  const oldestTransaction = allTransactions.length > 0
-    ? allTransactions[allTransactions.length - 1]
-    : null;
-  let dataMonths = 1;
-  if (oldestTransaction) {
-    const oldest = new Date(oldestTransaction.date);
-    const diffMs = now.getTime() - oldest.getTime();
-    dataMonths = Math.max(1, Math.floor(diffMs / (30 * 24 * 60 * 60 * 1000)));
+  // Anti-gaming: Calculate budget-to-spending ratio
+  // Compares total budgeted amounts to trailing 3-month average spending per category
+  // If budgets are significantly inflated vs actual spending, cap adherence score
+  let budgetToSpendingRatio: number | undefined;
+  if (budgets.length > 0) {
+    const totalBudgeted = budgets.reduce((sum: number, b: { budgeted: number }) => sum + (b.budgeted || 0), 0);
+    // Get 3-month average spending in budgeted categories
+    const budgetCategoryIds = new Set(budgets.map((b: { category_id: string }) => b.category_id));
+    const spendInBudgetedCategories = allTransactions
+      .filter((t: { amount: number; category_id: string | null }) => 
+        t.amount < 0 && t.category_id && budgetCategoryIds.has(t.category_id)
+      )
+      .reduce((sum: number, t: { amount: number }) => sum + Math.abs(t.amount), 0);
+    const monthlyAvgSpendInBudgeted = spendInBudgetedCategories / 3;
+    
+    if (monthlyAvgSpendInBudgeted > 0) {
+      budgetToSpendingRatio = totalBudgeted / monthlyAvgSpendInBudgeted;
+    }
   }
+
+  // --- Emergency Buffer ---
+  // Liquid savings = emergency + general + custom + HSA savings goals
+  // PLUS checking/savings account balances (real bank accounts)
+  const liquidSavingsGoals = savingsGoals.filter(
+    (g: { type: string }) => ['emergency', 'general', 'custom', 'hsa'].includes(g.type)
+  );
+  const savingsGoalTotal = liquidSavingsGoals.reduce(
+    (sum: number, g: { current_amount: number }) => sum + (g.current_amount || 0), 0
+  );
+  
+  // Also fetch account balances (checking + savings accounts are liquid)
+  const accountsRes = await sb.from('accounts')
+    .select('balance, type')
+    .eq('user_id', user.id)
+    .in('type', ['checking', 'savings']);
+  const accountBalances = (accountsRes.data || []).reduce(
+    (sum: number, a: { balance: number }) => sum + (a.balance || 0), 0
+  );
+  
+  const liquidSavings = savingsGoalTotal + accountBalances;
+
+  // --- Determine hasConfirmedNoDebt ---
+  // For now: if debts array is empty, treat as unconfirmed (neutral score)
+  // If debts array has entries, the DTI calculation works normally
+  // In the future, this should come from user's profile when we add explicit confirmation UI
+  const hasConfirmedNoDebt = debts.length > 0 ? undefined : false;
+
+  // --- Wealth contributions from savings goals by type ---
+  // Categorize ALL savings goals' monthly_contribution by wealth type
+  // DB types: emergency, general, retirement_401k, ira, hsa, education_529, brokerage, custom
+  const wealthFromGoals = {
+    cashSavings: 0,
+    retirement401k: 0,
+    ira: 0,
+    investments: 0,
+    hsa: 0,
+  };
+  
+  savingsGoals.forEach((g: { type: string; monthly_contribution: number }) => {
+    const contrib = g.monthly_contribution || 0;
+    if (contrib <= 0) return;
+    switch (g.type) {
+      case 'emergency':
+      case 'general':
+      case 'custom':
+        wealthFromGoals.cashSavings += contrib;
+        break;
+      case 'retirement_401k':
+        wealthFromGoals.retirement401k += contrib;
+        break;
+      case 'ira':
+        wealthFromGoals.ira += contrib;
+        break;
+      case 'brokerage':
+      case 'education_529':
+        wealthFromGoals.investments += contrib;
+        break;
+      case 'hsa':
+        wealthFromGoals.hsa += contrib;
+        break;
+    }
+  });
+  
+  // Use the higher of: actual logged savings contributions OR planned goal contributions
+  const cashSavingsAmount = Math.max(monthlyAvgSavingsContrib, wealthFromGoals.cashSavings);
 
   // --- Build Score Input ---
   const scoreInput: ScoreInput = {
     monthlyIncome,
     wealthContributions: {
-      cashSavings,
-      retirement401k,
-      ira,
-      investments,
-      hsa,
+      cashSavings: cashSavingsAmount,
+      retirement401k: wealthFromGoals.retirement401k,
+      ira: wealthFromGoals.ira,
+      investments: wealthFromGoals.investments,
+      hsa: wealthFromGoals.hsa,
       extraDebtPayments: monthlyAvgExtraDebt,
     },
     liquidSavings,
@@ -334,7 +436,15 @@ export async function GET() {
     budgetsOnTrack,
     totalBudgets: budgets.length,
     averageOverspendPercent: avgOverspendPct,
-    dataMonths,
+    hasConfirmedNoDebt,
+    // H5: Time-decay on late payments
+    latePaymentHistory: latePaymentHistory.length > 0 ? latePaymentHistory : undefined,
+    // Anti-gaming: budget reasonableness
+    budgetToSpendingRatio,
+    // Household type for dynamic emergency buffer targets
+    householdType: profileRes.data?.household_type as 'dual_income' | 'single_income' | 'self_employed' | 'retired' | undefined,
+    // Income confirmation: true if any real income source exists
+    hasConfirmedIncome: monthlyIncome > 0,
   };
 
   // --- Calculate Score ---
@@ -371,6 +481,24 @@ export async function GET() {
     .order('scored_at', { ascending: false })
     .limit(30);
 
+  // --- Generate factor-specific tips for low-scoring components ---
+  const factorTips: Record<string, string> = {
+    wealthBuilding: 'Increase your savings rate — even 1% more makes a difference over time',
+    debtVelocity: 'Focus extra payments on highest-interest debt first (avalanche method)',
+    paymentConsistency: 'Set up autopay for all recurring bills — never miss a payment',
+    budgetDiscipline: 'Review overspent categories — can you trim or reallocate from underspent ones?',
+    emergencyBuffer: 'Build your emergency fund — start with $1,000, then target 3-6 months of expenses',
+    debtToIncome: 'Reduce debt burden — consider consolidating high-interest debts',
+  };
+
+  // Add tips to factors scoring below 70%
+  const wealthBuildingPct = result.breakdown.wealthBuilding.percentage;
+  const debtVelocityPct = result.breakdown.debtVelocity.percentage;
+  const paymentConsistencyPct = result.breakdown.paymentConsistency.percentage;
+  const budgetDisciplinePct = result.breakdown.budgetDiscipline.percentage;
+  const emergencyBufferPct = result.breakdown.emergencyBuffer.percentage;
+  const debtToIncomePct = result.breakdown.debtToIncome.percentage;
+
   // --- Build Response ---
   const score = {
     total: result.total,
@@ -378,16 +506,18 @@ export async function GET() {
     levelTitle,
     trajectory: {
       score: result.pillarScores.trajectory.score,
-      max: 400,
+      max: 350,  // Updated from 400 to match v2
       wealthBuildingRate: {
         score: result.breakdown.wealthBuilding.score,
-        max: 200,
+        max: 175,  // Updated from 200 to match v2
         detail: result.breakdown.wealthBuilding.detail,
+        tip: wealthBuildingPct < 70 ? factorTips.wealthBuilding : undefined,
       },
       debtVelocity: {
         score: result.breakdown.debtVelocity.score,
-        max: 200,
+        max: 175,  // Updated from 200 to match v2
         detail: result.breakdown.debtVelocity.detail,
+        tip: debtVelocityPct < 70 ? factorTips.debtVelocity : undefined,
       },
     },
     behavior: {
@@ -397,25 +527,29 @@ export async function GET() {
         score: result.breakdown.paymentConsistency.score,
         max: 200,
         detail: result.breakdown.paymentConsistency.detail,
+        tip: paymentConsistencyPct < 70 ? factorTips.paymentConsistency : undefined,
       },
       budgetDiscipline: {
         score: result.breakdown.budgetDiscipline.score,
         max: 150,
         detail: result.breakdown.budgetDiscipline.detail,
+        tip: budgetDisciplinePct < 70 ? factorTips.budgetDiscipline : undefined,
       },
     },
     position: {
       score: result.pillarScores.position.score,
-      max: 250,
+      max: 300,  // Updated from 250 to match v2
       emergencyBuffer: {
         score: result.breakdown.emergencyBuffer.score,
-        max: 125,
+        max: 150,  // Updated from 125 to match v2
         detail: result.breakdown.emergencyBuffer.detail,
+        tip: emergencyBufferPct < 70 ? factorTips.emergencyBuffer : undefined,
       },
       debtToIncome: {
         score: result.breakdown.debtToIncome.score,
-        max: 125,
+        max: 150,  // Updated from 125 to match v2
         detail: result.breakdown.debtToIncome.detail,
+        tip: debtToIncomePct < 70 ? factorTips.debtToIncome : undefined,
       },
     },
     tips: result.tips,
@@ -424,8 +558,53 @@ export async function GET() {
       : null,
   };
 
+  // --- Build debt cost data for "The Bleed" ---
+  const debtCosts = debts
+    .filter((d: { apr: number; current_balance: number }) => d.apr > 0 && d.current_balance > 0)
+    .map((d: { type: string; current_balance: number; apr: number }) => ({
+      type: d.type,
+      balance: d.current_balance,
+      apr: d.apr,
+      monthlyInterest: (d.current_balance * (d.apr / 100)) / 12,
+    }));
+
+  // --- Build data completeness for "What's Missing" section ---
+  const totalRawPayments = currentDebtEntries.reduce((s: number, d: { monthlyPayment: number }) => s + d.monthlyPayment, 0);
+  const effectiveIncomeUsed = monthlyIncome > 0 ? monthlyIncome : (monthlyExpenses > 0 ? monthlyExpenses * 1.1 : 2000);
+  
+  const dataCompleteness = {
+    hasDebts: debts.length > 0,
+    hasBudgets: budgets.length > 0,
+    hasSavingsGoals: savingsGoals.length > 0,
+    hasBillPayments: billPayments.length > 0,
+    hasHouseholdType: !!(profileRes.data?.household_type),
+    hasIncome: monthlyIncome > 0,
+  };
+
+  // Temporary debug info for score inputs (remove after debugging)
+  const _debug = {
+    monthlyIncome,
+    profileMonthlyIncome,
+    incomeThisMonth,
+    totalIncome3Mo,
+    effectiveIncomeUsed,
+    monthlyExpenses,
+    debtsCount: debts.length,
+    totalRawPayments,
+    debtEntries: currentDebtEntries.map((d: { type: string; balance: number; monthlyPayment: number }) => ({
+      type: d.type, balance: d.balance, payment: d.monthlyPayment
+    })),
+    rawDTIpct: totalRawPayments > 0 ? ((totalRawPayments / effectiveIncomeUsed) * 100).toFixed(1) : '0',
+    wealthContributions: scoreInput.wealthContributions,
+  };
+
   return NextResponse.json({
-    score,
+    score: {
+      ...score,
+      dataCompleteness,
+      debtCosts,
+    },
+    _debug,
     history: (updatedHistory || []).reverse(),
     achievements: userAchievements,
     achievementDefinitions: achievementDefs,

@@ -2,13 +2,14 @@
 
 import { useScore } from '@/lib/hooks/use-data';
 import { ListLoading } from '@/components/layout/page-loading';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ScoreGauge } from '@/components/score/score-gauge';
+import { ScoreHeroPillars } from '@/components/score/score-hero';
 import { PillarCard } from '@/components/score/pillar-card';
+import { TheBleed } from '@/components/score/the-bleed';
 import { StreakCard } from '@/components/score/streak-card';
 import { AchievementBadge } from '@/components/score/achievement-badge';
 import { ScoreChart } from '@/components/score/score-chart';
-import { InsightsPanel } from '@/components/ai/insights-panel';
 import {
   TrendingUp,
   Shield,
@@ -16,6 +17,7 @@ import {
   Award,
   Flame,
   Receipt,
+  AlertTriangle,
 } from 'lucide-react';
 import type { StreakType, AchievementCategory, AchievementDefinition, UserAchievement, Streak } from '@/types/database';
 
@@ -40,16 +42,10 @@ export function ScoreContent() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-display font-bold">Financial Health Score</h1>
-        <p className="text-muted-foreground">Your 0-1,000 score with full breakdown</p>
-      </div>
-
       {isLoading ? (
         <ListLoading />
       ) : !score ? (
-        /* Empty State */
+        /* ── Empty State ── */
         <Card>
           <CardContent className="p-8 text-center">
             <Receipt className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
@@ -61,19 +57,36 @@ export function ScoreContent() {
         </Card>
       ) : (
         <>
-          {/* a) Score Hero */}
-          <Card>
-            <CardContent className="p-2">
-              <ScoreGauge
-                score={score.total}
-                levelTitle={score.levelTitle}
-                level={score.level}
-                previousScore={score.previousScore}
-              />
-            </CardContent>
-          </Card>
+          {/* ═══════════════════════════════════════════
+              a) SCORE HERO — Full-bleed, no card wrapper
+              The flagship visual. Gauge + pillar summary.
+              ═══════════════════════════════════════════ */}
+          <div className="relative rounded-2xl overflow-hidden border border-white/[0.04] bg-gradient-to-b from-white/[0.02] to-transparent">
+            {/* Ambient top edge accent line */}
+            <div className="absolute top-0 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-[#1a7a6d]/40 to-transparent" />
 
-          {/* b) Three Pillar Cards */}
+            {/* Score Gauge */}
+            <ScoreGauge
+              score={score.total}
+              levelTitle={score.levelTitle}
+              level={score.level}
+              previousScore={score.previousScore}
+            />
+
+            {/* Pillar Summary Bars */}
+            <div className="px-4 pb-5">
+              <ScoreHeroPillars
+                trajectory={{ name: 'Trajectory', score: score.trajectory.score, max: score.trajectory.max }}
+                behavior={{ name: 'Behavior', score: score.behavior.score, max: score.behavior.max }}
+                position={{ name: 'Position', score: score.position.score, max: score.position.max }}
+              />
+            </div>
+          </div>
+
+          {/* ═══════════════════════════════════════════
+              b) THREE PILLAR DETAIL CARDS
+              With reachable upside text
+              ═══════════════════════════════════════════ */}
           <div className="grid gap-4 md:grid-cols-3">
             <PillarCard
               name="Trajectory"
@@ -81,6 +94,13 @@ export function ScoreContent() {
               score={score.trajectory.score}
               max={score.trajectory.max}
               color="blue"
+              upsideText={
+                score.trajectory.max - score.trajectory.score > 20
+                  ? `+${score.trajectory.max - score.trajectory.score} pts available — increase savings or accelerate debt payoff`
+                  : score.trajectory.max - score.trajectory.score > 0
+                  ? `+${score.trajectory.max - score.trajectory.score} pts to max!`
+                  : undefined
+              }
               subComponents={[
                 {
                   name: 'Wealth Building Rate',
@@ -102,6 +122,13 @@ export function ScoreContent() {
               score={score.behavior.score}
               max={score.behavior.max}
               color="emerald"
+              upsideText={
+                score.behavior.max - score.behavior.score > 20
+                  ? `+${score.behavior.max - score.behavior.score} pts available — stay on budget & pay bills on time`
+                  : score.behavior.max - score.behavior.score > 0
+                  ? `+${score.behavior.max - score.behavior.score} pts to max!`
+                  : undefined
+              }
               subComponents={[
                 {
                   name: 'Payment Consistency',
@@ -123,6 +150,13 @@ export function ScoreContent() {
               score={score.position.score}
               max={score.position.max}
               color="amber"
+              upsideText={
+                score.position.max - score.position.score > 20
+                  ? `+${score.position.max - score.position.score} pts available — grow emergency fund or reduce debt`
+                  : score.position.max - score.position.score > 0
+                  ? `+${score.position.max - score.position.score} pts to max!`
+                  : undefined
+              }
               subComponents={[
                 {
                   name: 'Emergency Buffer',
@@ -140,15 +174,26 @@ export function ScoreContent() {
             />
           </div>
 
-          {/* c) Score History Chart */}
+          {/* ═══════════════════════════════════════════
+              c) THE BLEED — Monthly interest cost
+              ═══════════════════════════════════════════ */}
+          {score.debtCosts && score.debtCosts.length > 0 && (
+            <TheBleed debts={score.debtCosts} />
+          )}
+
+          {/* ═══════════════════════════════════════════
+              d) SCORE HISTORY CHART
+              ═══════════════════════════════════════════ */}
           <ScoreChart history={history} />
 
-          {/* d) Streaks Section */}
+          {/* ═══════════════════════════════════════════
+              d) STREAKS
+              ═══════════════════════════════════════════ */}
           {streaks.length > 0 && (
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Flame className="w-5 h-5 text-teal-400" />
-                <h2 className="text-lg font-display font-semibold">Streaks</h2>
+                <h2 className="text-lg font-semibold">Streaks</h2>
               </div>
               <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
                 {(['payment', 'budget', 'savings', 'logging'] as StreakType[]).map((type) => {
@@ -167,13 +212,15 @@ export function ScoreContent() {
             </div>
           )}
 
-          {/* e) Achievements Section */}
+          {/* ═══════════════════════════════════════════
+              e) ACHIEVEMENTS
+              ═══════════════════════════════════════════ */}
           {achievementDefinitions.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-[#1a7a6d]" />
-                  <h2 className="text-lg font-display font-semibold">Achievements</h2>
+                  <h2 className="text-lg font-semibold">Achievements</h2>
                 </div>
                 <span className="text-sm text-muted-foreground">
                   {achievements.length} / {achievementDefinitions.length} unlocked
@@ -216,17 +263,90 @@ export function ScoreContent() {
             </div>
           )}
 
-          {/* f) AI Insights */}
-          <InsightsPanel
-            page="score"
-            pageData={{
-              total: score.total,
-              level: score.level,
-              trajectory: score.trajectory.score,
-              behavior: score.behavior.score,
-              position: score.position.score,
-            }}
-          />
+          {/* ═══════════════════════════════════════════
+              f) WHAT'S MISSING — Data completeness
+              ═══════════════════════════════════════════ */}
+          {score.dataCompleteness && (
+            !score.dataCompleteness.hasDebts ||
+            !score.dataCompleteness.hasBudgets ||
+            !score.dataCompleteness.hasSavingsGoals ||
+            !score.dataCompleteness.hasBillPayments ||
+            !score.dataCompleteness.hasHouseholdType
+          ) && (
+            <Card className="border-amber-500/20 bg-amber-500/[0.03]">
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-amber-400" />
+                  <CardTitle className="text-sm">Improve Your Score Accuracy</CardTitle>
+                </div>
+                <CardDescription className="text-xs">
+                  Add missing data for a more complete picture
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-1.5">
+                  {!score.dataCompleteness.hasDebts && (
+                    <div className="flex items-start gap-2 text-xs">
+                      <span className="text-amber-400 mt-0.5">•</span>
+                      <p className="text-muted-foreground">
+                        Add your debts for accurate Debt-to-Income and Debt Velocity scoring
+                      </p>
+                    </div>
+                  )}
+                  {!score.dataCompleteness.hasBudgets && (
+                    <div className="flex items-start gap-2 text-xs">
+                      <span className="text-amber-400 mt-0.5">•</span>
+                      <p className="text-muted-foreground">
+                        Set up budgets to unlock Budget Discipline scoring
+                      </p>
+                    </div>
+                  )}
+                  {!score.dataCompleteness.hasSavingsGoals && (
+                    <div className="flex items-start gap-2 text-xs">
+                      <span className="text-amber-400 mt-0.5">•</span>
+                      <p className="text-muted-foreground">
+                        Create a savings goal to track your Emergency Buffer
+                      </p>
+                    </div>
+                  )}
+                  {!score.dataCompleteness.hasBillPayments && (
+                    <div className="flex items-start gap-2 text-xs">
+                      <span className="text-amber-400 mt-0.5">•</span>
+                      <p className="text-muted-foreground">
+                        Track your bills to improve Payment Consistency scoring
+                      </p>
+                    </div>
+                  )}
+                  {!score.dataCompleteness.hasHouseholdType && (
+                    <div className="flex items-start gap-2 text-xs">
+                      <span className="text-amber-400 mt-0.5">•</span>
+                      <p className="text-muted-foreground">
+                        Set your household type in Settings for personalized buffer targets
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* ═══════════════════════════════════════════
+              g) TOP RECOMMENDATIONS
+              ═══════════════════════════════════════════ */}
+          {score.tips && score.tips.length > 0 && (
+            <div>
+              <h2 className="text-lg font-semibold mb-4">Top Recommendations</h2>
+              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                {score.tips.slice(0, 3).map((tip: string, idx: number) => (
+                  <Card key={idx} className="border-[#1a7a6d]/20">
+                    <CardContent className="p-4">
+                      <p className="text-sm text-muted-foreground">{tip}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>

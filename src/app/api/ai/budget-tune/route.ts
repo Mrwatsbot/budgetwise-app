@@ -1,3 +1,4 @@
+export const maxDuration = 60;
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateBudgetTune } from '@/lib/ai/openrouter';
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const rl = rateLimit(user.id, 10);
+    const rl = await rateLimit(user.id, 10);
     if (!rl.success) {
       return NextResponse.json(
         { error: 'Too many requests' },
@@ -213,6 +214,9 @@ IMPORTANT: Analyze spending patterns across months. Identify categories that are
         result: null,
         raw: response.content,
         error: 'Failed to parse AI response as JSON',
+        model: response.model,
+        usage: response.usage,
+        estimatedCost: response.estimatedCost,
         generated_at: new Date().toISOString(),
       });
     }
@@ -234,6 +238,9 @@ IMPORTANT: Analyze spending patterns across months. Identify categories that are
 
     return NextResponse.json({
       result,
+      model: response.model,
+      usage: response.usage,
+      estimatedCost: response.estimatedCost,
       generated_at: new Date().toISOString(),
     });
   } catch (error) {
