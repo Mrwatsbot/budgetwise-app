@@ -40,6 +40,23 @@ const ACCOUNT_TYPES = [
   { value: 'cash', label: 'Cash', icon: Banknote },
 ];
 
+/** Fallback 50/30/20 template when AI is unavailable */
+function generateTemplateBudget(income: number) {
+  return [
+    { category_name: 'Housing', amount: Math.round(income * 0.28) },
+    { category_name: 'Food & Dining', amount: Math.round(income * 0.12) },
+    { category_name: 'Transportation', amount: Math.round(income * 0.10) },
+    { category_name: 'Utilities', amount: Math.round(income * 0.05) },
+    { category_name: 'Entertainment', amount: Math.round(income * 0.05) },
+    { category_name: 'Shopping', amount: Math.round(income * 0.05) },
+    { category_name: 'Health & Wellness', amount: Math.round(income * 0.05) },
+    { category_name: 'Subscriptions', amount: Math.round(income * 0.03) },
+    { category_name: 'Personal Care', amount: Math.round(income * 0.02) },
+    { category_name: 'Savings', amount: Math.round(income * 0.15) },
+    { category_name: 'Other', amount: Math.round(income * 0.10) },
+  ];
+}
+
 export function SetupWizard({ userId, preview = false }: SetupWizardProps) {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -75,15 +92,9 @@ export function SetupWizard({ userId, preview = false }: SetupWizardProps) {
         // Reset existing data so wizard writes fresh
         setLoading(true);
         try {
-          const res = await fetch('/api/setup/reset', { method: 'POST' });
-          if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(err.error || 'Failed to reset data');
-          }
-        } catch (error: any) {
-          toast.error(error.message || 'Failed to prepare account');
-          setLoading(false);
-          return;
+          await fetch('/api/setup/reset', { method: 'POST' });
+        } catch {
+          // Non-blocking — if reset fails, wizard still continues
         }
         setLoading(false);
       }
@@ -165,19 +176,30 @@ export function SetupWizard({ userId, preview = false }: SetupWizardProps) {
         setStep(4);
         setGeneratingBudget(true);
         
-        // Generate AI budget
-        const budgetResponse = await fetch('/api/ai/auto-budget', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ monthly_income: parseFloat(monthlyIncome) }),
-        });
+        const income = parseFloat(monthlyIncome);
         
-        if (!budgetResponse.ok) throw new Error('Failed to generate budget');
-        const budgetData = await budgetResponse.json();
+        // Try AI budget first, fall back to template if it fails (rate limit, free tier, etc.)
+        try {
+          const budgetResponse = await fetch('/api/ai/auto-budget', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ monthly_income: income }),
+          });
+          
+          if (!budgetResponse.ok) throw new Error('AI budget unavailable');
+          const budgetData = await budgetResponse.json();
+          
+          const allocations = budgetData.result?.allocations || budgetData.allocations || [];
+          if (allocations.length > 0) {
+            setBudgets(allocations);
+          } else {
+            throw new Error('Empty allocations');
+          }
+        } catch {
+          // Fallback: template budget based on 50/30/20 rule
+          setBudgets(generateTemplateBudget(income));
+        }
         
-        // AI returns { result: { allocations: [...] } }
-        const allocations = budgetData.result?.allocations || budgetData.allocations || [];
-        setBudgets(allocations);
         setGeneratingBudget(false);
         
       } catch (error: any) {
