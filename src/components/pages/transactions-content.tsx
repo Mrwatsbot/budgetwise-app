@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useTransactions, usePlaidStatus } from '@/lib/hooks/use-data';
-import { usePageTour } from '@/components/tour/use-page-tour';
 import { AddTransactionDialog } from '@/components/transactions/add-transaction-dialog';
 import { ScanReceiptDialog } from '@/components/transactions/scan-receipt-dialog';
 import { ImportStatementDialog } from '@/components/transactions/import-statement-dialog';
@@ -17,7 +16,6 @@ import { ExportDialog } from '@/components/export/export-dialog';
 type ViewMode = 'list' | 'calendar';
 
 export function TransactionsContent() {
-  usePageTour(); // Auto-start tour on first visit
   const { transactions, categories, accounts, user, isLoading, refresh } = useTransactions();
   const { connections: plaidConnections } = usePlaidStatus();
   const [viewMode, setViewMode] = useState<ViewMode>('list');

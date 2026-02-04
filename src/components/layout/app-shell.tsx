@@ -4,7 +4,6 @@ import { ThalloLogo } from '@/components/ui/thallo-logo';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { TourProvider } from '@/components/tour/tour-provider';
 import { 
   LayoutDashboard, 
   Receipt, 
@@ -123,7 +122,6 @@ export function AppShell({ children, user, isDemo = false }: AppShellProps) {
   };
 
   return (
-    <TourProvider autoStart={!isDemo}>
     <div className="overflow-x-hidden relative">
       {/* Mobile header */}
       <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md lg:hidden relative">
@@ -301,6 +299,5 @@ export function AppShell({ children, user, isDemo = false }: AppShellProps) {
       {/* AI Chat Widget — authenticated users only */}
       {!isDemo && <ChatWidget />}
     </div>
-    </TourProvider>
   );
 }

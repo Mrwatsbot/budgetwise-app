@@ -1,7 +1,6 @@
 'use client';
 
 import { useDebts } from '@/lib/hooks/use-data';
-import { usePageTour } from '@/components/tour/use-page-tour';
 import { AddDebtDialog } from '@/components/debts/add-debt-dialog';
 import { ScanStatementDialog } from '@/components/debts/scan-statement-dialog';
 import { DebtList } from '@/components/debts/debt-list';
@@ -10,7 +9,6 @@ import { ListLoading } from '@/components/layout/page-loading';
 import { InsightsPanel } from '@/components/ai/insights-panel';
 
 export function DebtsContent() {
-  usePageTour(); // Auto-start tour on first visit
   const { debts, isLoading } = useDebts();
 
   return (

@@ -1,7 +1,6 @@
 'use client';
 
 import { useScore } from '@/lib/hooks/use-data';
-import { usePageTour } from '@/components/tour/use-page-tour';
 import { ListLoading } from '@/components/layout/page-loading';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ScoreGauge } from '@/components/score/score-gauge';
@@ -32,7 +31,6 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
 };
 
 export function ScoreContent() {
-  usePageTour(); // Auto-start tour on first visit
   const {
     score,
     history,

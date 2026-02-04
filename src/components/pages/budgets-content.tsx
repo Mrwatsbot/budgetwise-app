@@ -1,7 +1,6 @@
 'use client';
 
 import { useBudgets, useSavings } from '@/lib/hooks/use-data';
-import { usePageTour } from '@/components/tour/use-page-tour';
 import { BudgetGrid } from '@/components/budgets/budget-grid';
 import { BudgetListCompact } from '@/components/budgets/budget-list-compact';
 import { ListLoading } from '@/components/layout/page-loading';
@@ -15,7 +14,6 @@ import { getAllocationBarStyle } from '@/lib/bar-colors';
 import { BudgetAlertsBanner } from '@/components/budgets/budget-alerts-banner';
 
 export function BudgetsContent() {
-  usePageTour(); // Auto-start tour on first visit
   const { budgets, categories, spentByCategory, monthlyIncome, totalSavingsTarget, user, isLoading, refresh } = useBudgets();
   const { goals: savingsGoals, isLoading: savingsLoading, refresh: refreshSavings } = useSavings();
 
