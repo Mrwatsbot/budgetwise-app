@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useSettings, updateSettings, addAccount, updateAccount, deleteAccount } from '@/lib/hooks/use-data';
+import { useTour } from '@/components/tour/tour-provider';
+import { resetTour } from '@/components/tour/tour-steps';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,6 +48,8 @@ import {
   Info,
   Filter,
   Calendar,
+  HelpCircle,
+  RotateCcw,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -1075,6 +1079,76 @@ function DangerZone() {
 }
 
 // ============================================================
+// TOUR SECTION
+// ============================================================
+
+function TourSection() {
+  const { startTour } = useTour();
+  const [resetting, setResetting] = useState(false);
+
+  const handleRestartMainTour = () => {
+    resetTour('main');
+    startTour('main');
+    toast.success('Tour restarted! Follow the guide to learn about Thallo.');
+  };
+
+  const handleResetAllTours = async () => {
+    setResetting(true);
+    resetTour(); // Reset all tours
+    toast.success('All tours reset! They will appear again when you visit each page.');
+    setTimeout(() => setResetting(false), 500);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <HelpCircle className="h-5 w-5 text-[#1a7a6d]" />
+          <CardTitle>Guided Tours</CardTitle>
+        </div>
+        <CardDescription>Replay the onboarding tours anytime</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="space-y-2">
+          <Button
+            onClick={handleRestartMainTour}
+            variant="outline"
+            className="w-full justify-start"
+          >
+            <RotateCcw className="mr-2 h-4 w-4" />
+            Restart Main Tour
+          </Button>
+          <p className="text-xs text-muted-foreground">
+            Replay the full product tour from the dashboard
+          </p>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-2">
+          <Button
+            onClick={handleResetAllTours}
+            variant="outline"
+            className="w-full justify-start"
+            disabled={resetting}
+          >
+            {resetting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <RotateCcw className="mr-2 h-4 w-4" />
+            )}
+            Reset All Tours
+          </Button>
+          <p className="text-xs text-muted-foreground">
+            Clear all tour progress — tours will auto-start when you visit each page
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ============================================================
 // LOADING STATE
 // ============================================================
 
@@ -1128,6 +1202,7 @@ export function SettingsContent() {
         <div className="space-y-6">
           <AccountsSection accounts={accounts} onRefresh={refresh} />
           <PlaidConnectSection userTier={userTier} />
+          <TourSection />
           <SubscriptionSection profile={profile} />
           <DangerZone />
         </div>

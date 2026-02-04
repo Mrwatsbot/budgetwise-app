@@ -67,6 +67,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.1",
+    "react-joyride": "^2.9.3",
     "react-plaid-link": "^4.1.1",
     "reading-time": "^1.5.0",
     "rehype-autolink-headings": "^7.1.0",

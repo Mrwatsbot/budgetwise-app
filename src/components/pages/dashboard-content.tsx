@@ -198,7 +198,7 @@ export function DashboardContent() {
     'spending-predictions': <SpendingPredictions />,
 
     'recent-transactions': (
-      <div className="glass-card rounded-xl p-5">
+      <div data-tour="recent-transactions" className="glass-card rounded-xl p-5">
         <div className="mb-4">
           <h3 className="font-semibold text-base">Recent Transactions</h3>
           <p className="text-xs text-muted-foreground">Your latest activity</p>

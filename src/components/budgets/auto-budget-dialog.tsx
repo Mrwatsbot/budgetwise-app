@@ -343,7 +343,7 @@ export function AutoBudgetDialog({ currentMonth, onApplied, prominent = false, s
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
       <DialogTrigger asChild>
         {prominent ? (
-          <button className="w-full glass-card rounded-xl p-6 text-left hover:border-[#1a7a6d4d] transition-colors group cursor-pointer border border-transparent">
+          <button data-tour="ai-auto-budget" className="w-full glass-card rounded-xl p-6 text-left hover:border-[#1a7a6d4d] transition-colors group cursor-pointer border border-transparent">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#1a7a6d33] to-[#146b5f33] border border-[#1a7a6d4d] flex items-center justify-center flex-shrink-0">
                 <Sparkles className="w-6 h-6 text-[#1a7a6d]" />
@@ -360,7 +360,7 @@ export function AutoBudgetDialog({ currentMonth, onApplied, prominent = false, s
             </div>
           </button>
         ) : (
-          <Button size="sm" className="shimmer-btn-outline border-0 px-4 py-2 rounded-lg">
+          <Button data-tour="ai-auto-budget" size="sm" className="shimmer-btn-outline border-0 px-4 py-2 rounded-lg">
             <Sparkles className="w-4 h-4 mr-2" />
             AI Auto Budget
           </Button>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useSavings } from '@/lib/hooks/use-data';
+import { usePageTour } from '@/components/tour/use-page-tour';
 import { AddGoalDialog } from '@/components/savings/add-goal-dialog';
 import { GoalCard } from '@/components/savings/goal-card';
 import { ListLoading } from '@/components/layout/page-loading';
@@ -11,6 +12,7 @@ import { InsightsPanel } from '@/components/ai/insights-panel';
 const INVESTMENT_TYPES = ['retirement_401k', 'ira', 'hsa', 'education_529', 'brokerage'];
 
 export function SavingsContent() {
+  usePageTour(); // Auto-start tour on first visit
   const { goals, user, isLoading, refresh } = useSavings();
 
   // Separate goals from investments

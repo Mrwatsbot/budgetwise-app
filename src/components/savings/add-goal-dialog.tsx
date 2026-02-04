@@ -118,7 +118,7 @@ export function AddGoalDialog({ onRefresh, section = 'goal' }: AddGoalDialogProp
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="gradient-btn border-0">
+        <Button data-tour="add-goal" className="gradient-btn border-0">
           <Plus className="mr-2 h-4 w-4" />
           {buttonText}
         </Button>

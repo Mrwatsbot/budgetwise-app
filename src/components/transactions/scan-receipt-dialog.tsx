@@ -232,7 +232,7 @@ export function ScanReceiptDialog({ categories, accounts, userId, onRefresh }: S
   return (
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) reset(); }}>
       <DialogTrigger asChild>
-        <Button size="sm" className="shimmer-btn-outline border-0 px-4 py-2 rounded-lg gap-2">
+        <Button data-tour="receipt-scan" size="sm" className="shimmer-btn-outline border-0 px-4 py-2 rounded-lg gap-2">
           <Camera className="h-4 w-4" />
           Scan Receipt
         </Button>

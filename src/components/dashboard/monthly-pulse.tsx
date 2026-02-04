@@ -143,7 +143,7 @@ export function MonthlyPulse({
       </div>
 
       {/* Income (secondary, editable) */}
-      <div className="mb-5 pb-5 border-b border-border/50">
+      <div data-tour="income-section" className="mb-5 pb-5 border-b border-border/50">
         {editingIncome ? (
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
@@ -214,7 +214,7 @@ export function MonthlyPulse({
       </div>
 
       {/* Quick Stats Grid */}
-      <div className="grid grid-cols-2 gap-3 mb-5">
+      <div data-tour="allocation-bar" className="grid grid-cols-2 gap-3 mb-5">
         <div className="rounded-lg bg-secondary/20 border border-border/30 p-3">
           <p className="text-xs text-muted-foreground mb-0.5">Budgeted</p>
           <p className="text-lg font-display font-semibold text-[#1a7a6d]">

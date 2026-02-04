@@ -35,7 +35,7 @@ export function ScoreWidget({ score, levelTitle, level, previousScore, recentAch
   const change = previousScore !== null ? score - previousScore : 0;
 
   return (
-    <a href="/score" className="glass-card rounded-xl p-4 sm:p-5 block hover:border-[#1a7a6d4d] transition-all group">
+    <a href="/score" data-tour="score-widget score-cta" className="glass-card rounded-xl p-4 sm:p-5 block hover:border-[#1a7a6d4d] transition-all group">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Award className="w-5 h-5 text-[#1a7a6d]" />

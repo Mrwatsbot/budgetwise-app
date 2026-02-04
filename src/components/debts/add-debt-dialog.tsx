@@ -96,7 +96,7 @@ export function AddDebtDialog() {
   return (
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
       <DialogTrigger asChild>
-        <Button className="gradient-btn border-0">
+        <Button data-tour="add-debt" className="gradient-btn border-0">
           <Plus className="mr-2 h-4 w-4" />
           Add Debt
         </Button>
