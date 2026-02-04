@@ -915,7 +915,7 @@ export default function Home() {
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               FICO was designed to predict default risk for <strong>lenders</strong>. It ignores your savings, 
-              penalizes you for closing paid-off accounts, and has zero visibility into your actual financial habits.
+              penalizes you for closing paid-off accounts, and has virtually zero visibility into your actual financial habits.
             </p>
           </div>
         </FadeIn>
