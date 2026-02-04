@@ -74,6 +74,7 @@ function checkApiGuard() {
     'auth/callback',
     'auth/signup',
     'stripe/webhook',
+    'health',
   ];
 
   for (const file of routeFiles) {
