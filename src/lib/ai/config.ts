@@ -38,7 +38,8 @@ export type AITask =
   | 'debt_payoff_plan'    // Detailed debt payoff plan with scenarios
   // Budget tools
   | 'auto_budget'         // AI-generated budget from income/expenses profile
-  | 'afford_check';       // "Can I afford this?" purchase analysis
+  | 'afford_check'        // "Can I afford this?" purchase analysis
+  | 'csv_column_detect';  // Detect CSV column mapping for imports
 
 // ============================================================
 // MODEL ASSIGNMENTS
@@ -73,6 +74,9 @@ export const MODEL_CONFIG: Record<AITask, string> = {
   // Budget tools
   auto_budget: 'x-ai/grok-4.1-fast',
   afford_check: 'x-ai/grok-4.1-fast',
+
+  // CSV import
+  csv_column_detect: 'openai/gpt-4.1-nano',
 };
 
 // Fallback if primary model fails
@@ -96,6 +100,7 @@ export const FALLBACK_MODELS: Record<AITask, string> = {
   debt_payoff_plan: 'openai/gpt-4o-mini',
   auto_budget: 'openai/gpt-4o-mini',
   afford_check: 'openai/gpt-4o-mini',
+  csv_column_detect: 'mistralai/mistral-7b-instruct',
 };
 
 // ============================================================
@@ -120,6 +125,7 @@ export const TEMPERATURE_CONFIG: Record<AITask, number> = {
   debt_payoff_plan: 0.1,       // Mostly math-driven
   auto_budget: 0.2,            // Balanced allocation
   afford_check: 0.2,           // Analytical with reasoning
+  csv_column_detect: 0.0,      // Deterministic mapping
 };
 
 export const MAX_TOKENS_CONFIG: Record<AITask, number> = {
@@ -140,6 +146,7 @@ export const MAX_TOKENS_CONFIG: Record<AITask, number> = {
   debt_payoff_plan: 2000,      // Detailed JSON payoff plan
   auto_budget: 1500,           // Budget allocations with reasoning
   afford_check: 1200,          // Affordability analysis
+  csv_column_detect: 500,      // JSON column mapping
 };
 
 // ============================================================
@@ -184,6 +191,7 @@ export const TASK_LABELS: Record<AITask, string> = {
   debt_payoff_plan: 'Debt Payoff Plan',
   auto_budget: 'Auto Budget',
   afford_check: 'Affordability Check',
+  csv_column_detect: 'CSV Column Detection',
 };
 
 export const TASK_TIER: Record<AITask, 'vision' | 'simple' | 'analysis'> = {
@@ -204,4 +212,5 @@ export const TASK_TIER: Record<AITask, 'vision' | 'simple' | 'analysis'> = {
   debt_payoff_plan: 'analysis',
   auto_budget: 'analysis',
   afford_check: 'analysis',
+  csv_column_detect: 'simple',
 };

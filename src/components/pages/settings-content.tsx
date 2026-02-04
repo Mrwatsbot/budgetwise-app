@@ -49,6 +49,7 @@ import {
   HelpCircle,
   RotateCcw,
   Sparkles,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -1131,6 +1132,24 @@ export function SettingsContent() {
         <div className="space-y-6">
           <AccountsSection accounts={accounts} onRefresh={refresh} />
           <PlaidConnectSection userTier={userTier} />
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Download className="h-5 w-5 text-[#1a7a6d]" />
+                <CardTitle>Import Data</CardTitle>
+              </div>
+              <CardDescription>Import transactions from YNAB, Monarch Money, Mint, or bank CSVs</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                onClick={() => window.location.href = '/import'}
+                className="gradient-btn border-0 w-full"
+              >
+                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                Import Transactions
+              </Button>
+            </CardContent>
+          </Card>
           <SubscriptionSection profile={profile} />
           <Card>
             <CardHeader>
