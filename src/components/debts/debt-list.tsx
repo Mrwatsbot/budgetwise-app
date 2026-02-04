@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { deleteDebt } from '@/lib/hooks/use-data';
 import { LogPaymentDialog } from './log-payment-dialog';
+import { EditDebtDialog } from './edit-debt-dialog';
 import { getAmortizationHealth } from '@/lib/amortization';
 import { getDebtBarColor } from '@/lib/bar-colors';
 import { DEBT_TYPE_LABELS, type Debt, type DebtPayment } from '@/types/database';
@@ -205,19 +206,22 @@ function DebtCard({ debt }: { debt: DebtWithPayments }) {
           <div className="mt-4 pt-4 border-t border-border space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="text-sm font-medium">Recent Payments</h4>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="text-red-400 hover:text-red-300 hover:bg-red-400/10 min-h-[44px] min-w-[44px] gap-1.5 px-3"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete();
-                }}
-                disabled={deleting}
-              >
-                <Trash2 className="h-4 w-4" />
-                {deleting ? 'Deleting...' : 'Delete Debt'}
-              </Button>
+              <div className="flex items-center gap-1">
+                <EditDebtDialog debt={debt} />
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-red-400 hover:text-red-300 hover:bg-red-400/10 min-h-[44px] min-w-[44px] gap-1.5 px-3"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete();
+                  }}
+                  disabled={deleting}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  {deleting ? 'Deleting...' : 'Delete'}
+                </Button>
+              </div>
             </div>
             
             {debt.recent_payments && debt.recent_payments.length > 0 ? (

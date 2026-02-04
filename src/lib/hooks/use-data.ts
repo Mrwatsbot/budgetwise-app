@@ -206,6 +206,21 @@ export async function addDebt(debtData: Record<string, unknown>) {
   return res.json();
 }
 
+export async function updateDebt(id: string, updates: Record<string, unknown>) {
+  const res = await fetch('/api/debts', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, ...updates }),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Failed to update debt');
+  }
+  mutate('/api/debts');
+  revalidateAll();
+  return res.json();
+}
+
 export async function deleteDebt(id: string) {
   await fetch('/api/debts', {
     method: 'DELETE',

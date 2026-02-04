@@ -90,6 +90,59 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(data);
 }
 
+export async function PUT(request: NextRequest) {
+  const guard = await apiGuard(30);
+  if (guard.error) return guard.error;
+  const { user, supabase } = guard;
+
+  const body = await request.json();
+  const { id, name, type, original_balance, current_balance, apr, minimum_payment,
+          monthly_payment, due_day, in_collections, notes, origination_date, term_months } = body;
+
+  if (!id) {
+    return NextResponse.json({ error: 'Debt ID is required' }, { status: 400 });
+  }
+  if (name !== undefined && (typeof name !== 'string' || name.trim().length === 0)) {
+    return NextResponse.json({ error: 'Name cannot be empty' }, { status: 400 });
+  }
+  if (type !== undefined && !VALID_DEBT_TYPES.includes(type)) {
+    return NextResponse.json({ error: 'Invalid debt type' }, { status: 400 });
+  }
+  if (due_day !== undefined && due_day !== null && (typeof due_day !== 'number' || due_day < 1 || due_day > 31)) {
+    return NextResponse.json({ error: 'Due day must be between 1 and 31' }, { status: 400 });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const update: Record<string, any> = {};
+  if (name !== undefined) update.name = name.trim();
+  if (type !== undefined) update.type = type;
+  if (current_balance !== undefined) update.current_balance = Math.max(0, current_balance);
+  if (original_balance !== undefined) update.original_balance = original_balance;
+  if (apr !== undefined) update.apr = Math.max(0, apr);
+  if (minimum_payment !== undefined) update.minimum_payment = Math.max(0, minimum_payment);
+  if (monthly_payment !== undefined) update.monthly_payment = Math.max(0, monthly_payment);
+  if (due_day !== undefined) update.due_day = due_day;
+  if (in_collections !== undefined) update.in_collections = in_collections === true;
+  if (notes !== undefined) update.notes = typeof notes === 'string' ? notes.trim() : null;
+  if (origination_date !== undefined) update.origination_date = origination_date || null;
+  if (term_months !== undefined) update.term_months = term_months && term_months > 0 ? term_months : null;
+
+  if (Object.keys(update).length === 0) {
+    return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.from as any)('debts')
+    .update(update)
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .select()
+    .single();
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  return NextResponse.json(data);
+}
+
 export async function DELETE(request: NextRequest) {
   const guard = await apiGuard(30);
   if (guard.error) return guard.error;
