@@ -24,10 +24,10 @@ export default async function SetupPage() {
   const hasIncome = profileRes.data && profileRes.data.monthly_income > 0;
   const hasBudgets = budgetsRes.data && budgetsRes.data.length > 0;
 
-  // If setup is complete, redirect to dashboard
-  if (hasAccounts && hasIncome && hasBudgets) {
-    redirect('/dashboard');
-  }
+  // TEMP: redirect disabled for testing — re-enable after review
+  // if (hasAccounts && hasIncome && hasBudgets) {
+  //   redirect('/dashboard');
+  // }
 
   return <SetupWizard userId={user.id} />;
 }
