@@ -1141,17 +1141,33 @@ export function SettingsContent() {
               <CardDescription>Preview the new user setup experience</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button
-                variant="outline"
-                className="w-full justify-start"
-                onClick={() => window.location.href = '/setup?preview=1'}
-              >
-                <RotateCcw className="mr-2 h-4 w-4" />
-                Preview Setup Wizard
-              </Button>
-              <p className="text-xs text-muted-foreground mt-2">
-                Runs in preview mode — no data will be changed
-              </p>
+              <div className="space-y-2">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => window.location.href = '/setup'}
+                >
+                  <RotateCcw className="mr-2 h-4 w-4" />
+                  Run Setup Wizard
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  Resets all data and runs the full wizard from scratch
+                </p>
+              </div>
+              <Separator />
+              <div className="space-y-2">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => window.location.href = '/setup?preview=1'}
+                >
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Preview Setup Wizard
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  Preview mode — no data will be changed
+                </p>
+              </div>
             </CardContent>
           </Card>
           <DangerZone />

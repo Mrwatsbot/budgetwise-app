@@ -71,6 +71,22 @@ export function SetupWizard({ userId, preview = false }: SetupWizardProps) {
 
   const handleNext = async () => {
     if (step === 1) {
+      if (!preview) {
+        // Reset existing data so wizard writes fresh
+        setLoading(true);
+        try {
+          const res = await fetch('/api/setup/reset', { method: 'POST' });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || 'Failed to reset data');
+          }
+        } catch (error: any) {
+          toast.error(error.message || 'Failed to prepare account');
+          setLoading(false);
+          return;
+        }
+        setLoading(false);
+      }
       setStep(2);
     } else if (step === 2) {
       // Save income
@@ -304,9 +320,16 @@ export function SetupWizard({ userId, preview = false }: SetupWizardProps) {
                 onClick={handleNext}
                 size="lg"
                 className="gradient-btn border-0 w-full max-w-xs"
+                disabled={loading}
               >
-                Let's Go
-                <ArrowRight className="ml-2 h-5 w-5" />
+                {loading ? (
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                ) : (
+                  <>
+                    Let's Go
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </>
+                )}
               </Button>
             </motion.div>
           )}
