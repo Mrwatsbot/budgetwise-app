@@ -11,8 +11,8 @@ export async function POST(request: Request) {
     const { user, supabase } = guard;
 
     // Rate limit check
-    const { tier, hasByok } = await getUserTier(supabase, user.id);
-    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'afford_check', hasByok);
+    const { tier } = await getUserTier(supabase, user.id);
+    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'afford_check');
     if (!rateCheck.allowed) {
       return NextResponse.json({
         error: 'Rate limit exceeded',
@@ -155,20 +155,8 @@ ${savingsStr}
 Accounts:
 ${accountStr}`;
 
-    // Fetch BYOK key if applicable
-    let apiKeyOverride: string | undefined;
-    if (hasByok && tier === 'pro') {
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('openrouter_api_key')
-        .eq('id', user.id)
-        .single();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      apiKeyOverride = (profileData as any)?.openrouter_api_key || undefined;
-    }
-
     // Call AI
-    const response = await checkAffordability(purchaseStr, financialContext, apiKeyOverride);
+    const response = await checkAffordability(purchaseStr, financialContext);
 
     // Parse response
     let result;

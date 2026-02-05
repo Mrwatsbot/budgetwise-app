@@ -49,7 +49,6 @@ interface AIRequestOptions {
   messages: Message[];
   overrideModel?: string;
   overrideTemp?: number;
-  apiKeyOverride?: string; // BYOK support
 }
 
 // ============================================================
@@ -57,9 +56,9 @@ interface AIRequestOptions {
 // ============================================================
 
 export async function callAI(options: AIRequestOptions): Promise<AIResponse> {
-  const { task, messages, overrideModel, overrideTemp, apiKeyOverride } = options;
+  const { task, messages, overrideModel, overrideTemp } = options;
   
-  const apiKey = apiKeyOverride || process.env.OPENROUTER_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
     throw new Error('OPENROUTER_API_KEY not configured');
   }
@@ -239,10 +238,9 @@ export async function cleanPayee(rawPayee: string): Promise<AIResponse> {
   });
 }
 
-export async function analyzeSpending(transactionData: string, apiKeyOverride?: string): Promise<AIResponse> {
+export async function analyzeSpending(transactionData: string): Promise<AIResponse> {
   return callAI({
     task: 'analyze_spending',
-    apiKeyOverride,
     messages: [
       {
         role: 'system',
@@ -262,10 +260,9 @@ Be concise, use bullet points, be specific with numbers. Tie recommendations to 
   });
 }
 
-export async function debtStrategy(debtData: string, apiKeyOverride?: string): Promise<AIResponse> {
+export async function debtStrategy(debtData: string): Promise<AIResponse> {
   return callAI({
     task: 'debt_strategy',
-    apiKeyOverride,
     messages: [
       {
         role: 'system',
@@ -286,10 +283,9 @@ Show the math. Be specific with amounts and dates.`,
   });
 }
 
-export async function budgetSuggestions(financialData: string, apiKeyOverride?: string): Promise<AIResponse> {
+export async function budgetSuggestions(financialData: string): Promise<AIResponse> {
   return callAI({
     task: 'budget_suggestions',
-    apiKeyOverride,
     messages: [
       {
         role: 'system',
@@ -308,10 +304,9 @@ Follow the 50/30/20 rule as a baseline (50% needs, 30% wants, 20% savings/debt),
   });
 }
 
-export async function scoreCoach(scoreData: string, apiKeyOverride?: string): Promise<AIResponse> {
+export async function scoreCoach(scoreData: string): Promise<AIResponse> {
   return callAI({
     task: 'score_coach',
-    apiKeyOverride,
     messages: [
       {
         role: 'system',
@@ -331,10 +326,9 @@ Be motivational but honest. Tie every suggestion to specific score points. Forma
   });
 }
 
-export async function findSavings(transactionData: string, apiKeyOverride?: string): Promise<AIResponse> {
+export async function findSavings(transactionData: string): Promise<AIResponse> {
   return callAI({
     task: 'find_savings',
-    apiKeyOverride,
     messages: [
       {
         role: 'system',
@@ -354,10 +348,9 @@ Be specific with amounts. Estimate monthly/yearly savings. Prioritize by impact.
   });
 }
 
-export async function generatePayoffPlan(debtData: string, apiKeyOverride?: string): Promise<AIResponse> {
+export async function generatePayoffPlan(debtData: string): Promise<AIResponse> {
   return callAI({
     task: 'debt_payoff_plan',
-    apiKeyOverride,
     messages: [
       {
         role: 'system',
@@ -432,7 +425,7 @@ Rules:
   });
 }
 
-export async function generatePageInsights(page: string, contextData: string, apiKeyOverride?: string): Promise<AIResponse> {
+export async function generatePageInsights(page: string, contextData: string): Promise<AIResponse> {
   const pagePrompts: Record<string, string> = {
     dashboard: 'Analyze the overall financial picture. Focus on: spending trends vs last month, balance health, and one quick win.',
     budgets: 'Analyze budget adherence. Focus on: categories over/under budget, optimization opportunities, and spending velocity.',
@@ -443,7 +436,6 @@ export async function generatePageInsights(page: string, contextData: string, ap
 
   return callAI({
     task: 'page_insights',
-    apiKeyOverride,
     messages: [
       {
         role: 'system',
@@ -476,10 +468,9 @@ Rules:
   });
 }
 
-export async function generateAutoBudget(financialProfile: string, apiKeyOverride?: string): Promise<AIResponse> {
+export async function generateAutoBudget(financialProfile: string): Promise<AIResponse> {
   return callAI({
     task: 'auto_budget',
-    apiKeyOverride,
     messages: [
       {
         role: 'system',
@@ -546,10 +537,9 @@ Rules:
   });
 }
 
-export async function checkAffordability(purchaseData: string, financialContext: string, apiKeyOverride?: string): Promise<AIResponse> {
+export async function checkAffordability(purchaseData: string, financialContext: string): Promise<AIResponse> {
   return callAI({
     task: 'afford_check',
-    apiKeyOverride,
     messages: [
       {
         role: 'system',
@@ -614,10 +604,9 @@ export async function achievementCongrats(achievementName: string, achievementDe
   });
 }
 
-export async function generateBudgetTune(financialProfile: string, apiKeyOverride?: string): Promise<AIResponse> {
+export async function generateBudgetTune(financialProfile: string): Promise<AIResponse> {
   return callAI({
     task: 'auto_budget',
-    apiKeyOverride,
     messages: [
       {
         role: 'system',
@@ -672,10 +661,9 @@ Rules:
   });
 }
 
-export async function generateMonthlyNudge(monthSummary: string, apiKeyOverride?: string): Promise<AIResponse> {
+export async function generateMonthlyNudge(monthSummary: string): Promise<AIResponse> {
   return callAI({
     task: 'score_coach',
-    apiKeyOverride,
     messages: [
       {
         role: 'system',

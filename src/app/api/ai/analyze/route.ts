@@ -31,9 +31,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Tier-based rate limiting (prevents free users from bypassing gates)
-    const { tier, hasByok } = await getUserTier(supabase, user.id);
+    const { tier } = await getUserTier(supabase, user.id);
     const feature = ACTION_FEATURE_MAP[action] || 'insights';
-    const rateCheck = await checkRateLimit(supabase, user.id, tier, feature, hasByok);
+    const rateCheck = await checkRateLimit(supabase, user.id, tier, feature);
     if (!rateCheck.allowed) {
       return NextResponse.json({
         error: 'Rate limit exceeded',

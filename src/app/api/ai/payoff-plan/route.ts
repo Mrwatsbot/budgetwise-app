@@ -11,8 +11,8 @@ export async function POST() {
     const { user, supabase } = guard;
 
     // Rate limit check
-    const { tier, hasByok } = await getUserTier(supabase, user.id);
-    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'payoff_plan', hasByok);
+    const { tier } = await getUserTier(supabase, user.id);
+    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'payoff_plan');
     if (!rateCheck.allowed) {
       return NextResponse.json({
         error: 'Rate limit exceeded',
@@ -58,20 +58,8 @@ export async function POST() {
       `\nTotal minimum payments: $${debtList.reduce((s: number, d: { minimum_payment: number | null }) => s + (d.minimum_payment || 0), 0).toFixed(2)}` +
       `\nTotal monthly payments: $${debtList.reduce((s: number, d: { monthly_payment: number | null }) => s + (d.monthly_payment || 0), 0).toFixed(2)}`;
 
-    // Fetch BYOK key if applicable
-    let apiKeyOverride: string | undefined;
-    if (hasByok && tier === 'pro') {
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('openrouter_api_key')
-        .eq('id', user.id)
-        .single();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      apiKeyOverride = (profileData as any)?.openrouter_api_key || undefined;
-    }
-
     // Call AI to generate the payoff plan
-    const response = await generatePayoffPlan(debtSummary, apiKeyOverride);
+    const response = await generatePayoffPlan(debtSummary);
 
     // Try to parse the AI response as JSON
     let plan;

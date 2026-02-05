@@ -58,7 +58,6 @@ export interface Profile {
   created_at: string;
   updated_at: string;
   monthly_income: number;
-  openrouter_api_key: string | null;
 }
 
 export interface Account {

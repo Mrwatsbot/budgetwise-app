@@ -11,8 +11,8 @@ export async function POST(request: Request) {
     const { user, supabase } = guard;
 
     // Rate limit check
-    const { tier, hasByok } = await getUserTier(supabase, user.id);
-    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'auto_budget', hasByok);
+    const { tier } = await getUserTier(supabase, user.id);
+    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'auto_budget');
     if (!rateCheck.allowed) {
       return NextResponse.json({
         error: 'Rate limit exceeded',
@@ -162,20 +162,8 @@ ${hasSavingsCategories
 
 ${savings.length > 0 ? `SAVINGS GOALS: The user has ${savings.length} savings goal(s) listed above with IDs. You MUST also suggest monthly_contribution amounts for each savings goal in the "savings_goal_allocations" field. These contributions are PART OF (not in addition to) the ~20% savings portion. The expense category allocations + savings goal contributions together must equal the monthly income.` : 'All expense category allocations MUST sum to the monthly income — do NOT leave money unallocated.'}`;
 
-    // Fetch BYOK key if applicable
-    let apiKeyOverride: string | undefined;
-    if (hasByok && tier === 'pro') {
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('openrouter_api_key')
-        .eq('id', user.id)
-        .single();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      apiKeyOverride = (profileData as any)?.openrouter_api_key || undefined;
-    }
-
     // Call AI
-    const response = await generateAutoBudget(profile, apiKeyOverride);
+    const response = await generateAutoBudget(profile);
 
     // Parse response
     let result;

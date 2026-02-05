@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   const { user, supabase } = guard;
 
   // Check user tier - bank statement import requires Plus
-  const { tier, hasByok } = await getUserTier(supabase, user.id);
+  const { tier } = await getUserTier(supabase, user.id);
   const isFree = tier === 'free' || tier === 'basic';
   if (isFree) {
     return NextResponse.json(
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Check rate limits
-  const rateCheck = await checkRateLimit(supabase, user.id, tier, 'statement_import', hasByok);
+  const rateCheck = await checkRateLimit(supabase, user.id, tier, 'statement_import');
   if (!rateCheck.allowed) {
     return NextResponse.json({
       error: 'Rate limit exceeded',

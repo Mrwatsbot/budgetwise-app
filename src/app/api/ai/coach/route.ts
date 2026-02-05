@@ -19,8 +19,8 @@ export async function POST(request: NextRequest) {
     const { user, supabase } = guard;
 
     // Rate limit check
-    const { tier, hasByok } = await getUserTier(supabase, user.id);
-    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'coaching', hasByok);
+    const { tier } = await getUserTier(supabase, user.id);
+    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'coaching');
     if (!rateCheck.allowed) {
       return NextResponse.json({
         error: 'Rate limit exceeded',
@@ -37,18 +37,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid coaching type' }, { status: 400 });
     }
 
-    // Fetch BYOK key if applicable
-    let apiKeyOverride: string | undefined;
-    if (hasByok && tier === 'pro') {
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('openrouter_api_key')
-        .eq('id', user.id)
-        .single();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      apiKeyOverride = (profileData as any)?.openrouter_api_key || undefined;
-    }
-
     // Gather relevant data server-side
     const contextData = await gatherCoachingData(supabase, user.id, type);
 
@@ -56,19 +44,19 @@ export async function POST(request: NextRequest) {
     let response;
     switch (type) {
       case 'spending':
-        response = await analyzeSpending(contextData, apiKeyOverride);
+        response = await analyzeSpending(contextData);
         break;
       case 'debt':
-        response = await debtStrategy(contextData, apiKeyOverride);
+        response = await debtStrategy(contextData);
         break;
       case 'budget':
-        response = await budgetSuggestions(contextData, apiKeyOverride);
+        response = await budgetSuggestions(contextData);
         break;
       case 'savings':
-        response = await scoreCoach(contextData, apiKeyOverride);
+        response = await findSavings(contextData);
         break;
       case 'score':
-        response = await scoreCoach(contextData, apiKeyOverride);
+        response = await scoreCoach(contextData);
         break;
       default:
         return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
@@ -89,9 +77,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       result: response.content,
       type,
-      model: response.model,
-      usage: response.usage,
-      estimatedCost: response.estimatedCost,
       generated_at: new Date().toISOString(),
     });
   } catch (error) {

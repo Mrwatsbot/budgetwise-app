@@ -10,7 +10,7 @@ export async function GET() {
   const [profileRes, accountsRes] = await Promise.all([
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (supabase.from as any)('profiles')
-      .select('id, full_name, email, monthly_income, subscription_tier, subscription_status, openrouter_api_key, pay_frequency, next_pay_date')
+      .select('id, full_name, email, monthly_income, subscription_tier, subscription_status, pay_frequency, next_pay_date')
       .eq('id', user.id)
       .single(),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,16 +24,10 @@ export async function GET() {
   const profile = profileRes.data;
   const accounts = accountsRes.data || [];
 
-  // Mask the API key — only show last 4 chars
-  const maskedKey = profile?.openrouter_api_key
-    ? '••••••••' + profile.openrouter_api_key.slice(-4)
-    : null;
-
   return NextResponse.json({
     profile: {
       ...profile,
       email: profile?.email || user.email,
-      openrouter_api_key: maskedKey,
       monthly_income: profile?.monthly_income || 0,
     },
     accounts,
@@ -46,7 +40,7 @@ export async function PUT(request: NextRequest) {
   const { user, supabase } = guard;
 
   const body = await request.json();
-  const { full_name, monthly_income, openrouter_api_key, pay_frequency, next_pay_date } = body;
+  const { full_name, monthly_income, pay_frequency, next_pay_date } = body;
 
   // Build update object with only provided fields
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -65,14 +59,6 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Monthly income must be a non-negative number' }, { status: 400 });
     }
     updates.monthly_income = income;
-  }
-
-  if (openrouter_api_key !== undefined) {
-    if (openrouter_api_key && openrouter_api_key.length > 200) {
-      return NextResponse.json({ error: 'API key too long (max 200 characters)' }, { status: 400 });
-    }
-    // Allow null/empty to clear the key
-    updates.openrouter_api_key = openrouter_api_key || null;
   }
 
   if (pay_frequency !== undefined) {
@@ -108,11 +94,6 @@ export async function PUT(request: NextRequest) {
 
   return NextResponse.json({ 
     success: true,
-    profile: {
-      ...data,
-      openrouter_api_key: data.openrouter_api_key
-        ? '••••••••' + data.openrouter_api_key.slice(-4)
-        : null,
-    }
+    profile: data,
   });
 }

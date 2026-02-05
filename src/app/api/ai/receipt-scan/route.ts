@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const { user, supabase } = guard;
 
     // Tier gate
-    const { tier, hasByok } = await getUserTier(supabase, user.id);
+    const { tier } = await getUserTier(supabase, user.id);
     const isFree = tier === 'free' || tier === 'basic';
     if (isFree) {
       return NextResponse.json(
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Rate limit check
-    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'receipt_scan', hasByok);
+    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'receipt_scan');
     if (!rateCheck.allowed) {
       return NextResponse.json({
         error: 'Rate limit exceeded',

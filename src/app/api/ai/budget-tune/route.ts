@@ -11,8 +11,8 @@ export async function POST(request: Request) {
     const { user, supabase } = guard;
 
     // Rate limit check — share limits with auto_budget
-    const { tier, hasByok } = await getUserTier(supabase, user.id);
-    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'auto_budget', hasByok);
+    const { tier } = await getUserTier(supabase, user.id);
+    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'auto_budget');
     if (!rateCheck.allowed) {
       return NextResponse.json({
         error: 'Rate limit exceeded',
@@ -175,20 +175,8 @@ ${categoryList}
 
 IMPORTANT: Analyze spending patterns across months. Identify categories that are consistently over or under budget. Reallocate to match reality while keeping total = income. Do NOT raid savings to fund overspending — adjust expense categories only.`;
 
-    // Fetch BYOK key if applicable
-    let apiKeyOverride: string | undefined;
-    if (hasByok && tier === 'pro') {
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('openrouter_api_key')
-        .eq('id', user.id)
-        .single();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      apiKeyOverride = (profileData as any)?.openrouter_api_key || undefined;
-    }
-
     // Call AI
-    const response = await generateBudgetTune(profile, apiKeyOverride);
+    const response = await generateBudgetTune(profile);
 
     // Parse response
     let result;

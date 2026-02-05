@@ -70,7 +70,6 @@ const tiers = [
       { text: 'Bank sync (Plaid)', included: true },
       { text: '"Can I Afford This?" (15/week)', included: true },
       { text: 'Receipt scanning (10/week)', included: true },
-      { text: 'BYOK (bring your own API key)', included: true },
       { text: 'Priority support', included: true },
       { text: 'Family sharing (+$29/yr)', included: true, note: 'Add-on' },
     ],
@@ -102,7 +101,6 @@ const comparisonFeatures = [
   ]},
   { category: 'Advanced', items: [
     { name: 'Bank sync (Plaid)', free: false, plus: false, pro: true },
-    { name: 'BYOK (own API key)', free: false, plus: false, pro: true },
     { name: 'Family sharing', free: false, plus: false, pro: '+$29/yr' },
   ]},
 ];
@@ -133,10 +131,6 @@ const faqs = [
   {
     question: 'Is my data secure?',
     answer: 'Yes. We use bank-level encryption (TLS 1.3 + AES-256), don\'t sell your data, and strip all personal identifiers before AI processing. Read our Security page for details.',
-  },
-  {
-    question: 'What is BYOK (Bring Your Own Key)?',
-    answer: 'Pro users can use their own OpenRouter API key for unlimited AI features at their own cost. Great for power users who want full control.',
   },
   {
     question: 'Can I cancel anytime?',

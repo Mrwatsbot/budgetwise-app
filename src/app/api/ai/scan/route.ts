@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const { user, supabase } = guard;
 
     // Tier gate — statement scanning requires Plus or higher
-    const { tier, hasByok } = await getUserTier(supabase, user.id);
+    const { tier } = await getUserTier(supabase, user.id);
     if (tier === 'free' || tier === 'basic') {
       return NextResponse.json(
         { error: 'Upgrade to Plus to unlock statement scanning' },
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Rate limit check
-    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'receipt_scan', hasByok);
+    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'receipt_scan');
     if (!rateCheck.allowed) {
       return NextResponse.json({
         error: 'Rate limit exceeded',

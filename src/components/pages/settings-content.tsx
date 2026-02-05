@@ -29,7 +29,6 @@ import {
   DollarSign,
   CreditCard,
   Crown,
-  Key,
   AlertTriangle,
   Plus,
   Pencil,
@@ -845,97 +844,6 @@ function SubscriptionSection({ profile }: { profile: Record<string, unknown> | n
 }
 
 // ============================================================
-// AI / BYOK SECTION
-// ============================================================
-
-function AIKeySection({ profile, onSave }: { profile: Record<string, unknown> | null; onSave: () => void }) {
-  const [apiKey, setApiKey] = useState('');
-  const [saving, setSaving] = useState(false);
-  const hasKey = !!(profile?.openrouter_api_key);
-
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      await updateSettings({ openrouter_api_key: apiKey });
-      toast.success('API key saved');
-      setApiKey('');
-      onSave();
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Failed to save API key');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleClear = async () => {
-    setSaving(true);
-    try {
-      await updateSettings({ openrouter_api_key: null });
-      toast.success('API key removed');
-      onSave();
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Failed to clear API key');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Key className="h-5 w-5 text-[#22a090]" />
-          <CardTitle>AI / Bring Your Own Key</CardTitle>
-        </div>
-        <CardDescription>Bring your own OpenRouter API key for unlimited AI features</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {hasKey && (
-          <div className="flex items-center gap-2 rounded-lg bg-[#6db555]/10 border border-[#6db555]/20 p-3">
-            <Check className="h-4 w-4 text-[#7aba5c] shrink-0" />
-            <p className="text-sm text-[#7aba5c]">
-              API key set: {profile?.openrouter_api_key as string}
-            </p>
-          </div>
-        )}
-        <div className="space-y-2">
-          <Label htmlFor="api-key">{hasKey ? 'Replace API Key' : 'OpenRouter API Key'}</Label>
-          <Input
-            id="api-key"
-            type="password"
-            value={apiKey}
-            onChange={e => setApiKey(e.target.value)}
-            placeholder="sk-or-v1-..."
-          />
-          <p className="text-xs text-muted-foreground">
-            Get your key at{' '}
-            <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-[#1a7a6d] hover:underline">
-              openrouter.ai/keys
-            </a>
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            onClick={handleSave}
-            disabled={saving || !apiKey}
-            className="gradient-btn border-0"
-          >
-            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-            Save Key
-          </Button>
-          {hasKey && (
-            <Button variant="outline" onClick={handleClear} disabled={saving}>
-              <X className="mr-2 h-4 w-4" />
-              Clear Key
-            </Button>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-// ============================================================
 // DANGER ZONE
 // ============================================================
 
@@ -1127,7 +1035,6 @@ export function SettingsContent() {
           <IncomeSection profile={profile} onSave={refresh} />
           <PayScheduleSection profile={profile} onSave={refresh} />
           <CategoryRulesSection />
-          <AIKeySection profile={profile} onSave={refresh} />
         </div>
         <div className="space-y-6">
           <AccountsSection accounts={accounts} onRefresh={refresh} />

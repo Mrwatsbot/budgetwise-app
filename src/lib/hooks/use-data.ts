@@ -571,7 +571,6 @@ export function useAILimits() {
   });
   return {
     tier: data?.tier || 'free',
-    hasByok: data?.hasByok || false,
     features: data?.features || {},
     error,
     isLoading,

@@ -75,14 +75,8 @@ export async function checkRateLimit(
   supabase: SupabaseClient,
   userId: string,
   tier: SubscriptionTier,
-  feature: AIFeature,
-  hasByok?: boolean
+  feature: AIFeature
 ): Promise<{ allowed: boolean; remaining: number; limit: number; period: string; message?: string }> {
-  // BYOK Pro users get unlimited
-  if (hasByok && tier === 'pro') {
-    return { allowed: true, remaining: -1, limit: -1, period: 'unlimited' };
-  }
-
   const config = RATE_LIMITS[tier]?.[feature];
   if (!config) {
     return { allowed: false, remaining: 0, limit: 0, period: 'unknown', message: 'Unknown tier or feature' };
@@ -163,18 +157,22 @@ export async function incrementUsage(
 /**
  * Get user's tier from profiles table
  */
-export async function getUserTier(supabase: SupabaseClient, userId: string): Promise<{ tier: SubscriptionTier; hasByok: boolean }> {
+export async function getUserTier(supabase: SupabaseClient, userId: string): Promise<{ tier: SubscriptionTier }> {
   const { data } = await supabase
     .from('profiles')
-    .select('subscription_tier, openrouter_api_key')
+    .select('subscription_tier, subscription_status')
     .eq('id', userId)
     .single();
 
-  return {
-    tier: (data?.subscription_tier as SubscriptionTier) || 'free',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    hasByok: !!(data as any)?.openrouter_api_key,
-  };
+  let tier = (data?.subscription_tier as SubscriptionTier) || 'free';
+  const status = (data as any)?.subscription_status;
+
+  // Downgrade to free if subscription is not active
+  if (status !== 'active' && tier !== 'free') {
+    tier = 'free';
+  }
+
+  return { tier };
 }
 
 // Export for client-side display

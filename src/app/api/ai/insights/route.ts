@@ -59,8 +59,8 @@ export async function POST(request: NextRequest) {
     const { user, supabase } = guard;
 
     // Rate limit check
-    const { tier, hasByok } = await getUserTier(supabase, user.id);
-    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'insights', hasByok);
+    const { tier } = await getUserTier(supabase, user.id);
+    const rateCheck = await checkRateLimit(supabase, user.id, tier, 'insights');
     if (!rateCheck.allowed) {
       return NextResponse.json({
         error: 'Rate limit exceeded',
@@ -77,23 +77,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid or missing page parameter' }, { status: 400 });
     }
 
-    // Fetch BYOK key if applicable
-    let apiKeyOverride: string | undefined;
-    if (hasByok && tier === 'pro') {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('openrouter_api_key')
-        .eq('id', user.id)
-        .single();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      apiKeyOverride = (profile as any)?.openrouter_api_key || undefined;
-    }
-
     // Gather page data server-side
     const contextData = await gatherPageData(supabase, user.id, page);
 
     // Call AI
-    const response = await generatePageInsights(page, contextData, apiKeyOverride);
+    const response = await generatePageInsights(page, contextData);
 
     // Parse structured insights from AI response
     let insights;

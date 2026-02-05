@@ -27,7 +27,7 @@ export async function GET() {
     if (guard.error) return guard.error;
     const { user, supabase } = guard;
 
-    const { tier, hasByok } = await getUserTier(supabase, user.id);
+    const { tier } = await getUserTier(supabase, user.id);
     const tierConfig = RATE_LIMITS[tier as SubscriptionTier] || RATE_LIMITS.free;
 
     // Fetch all usage counts for this user in current periods
@@ -62,7 +62,7 @@ export async function GET() {
       const config = tierConfig[feature];
       const periodKey = getPeriodKey(config.period);
       const used = usageMap[`${feature}:${periodKey}`] || 0;
-      const limit = (hasByok && tier === 'pro') ? -1 : config.limit;
+      const limit = config.limit;
       const remaining = limit === -1 ? -1 : limit === 0 ? 0 : Math.max(0, limit - used);
 
       features[feature] = {
@@ -75,7 +75,6 @@ export async function GET() {
 
     return NextResponse.json({
       tier,
-      hasByok,
       features,
     });
   } catch (error) {
