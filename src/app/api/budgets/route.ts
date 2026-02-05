@@ -128,6 +128,44 @@ export async function GET(request: Request) {
   });
 }
 
+export async function POST(request: Request) {
+  const guard = await apiGuard(60);
+  if (guard.error) return guard.error;
+  const { user, supabase } = guard;
+
+  try {
+    const body = await request.json();
+    const { category_id, month, budgeted, rollover } = body;
+
+    if (!category_id || !month || budgeted === undefined) {
+      return NextResponse.json(
+        { error: 'category_id, month, and budgeted are required' },
+        { status: 400 }
+      );
+    }
+
+    const { data, error } = await (supabase.from as any)('budgets')
+      .insert({
+        user_id: user.id,
+        category_id,
+        month,
+        budgeted: Number(budgeted),
+        rollover: rollover !== undefined ? rollover : true,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true, budget: data });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || 'Failed to create budget' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PUT(request: Request) {
   const guard = await apiGuard(60);
   if (guard.error) return guard.error;
@@ -135,17 +173,29 @@ export async function PUT(request: Request) {
 
   try {
     const body = await request.json();
-    const { budgetId, rollover } = body;
+    const { budgetId, rollover, budgeted } = body;
 
-    if (!budgetId || typeof rollover !== 'boolean') {
+    if (!budgetId) {
       return NextResponse.json(
-        { error: 'budgetId and rollover (boolean) are required' },
+        { error: 'budgetId is required' },
+        { status: 400 }
+      );
+    }
+
+    // Build update object with only provided fields
+    const updates: Record<string, any> = {};
+    if (typeof rollover === 'boolean') updates.rollover = rollover;
+    if (budgeted !== undefined) updates.budgeted = Number(budgeted);
+
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json(
+        { error: 'No fields to update' },
         { status: 400 }
       );
     }
 
     const { data, error } = await (supabase.from as any)('budgets')
-      .update({ rollover })
+      .update(updates)
       .eq('id', budgetId)
       .eq('user_id', user.id)
       .select()
@@ -157,6 +207,38 @@ export async function PUT(request: Request) {
   } catch (error: any) {
     return NextResponse.json(
       { error: error.message || 'Failed to update budget' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  const guard = await apiGuard(60);
+  if (guard.error) return guard.error;
+  const { user, supabase } = guard;
+
+  try {
+    const body = await request.json();
+    const { budgetId } = body;
+
+    if (!budgetId) {
+      return NextResponse.json(
+        { error: 'budgetId is required' },
+        { status: 400 }
+      );
+    }
+
+    const { error } = await (supabase.from as any)('budgets')
+      .delete()
+      .eq('id', budgetId)
+      .eq('user_id', user.id);
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || 'Failed to delete budget' },
       { status: 500 }
     );
   }

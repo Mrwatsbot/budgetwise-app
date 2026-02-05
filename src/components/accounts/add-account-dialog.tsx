@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -55,16 +54,20 @@ export function AddAccountDialog({ userId, onSuccess, trigger }: AddAccountDialo
     setLoading(true);
 
     try {
-      const supabase = createClient();
-      
-      const { error } = await supabase.from('accounts').insert({
-        user_id: userId,
-        name: formData.name,
-        type: formData.type,
-        balance: formData.balance ? parseFloat(formData.balance) : 0,
-      } as any);
+      const response = await fetch('/api/accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          type: formData.type,
+          balance: formData.balance ? parseFloat(formData.balance) : 0,
+        }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to create account');
+      }
 
       toast.success('Account created!');
       setOpen(false);

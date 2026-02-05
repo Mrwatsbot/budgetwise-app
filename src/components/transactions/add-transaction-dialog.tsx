@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -70,26 +69,30 @@ export function AddTransactionDialog({ categories, accounts, userId, onRefresh }
     setLoading(true);
 
     try {
-      const supabase = createClient();
-      
       // Calculate amount (negative for expenses, positive for income)
       const amount = formData.type === 'expense' 
         ? -Math.abs(parseFloat(formData.amount))
         : Math.abs(parseFloat(formData.amount));
 
-      const { error } = await supabase.from('transactions').insert({
-        user_id: userId,
-        account_id: formData.accountId,
-        category_id: formData.categoryId || null,
-        amount,
-        payee_original: formData.payee,
-        payee_clean: formData.payee,
-        date: formData.date,
-        memo: formData.memo || null,
-        is_cleared: true,
-      } as any);
+      const response = await fetch('/api/transactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          account_id: formData.accountId,
+          category_id: formData.categoryId || null,
+          amount,
+          payee_original: formData.payee,
+          payee_clean: formData.payee,
+          date: formData.date,
+          memo: formData.memo || null,
+          is_cleared: true,
+        }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to add transaction');
+      }
 
       toast.success('Transaction added!');
       setOpen(false);

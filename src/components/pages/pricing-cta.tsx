@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { createClient } from '@/lib/supabase/client';
 
 interface PricingCTAProps {
   tier: 'free' | 'plus' | 'pro';
@@ -19,22 +18,18 @@ export function PricingCTA({ tier, cta, highlighted }: PricingCTAProps) {
   const handleUpgrade = async (targetTier: 'plus' | 'pro') => {
     setLoading(true);
     try {
-      // Check if user is logged in
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) {
-        // Redirect to signup with plan parameter
-        window.location.href = `/signup?plan=${targetTier}`;
-        return;
-      }
-
-      // User is logged in, create checkout session
+      // Try to create checkout session - API will handle auth
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tier: targetTier }),
       });
+
+      if (response.status === 401) {
+        // Not authenticated, redirect to signup
+        window.location.href = `/signup?plan=${targetTier}`;
+        return;
+      }
 
       if (!response.ok) {
         const error = await response.json();

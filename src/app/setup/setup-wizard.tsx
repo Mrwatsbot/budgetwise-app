@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -158,7 +157,6 @@ export function SetupWizard({ userId, preview = false }: SetupWizardProps) {
       }
       
       try {
-        const supabase = createClient();
         const accountNames: Record<string, string> = {
           checking: 'Main Checking',
           savings: 'Savings',
@@ -166,14 +164,20 @@ export function SetupWizard({ userId, preview = false }: SetupWizardProps) {
           cash: 'Cash',
         };
         
-        const { error } = await supabase.from('accounts').insert({
-          user_id: userId,
-          name: accountNames[accountType],
-          type: accountType,
-          balance: parseFloat(accountBalance),
-        } as any);
+        const response = await fetch('/api/accounts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: accountNames[accountType],
+            type: accountType,
+            balance: parseFloat(accountBalance),
+          }),
+        });
 
-        if (error) throw error;
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to create account');
+        }
         
         // Move to AI Budget step and generate budget
         setStep(4);

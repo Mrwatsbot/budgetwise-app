@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -93,8 +92,6 @@ export function TransactionList({ transactions, categories = [], showAccount = f
   const [expandedTransactions, setExpandedTransactions] = useState<Set<string>>(new Set());
   const [childTransactions, setChildTransactions] = useState<Record<string, Transaction[]>>({});
 
-  const supabase = createClient();
-
   // Fetch child transactions for split parents
   useEffect(() => {
     const fetchChildTransactions = async () => {
@@ -104,25 +101,30 @@ export function TransactionList({ transactions, categories = [], showAccount = f
 
       if (splitParentIds.length === 0) return;
 
-      const { data, error } = await (supabase as any)
-        .from('transactions')
-        .select('id, amount, payee_clean, payee_original, date, memo, is_cleared, parent_transaction_id, category:categories(id, name, icon, color), account:accounts(id, name)')
-        .in('parent_transaction_id', splitParentIds)
-        .order('created_at');
+      try {
+        // Fetch children for all split parents
+        const childPromises = splitParentIds.map(async (parentId) => {
+          const response = await fetch(`/api/transactions?parent_transaction_id=${parentId}`);
+          if (!response.ok) return { parentId, children: [] };
+          const data = await response.json();
+          return { parentId, children: data.transactions || [] };
+        });
 
-      if (!error && data) {
-        const grouped = data.reduce((acc: Record<string, Transaction[]>, child: any) => {
-          const parentId = child.parent_transaction_id!;
-          if (!acc[parentId]) acc[parentId] = [];
-          acc[parentId].push(child as Transaction);
+        const results = await Promise.all(childPromises);
+        
+        const grouped = results.reduce((acc, { parentId, children }) => {
+          acc[parentId] = children;
           return acc;
         }, {} as Record<string, Transaction[]>);
+        
         setChildTransactions(grouped);
+      } catch (error) {
+        console.error('Failed to fetch child transactions:', error);
       }
     };
 
     fetchChildTransactions();
-  }, [transactions, supabase]);
+  }, [transactions]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this transaction?')) return;

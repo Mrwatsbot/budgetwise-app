@@ -12,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { createClient } from '@/lib/supabase/client';
 import { DEBT_TYPE_LABELS, type DebtType } from '@/types/database';
 
 interface ScannedDebt {
@@ -95,25 +94,27 @@ export function ScanStatementDialog() {
     setError('');
 
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
-
       for (const debt of scannedDebts) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { error: insertError } = await (supabase.from as any)('debts').insert({
-          user_id: user.id,
-          name: debt.name || 'Scanned Debt',
-          type: debt.type || 'other',
-          current_balance: debt.current_balance || 0,
-          original_balance: debt.original_balance,
-          apr: debt.apr || 0,
-          minimum_payment: debt.minimum_payment || 0,
-          monthly_payment: debt.monthly_payment || 0,
-          due_day: debt.due_day,
-          in_collections: debt.in_collections || false,
+        const response = await fetch('/api/debts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: debt.name || 'Scanned Debt',
+            type: debt.type || 'other',
+            current_balance: debt.current_balance || 0,
+            original_balance: debt.original_balance,
+            apr: debt.apr || 0,
+            minimum_payment: debt.minimum_payment || 0,
+            monthly_payment: debt.monthly_payment || 0,
+            due_day: debt.due_day,
+            in_collections: debt.in_collections || false,
+          }),
         });
-        if (insertError) throw insertError;
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to save debt');
+        }
       }
 
       setOpen(false);

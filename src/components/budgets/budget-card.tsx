@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -66,34 +65,50 @@ export function BudgetCard({
 
     setLoading(true);
     try {
-      const supabase = createClient() as any;
-
       if (budgetId) {
         // Update existing budget
         if (newAmount === 0) {
           // Delete if set to 0
-          const { error } = await supabase
-            .from('budgets')
-            .delete()
-            .eq('id', budgetId);
-          if (error) throw error;
+          const response = await fetch('/api/budgets', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ budgetId }),
+          });
+          if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error || 'Failed to delete budget');
+          }
         } else {
-          const { error } = await supabase
-            .from('budgets')
-            .update({ budgeted: newAmount, rollover: rolloverEnabled })
-            .eq('id', budgetId);
-          if (error) throw error;
+          const response = await fetch('/api/budgets', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              budgetId,
+              budgeted: newAmount,
+              rollover: rolloverEnabled,
+            }),
+          });
+          if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error || 'Failed to update budget');
+          }
         }
       } else if (newAmount > 0) {
         // Create new budget
-        const { error } = await supabase.from('budgets').insert({
-          user_id: userId,
-          category_id: categoryId,
-          month: currentMonth,
-          budgeted: newAmount,
-          rollover: rolloverEnabled,
+        const response = await fetch('/api/budgets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            category_id: categoryId,
+            month: currentMonth,
+            budgeted: newAmount,
+            rollover: rolloverEnabled,
+          }),
         });
-        if (error) throw error;
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to create budget');
+        }
       }
 
       toast.success('Budget updated!');
