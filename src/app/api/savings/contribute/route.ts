@@ -1,19 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { rateLimit } from '@/lib/rate-limit';
+import { apiGuard } from '@/lib/api-guard';
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-  const rl = await rateLimit(user.id, 30);
-  if (!rl.success) {
-    return NextResponse.json(
-      { error: 'Too many requests' },
-      { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.reset - Date.now()) / 1000)) } }
-    );
-  }
+  const guard = await apiGuard(30);
+  if (guard.error) return guard.error;
+  const { user, supabase } = guard;
 
   const body = await request.json();
   const { savings_goal_id, amount, date } = body;
@@ -59,7 +50,10 @@ export async function POST(request: NextRequest) {
       date: contributionDate,
     });
 
-  if (contribError) return NextResponse.json({ error: contribError.message }, { status: 400 });
+  if (contribError) {
+    console.error('Failed to record contribution:', contribError.message);
+    return NextResponse.json({ error: 'Failed to record contribution' }, { status: 400 });
+  }
 
   // Atomic update: increment current_amount to prevent race conditions
   const newAmount = (goal.current_amount || 0) + parsedAmount;

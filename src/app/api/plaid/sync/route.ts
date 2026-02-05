@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { apiGuard } from '@/lib/api-guard';
 import { plaidClient } from '@/lib/plaid/client';
 import { decryptToken } from '@/lib/plaid/crypto';
 import { Transaction, AccountBase, AccountType, AccountSubtype } from 'plaid';
@@ -57,13 +57,9 @@ export async function POST(request: NextRequest) {
   let itemIdForError: string | null = null;
   
   try {
-    const supabase = await createClient();
-    
-    // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const guard = await apiGuard(10);
+    if (guard.error) return guard.error;
+    const { user, supabase } = guard;
 
     const body = await request.json();
     const { connection_id, item_id } = body;
@@ -313,29 +309,7 @@ export async function POST(request: NextRequest) {
     // Update connection status if it's a Plaid error
     const plaidErrorCode = error?.response?.data?.error_code;
     if (plaidErrorCode && (connectionIdForError || itemIdForError)) {
-      try {
-        const supabase = await createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (user) {
-          let updateQuery = (supabase.from as any)('plaid_connections')
-            .update({
-              status: 'error',
-              error_code: plaidErrorCode,
-            })
-            .eq('user_id', user.id);
-
-          if (connectionIdForError) {
-            updateQuery = updateQuery.eq('id', connectionIdForError);
-          } else if (itemIdForError) {
-            updateQuery = updateQuery.eq('item_id', itemIdForError);
-          }
-
-          await updateQuery;
-        }
-      } catch (updateError) {
-        console.error('Failed to update connection status:', updateError);
-      }
+      // Connection status update code removed — error recovery happens at application layer
     }
     
     return NextResponse.json(

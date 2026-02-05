@@ -81,12 +81,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const transactionAmount = Number(amount);
+    if (isNaN(transactionAmount) || !isFinite(transactionAmount)) {
+      return NextResponse.json({ error: 'Invalid amount' }, { status: 400 });
+    }
+    if (Math.abs(transactionAmount) > 1000000) {
+      return NextResponse.json({ error: 'Amount out of range' }, { status: 400 });
+    }
+
     const { data, error } = await (supabase.from as any)('transactions')
       .insert({
         user_id: user.id,
         account_id,
         category_id: category_id || null,
-        amount: Number(amount),
+        amount: transactionAmount,
         payee_original: payee_original || 'Manual Entry',
         payee_clean: payee_clean || payee_original || 'Manual Entry',
         date,

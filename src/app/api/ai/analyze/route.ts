@@ -1,8 +1,7 @@
 export const maxDuration = 60;
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { apiGuard } from '@/lib/api-guard';
 import { analyzeSpending, findSavings, debtStrategy, budgetSuggestions, scoreCoach } from '@/lib/ai/openrouter';
-import { rateLimit } from '@/lib/rate-limit';
 import { checkRateLimit, incrementUsage, getUserTier, type AIFeature } from '@/lib/ai/rate-limiter';
 
 const ACTION_FEATURE_MAP: Record<string, AIFeature> = {
@@ -15,20 +14,9 @@ const ACTION_FEATURE_MAP: Record<string, AIFeature> = {
 
 export async function POST(request: NextRequest) {
   try {
-    // Auth check
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const rl = await rateLimit(user.id, 10);
-    if (!rl.success) {
-      return NextResponse.json(
-        { error: 'Too many requests' },
-        { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.reset - Date.now()) / 1000)) } }
-      );
-    }
+    const guard = await apiGuard(10);
+    if (guard.error) return guard.error;
+    const { user, supabase } = guard;
 
     const body = await request.json();
     const { action, data } = body;

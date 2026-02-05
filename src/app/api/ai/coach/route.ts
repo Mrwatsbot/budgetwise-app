@@ -1,6 +1,6 @@
 export const maxDuration = 60;
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { apiGuard } from '@/lib/api-guard';
 import {
   analyzeSpending,
   debtStrategy,
@@ -9,25 +9,14 @@ import {
   findSavings,
 } from '@/lib/ai/openrouter';
 import { checkRateLimit, incrementUsage, getUserTier } from '@/lib/ai/rate-limiter';
-import { rateLimit } from '@/lib/rate-limit';
 
 const VALID_TYPES = ['spending', 'debt', 'budget', 'savings', 'score'];
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const rl = await rateLimit(user.id, 10);
-    if (!rl.success) {
-      return NextResponse.json(
-        { error: 'Too many requests' },
-        { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.reset - Date.now()) / 1000)) } }
-      );
-    }
+    const guard = await apiGuard(10);
+    if (guard.error) return guard.error;
+    const { user, supabase } = guard;
 
     // Rate limit check
     const { tier, hasByok } = await getUserTier(supabase, user.id);

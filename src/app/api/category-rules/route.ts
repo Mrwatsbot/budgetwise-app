@@ -18,7 +18,8 @@ export async function GET(request: NextRequest) {
     .order('created_at', { ascending: false });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Failed to fetch category rules:', error.message);
+    return NextResponse.json({ error: 'Failed to fetch category rules' }, { status: 500 });
   }
 
   return NextResponse.json({ rules: rules || [] });
@@ -75,8 +76,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ rule: data }, { status: 201 });
   } catch (error: any) {
+    console.error('Failed to create category rule:', error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { error: error.message || 'Failed to create rule' },
+      { error: 'Failed to create rule' },
       { status: 500 }
     );
   }
@@ -111,8 +113,9 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ rule: data });
   } catch (error: any) {
+    console.error('Failed to update category rule:', error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { error: error.message || 'Failed to update rule' },
+      { error: 'Failed to update rule' },
       { status: 500 }
     );
   }
@@ -140,8 +143,9 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
+    console.error('Failed to delete category rule:', error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { error: error.message || 'Failed to delete rule' },
+      { error: 'Failed to delete rule' },
       { status: 500 }
     );
   }

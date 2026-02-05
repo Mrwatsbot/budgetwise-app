@@ -1,19 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { rateLimit } from '@/lib/rate-limit';
+import { apiGuard } from '@/lib/api-guard';
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-  const rl = await rateLimit(user.id, 30);
-  if (!rl.success) {
-    return NextResponse.json(
-      { error: 'Too many requests' },
-      { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.reset - Date.now()) / 1000)) } }
-    );
-  }
+  const guard = await apiGuard(30);
+  if (guard.error) return guard.error;
+  const { user, supabase } = guard;
 
   const body = await request.json();
   const { debt_id, amount, date, is_extra } = body;
@@ -68,7 +59,10 @@ export async function POST(request: NextRequest) {
     balance_after: balanceAfter,
   });
 
-  if (paymentError) return NextResponse.json({ error: paymentError.message }, { status: 400 });
+  if (paymentError) {
+    console.error('Failed to record payment:', paymentError.message);
+    return NextResponse.json({ error: 'Failed to record payment' }, { status: 400 });
+  }
 
   // Update debt balance
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -82,6 +76,9 @@ export async function POST(request: NextRequest) {
     .eq('id', debt_id)
     .eq('user_id', user.id);
 
-  if (updateError) return NextResponse.json({ error: updateError.message }, { status: 400 });
+  if (updateError) {
+    console.error('Failed to update debt balance:', updateError.message);
+    return NextResponse.json({ error: 'Failed to update debt balance' }, { status: 400 });
+  }
   return NextResponse.json({ success: true, balance_after: balanceAfter, is_paid_off: isPaidOff });
 }

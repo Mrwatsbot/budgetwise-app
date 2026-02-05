@@ -144,12 +144,20 @@ export async function POST(request: Request) {
       );
     }
 
+    const budgetedAmount = Number(budgeted);
+    if (isNaN(budgetedAmount) || !isFinite(budgetedAmount)) {
+      return NextResponse.json({ error: 'Invalid budgeted amount' }, { status: 400 });
+    }
+    if (budgetedAmount < 0 || budgetedAmount > 1000000) {
+      return NextResponse.json({ error: 'Budgeted amount out of range' }, { status: 400 });
+    }
+
     const { data, error } = await (supabase.from as any)('budgets')
       .insert({
         user_id: user.id,
         category_id,
         month,
-        budgeted: Number(budgeted),
+        budgeted: budgetedAmount,
         rollover: rollover !== undefined ? rollover : true,
       })
       .select()
@@ -185,7 +193,16 @@ export async function PUT(request: Request) {
     // Build update object with only provided fields
     const updates: Record<string, any> = {};
     if (typeof rollover === 'boolean') updates.rollover = rollover;
-    if (budgeted !== undefined) updates.budgeted = Number(budgeted);
+    if (budgeted !== undefined) {
+      const budgetedAmount = Number(budgeted);
+      if (isNaN(budgetedAmount) || !isFinite(budgetedAmount)) {
+        return NextResponse.json({ error: 'Invalid budgeted amount' }, { status: 400 });
+      }
+      if (budgetedAmount < 0 || budgetedAmount > 1000000) {
+        return NextResponse.json({ error: 'Budgeted amount out of range' }, { status: 400 });
+      }
+      updates.budgeted = budgetedAmount;
+    }
 
     if (Object.keys(updates).length === 0) {
       return NextResponse.json(

@@ -13,7 +13,10 @@ export async function GET() {
     .eq('is_active', true)
     .order('created_at', { ascending: true });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) {
+    console.error('Failed to fetch accounts:', error.message);
+    return NextResponse.json({ error: 'Failed to fetch accounts' }, { status: 400 });
+  }
   return NextResponse.json(accounts || []);
 }
 
@@ -29,18 +32,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Name and type are required' }, { status: 400 });
   }
 
+  const accountBalance = Number(balance || 0);
+  if (isNaN(accountBalance) || !isFinite(accountBalance)) {
+    return NextResponse.json({ error: 'Invalid balance' }, { status: 400 });
+  }
+  if (Math.abs(accountBalance) > 100000000) {
+    return NextResponse.json({ error: 'Balance out of range' }, { status: 400 });
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase.from as any)('accounts')
     .insert({
       user_id: user.id,
       name,
       type,
-      balance: balance || 0,
+      balance: accountBalance,
     })
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) {
+    console.error('Failed to create account:', error.message);
+    return NextResponse.json({ error: 'Failed to create account' }, { status: 400 });
+  }
   return NextResponse.json(data);
 }
 
@@ -60,7 +74,16 @@ export async function PUT(request: NextRequest) {
   const updates: Record<string, any> = {};
   if (name !== undefined) updates.name = name;
   if (type !== undefined) updates.type = type;
-  if (balance !== undefined) updates.balance = Number(balance);
+  if (balance !== undefined) {
+    const accountBalance = Number(balance);
+    if (isNaN(accountBalance) || !isFinite(accountBalance)) {
+      return NextResponse.json({ error: 'Invalid balance' }, { status: 400 });
+    }
+    if (Math.abs(accountBalance) > 100000000) {
+      return NextResponse.json({ error: 'Balance out of range' }, { status: 400 });
+    }
+    updates.balance = accountBalance;
+  }
   updates.updated_at = new Date().toISOString();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,7 +94,10 @@ export async function PUT(request: NextRequest) {
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) {
+    console.error('Failed to update account:', error.message);
+    return NextResponse.json({ error: 'Failed to update account' }, { status: 400 });
+  }
   return NextResponse.json(data);
 }
 
@@ -93,6 +119,9 @@ export async function DELETE(request: NextRequest) {
     .eq('id', id)
     .eq('user_id', user.id);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) {
+    console.error('Failed to delete account:', error.message);
+    return NextResponse.json({ error: 'Failed to delete account' }, { status: 400 });
+  }
   return NextResponse.json({ success: true });
 }

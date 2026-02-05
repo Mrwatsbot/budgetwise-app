@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { apiGuard } from '@/lib/api-guard';
 import { plaidClient } from '@/lib/plaid/client';
 import { encryptToken } from '@/lib/plaid/crypto';
 import { getUserTier } from '@/lib/ai/rate-limiter';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    
-    // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const guard = await apiGuard(10);
+    if (guard.error) return guard.error;
+    const { user, supabase } = guard;
 
     // Check user tier
     const { tier } = await getUserTier(supabase, user.id);

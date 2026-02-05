@@ -60,6 +60,22 @@ export async function POST(request: NextRequest) {
   if (!type || !VALID_SAVINGS_TYPES.includes(type)) {
     return NextResponse.json({ error: 'Valid savings type is required' }, { status: 400 });
   }
+  if (target_amount !== undefined && target_amount !== null) {
+    if (typeof target_amount !== 'number' || isNaN(target_amount) || !isFinite(target_amount)) {
+      return NextResponse.json({ error: 'Invalid target amount' }, { status: 400 });
+    }
+    if (target_amount < 0 || target_amount > 10000000) {
+      return NextResponse.json({ error: 'Target amount out of range' }, { status: 400 });
+    }
+  }
+  if (monthly_contribution !== undefined && monthly_contribution !== null) {
+    if (typeof monthly_contribution !== 'number' || isNaN(monthly_contribution) || !isFinite(monthly_contribution)) {
+      return NextResponse.json({ error: 'Invalid monthly contribution' }, { status: 400 });
+    }
+    if (monthly_contribution < 0 || monthly_contribution > 100000) {
+      return NextResponse.json({ error: 'Monthly contribution out of range' }, { status: 400 });
+    }
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const insert: Record<string, any> = {
@@ -77,7 +93,10 @@ export async function POST(request: NextRequest) {
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) {
+    console.error('Failed to create savings goal:', error.message);
+    return NextResponse.json({ error: 'Failed to create savings goal' }, { status: 400 });
+  }
   return NextResponse.json(data);
 }
 
@@ -107,7 +126,10 @@ export async function PUT(request: NextRequest) {
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) {
+    console.error('Failed to update savings goal:', error.message);
+    return NextResponse.json({ error: 'Failed to update savings goal' }, { status: 400 });
+  }
   return NextResponse.json(data);
 }
 

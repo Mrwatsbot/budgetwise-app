@@ -54,7 +54,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Protected routes - redirect to login if not authenticated
-  const protectedPaths = ['/dashboard', '/transactions', '/budgets', '/debts', '/savings', '/score', '/settings', '/onboarding', '/reports', '/review', '/coaching', '/creator', '/api/debts', '/api/dashboard', '/api/transactions', '/api/budgets', '/api/ai', '/api/reports', '/api/chat', '/api/predictions', '/api/recurring', '/api/category-rules', '/api/stripe'];
+  const protectedPaths = ['/dashboard', '/transactions', '/budgets', '/debts', '/savings', '/score', '/settings', '/reports', '/review', '/coaching', '/creator', '/api/debts', '/api/dashboard', '/api/transactions', '/api/budgets', '/api/ai', '/api/reports', '/api/chat', '/api/predictions', '/api/recurring', '/api/category-rules', '/api/stripe'];
   const isProtectedPath = protectedPaths.some(path => 
     request.nextUrl.pathname.startsWith(path)
   );

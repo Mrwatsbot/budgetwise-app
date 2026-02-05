@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { apiGuard } from '@/lib/api-guard';
 import { plaidClient } from '@/lib/plaid/client';
 import { decryptToken } from '@/lib/plaid/crypto';
 
 // GET: List user's Plaid connections
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    
-    // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const guard = await apiGuard(10);
+    if (guard.error) return guard.error;
+    const { user, supabase } = guard;
 
     // Get all connections
     const { data: connections, error: connError } = await (supabase.from as any)('plaid_connections')
@@ -35,13 +31,9 @@ export async function GET(request: NextRequest) {
 // DELETE: Disconnect a Plaid connection
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    
-    // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const guard = await apiGuard(10);
+    if (guard.error) return guard.error;
+    const { user, supabase } = guard;
 
     const { searchParams } = new URL(request.url);
     const connectionId = searchParams.get('id');

@@ -56,8 +56,20 @@ export async function POST(request: NextRequest) {
   if (!type || !VALID_DEBT_TYPES.includes(type)) {
     return NextResponse.json({ error: 'Valid debt type is required' }, { status: 400 });
   }
-  if (current_balance === undefined || typeof current_balance !== 'number' || current_balance < 0) {
-    return NextResponse.json({ error: 'Current balance must be a non-negative number' }, { status: 400 });
+  if (current_balance === undefined || typeof current_balance !== 'number' || isNaN(current_balance) || !isFinite(current_balance)) {
+    return NextResponse.json({ error: 'Current balance must be a valid number' }, { status: 400 });
+  }
+  if (current_balance < 0 || current_balance > 10000000) {
+    return NextResponse.json({ error: 'Current balance out of range' }, { status: 400 });
+  }
+  if (apr !== undefined && apr !== null && (typeof apr !== 'number' || isNaN(apr) || apr < 0 || apr > 100)) {
+    return NextResponse.json({ error: 'APR must be between 0 and 100' }, { status: 400 });
+  }
+  if (minimum_payment !== undefined && minimum_payment !== null && (typeof minimum_payment !== 'number' || isNaN(minimum_payment) || minimum_payment < 0 || minimum_payment > 100000)) {
+    return NextResponse.json({ error: 'Minimum payment out of range' }, { status: 400 });
+  }
+  if (monthly_payment !== undefined && monthly_payment !== null && (typeof monthly_payment !== 'number' || isNaN(monthly_payment) || monthly_payment < 0 || monthly_payment > 100000)) {
+    return NextResponse.json({ error: 'Monthly payment out of range' }, { status: 400 });
   }
   if (due_day !== undefined && due_day !== null && (typeof due_day !== 'number' || due_day < 1 || due_day > 31)) {
     return NextResponse.json({ error: 'Due day must be between 1 and 31' }, { status: 400 });
@@ -86,7 +98,10 @@ export async function POST(request: NextRequest) {
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) {
+    console.error('Failed to create debt:', error.message);
+    return NextResponse.json({ error: 'Failed to create debt' }, { status: 400 });
+  }
   return NextResponse.json(data);
 }
 
@@ -139,7 +154,10 @@ export async function PUT(request: NextRequest) {
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) {
+    console.error('Failed to update debt:', error.message);
+    return NextResponse.json({ error: 'Failed to update debt' }, { status: 400 });
+  }
   return NextResponse.json(data);
 }
 
