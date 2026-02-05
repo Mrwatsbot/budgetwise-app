@@ -56,17 +56,18 @@ export async function POST(request: Request) {
     const rows = parseResult.data as string[][];
     const dataRows = rows.slice(1); // Skip header
 
-    // Get user's categories for fuzzy matching
-    const { data: categories } = await supabase
-      .from('categories')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase.from as any;
+
+    // Get global categories for fuzzy matching
+    const { data: categories } = await db('categories')
       .select('id, name, type')
-      .or(`user_id.eq.${user.id},is_system.eq.true`);
+      .order('sort_order');
 
     // Get or create default account
     let targetAccountId = accountId;
     if (!targetAccountId) {
-      const { data: accounts } = await supabase
-        .from('accounts')
+      const { data: accounts } = await db('accounts')
         .select('id')
         .eq('user_id', user.id)
         .eq('is_active', true)
@@ -76,14 +77,12 @@ export async function POST(request: Request) {
         targetAccountId = (accounts[0] as { id: string }).id;
       } else {
         // Create a default account
-        const { data: newAccount, error: accountError } = await (supabase.from as any)('accounts')
+        const { data: newAccount, error: accountError } = await db('accounts')
           .insert({
             user_id: user.id,
             name: 'Imported Account',
             type: 'checking',
             balance: 0,
-            currency: 'USD',
-            is_active: true,
           })
           .select()
           .single();
@@ -94,8 +93,7 @@ export async function POST(request: Request) {
     }
 
     // Get existing transactions for duplicate detection
-    const { data: existingTransactions } = await supabase
-      .from('transactions')
+    const { data: existingTransactions } = await db('transactions')
       .select('date, amount, payee_original')
       .eq('user_id', user.id);
 
@@ -158,11 +156,8 @@ export async function POST(request: Request) {
           }
         }
 
-        // Determine transaction type
-        const type = amount < 0 ? 'expense' : 'income';
-
-        // Insert transaction
-        const { error: insertError } = await (supabase.from as any)('transactions').insert({
+        // Insert transaction (match existing bulk insert pattern)
+        const { error: insertError } = await db('transactions').insert({
           user_id: user.id,
           account_id: targetAccountId,
           category_id: categoryId,
@@ -170,10 +165,7 @@ export async function POST(request: Request) {
           date,
           payee_original: payee || 'Unknown',
           payee_clean: payee || 'Unknown',
-          notes: notesStr || null,
-          type,
-          is_recurring: false,
-          source: 'import',
+          notes: notesStr ? `${notesStr} (imported)` : 'Imported',
         });
 
         if (insertError) {
