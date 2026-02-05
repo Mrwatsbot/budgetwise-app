@@ -12,7 +12,7 @@ const tiers = [
     name: 'Free',
     price: '$0',
     period: 'forever',
-    description: 'Perfect for getting started',
+    description: 'Start building better habits',
     icon: Target,
     color: 'text-gray-400',
     bgGradient: 'from-gray-500/10 to-slate-500/10',
@@ -21,7 +21,7 @@ const tiers = [
       { text: 'Financial Health Score', included: true },
       { text: 'Manual transaction tracking', included: true },
       { text: 'CSV import', included: true },
-      { text: 'Basic gamification', included: true },
+      { text: 'Streaks & daily check-ins', included: true },
       { text: 'Budget & debt tracking', included: true },
       { text: 'AI Insights', included: false, note: 'Locked (see demo)' },
       { text: 'Leaderboards', included: false },
@@ -35,14 +35,14 @@ const tiers = [
     name: 'Plus',
     price: '$79',
     period: 'per year',
-    description: 'For serious budgeters',
+    description: 'Your complete money toolkit',
     icon: Zap,
     color: 'text-[#3D6B52]',
     bgGradient: 'from-[#3D6B5233] to-[#2D544033]',
     borderColor: 'border-[#3D6B5266]',
     features: [
       { text: 'Everything in Free', included: true },
-      { text: 'Full gamification (streaks, challenges)', included: true },
+      { text: 'Full streaks, challenges & milestones', included: true },
       { text: 'AI Insights (5 refreshes/day)', included: true },
       { text: 'Auto Budget Wizard (2/month)', included: true },
       { text: '"Can I Afford This?" (3/week)', included: true },
@@ -59,7 +59,7 @@ const tiers = [
     name: 'Pro',
     price: '$149',
     period: 'per year',
-    description: 'Maximum automation',
+    description: 'Everything, unlimited',
     icon: Crown,
     color: 'text-teal-400',
     bgGradient: 'from-teal-500/20 to-teal-600/20',
@@ -86,7 +86,7 @@ const comparisonFeatures = [
     { name: 'Debt & savings goals', free: true, plus: true, pro: true },
     { name: 'CSV import', free: true, plus: true, pro: true },
   ]},
-  { category: 'Gamification', items: [
+  { category: 'Progress Tracking', items: [
     { name: 'Streaks & achievements', free: 'Basic', plus: 'Full', pro: 'Full' },
     { name: 'Challenges', free: false, plus: true, pro: true },
     { name: 'Leaderboards', free: false, plus: true, pro: true },
@@ -106,9 +106,9 @@ const comparisonFeatures = [
 ];
 
 const competitors = [
-  { name: 'YNAB', price: '$109/yr', gamification: false, aiCoach: false, score: false },
-  { name: 'Monarch', price: '$99/yr', gamification: false, aiCoach: false, score: false },
-  { name: 'Thallo Plus', price: '$79/yr', gamification: true, aiCoach: true, score: true },
+  { name: 'YNAB', price: '$109/yr', streaks: false, aiCoach: false, score: false },
+  { name: 'Monarch', price: '$99/yr', streaks: false, aiCoach: false, score: false },
+  { name: 'Thallo Plus', price: '$79/yr', streaks: true, aiCoach: true, score: true },
 ];
 
 const faqs = [
@@ -118,7 +118,7 @@ const faqs = [
   },
   {
     question: 'How is this different from YNAB or Mint?',
-    answer: 'We\'re the only budget app with gamification (streaks, challenges, leaderboards) AND a Financial Health Score. YNAB is great for zero-based budgeting, but we add AI automation and make it actually fun to budget.',
+    answer: 'We\'re the only budget app with built-in progress tracking (streaks, challenges, leaderboards) AND a comprehensive Financial Health Score. YNAB is great for zero-based budgeting, but we add AI automation and tools designed to keep you motivated.',
   },
   {
     question: 'What is the Financial Health Score?',
@@ -175,12 +175,12 @@ export default function PricingPage() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-sm mb-6">
             <Sparkles className="w-4 h-4 text-[#3D6B52]" />
-            <span className="text-muted-foreground">The only budget app with gamification + AI</span>
+            <span className="text-muted-foreground">Plans for every stage of your journey</span>
           </div>
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6">
-            Get Financially Fit.
+            Simple plans that
             <br />
-            <span className="gradient-text">Without the Spreadsheet.</span>
+            <span className="gradient-text">grow with you.</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Choose the plan that matches your goals. Start free, upgrade when you're ready.
@@ -333,7 +333,7 @@ export default function PricingPage() {
             <div className="grid grid-cols-5 gap-4 px-6 py-4 bg-muted/30 font-semibold text-sm">
               <div>App</div>
               <div className="text-center">Price</div>
-              <div className="text-center">Gamification</div>
+              <div className="text-center">Streaks & Habits</div>
               <div className="text-center">AI Coach</div>
               <div className="text-center">Health Score</div>
             </div>
@@ -354,7 +354,7 @@ export default function PricingPage() {
                 </div>
                 <div className="text-center">{comp.price}</div>
                 <div className="text-center">
-                  {comp.gamification ? (
+                  {comp.streaks ? (
                     <Check className="w-5 h-5 text-[#7aba5c] mx-auto" />
                   ) : (
                     <X className="w-5 h-5 text-muted-foreground/40 mx-auto" />
@@ -394,7 +394,7 @@ export default function PricingPage() {
 
         {/* CTA Section */}
         <div className="glass-card rounded-2xl p-12 text-center bg-gradient-to-br from-[#3D6B521a] to-[#2D54401a] border border-[#3D6B5233]">
-          <h2 className="text-3xl font-bold mb-4">Ready to Get Financially Fit?</h2>
+          <h2 className="text-3xl font-bold mb-4">Ready to take the first step?</h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Join thousands of people building better financial habits. Start free, upgrade anytime.
           </p>

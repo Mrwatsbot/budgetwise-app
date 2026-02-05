@@ -114,7 +114,7 @@ export function RevenueChart() {
           </p>
         </div>
 
-        <div className="flex gap-1 bg-[#0C1425]/60 rounded-lg p-1">
+        <div className="flex gap-1 bg-[#0F1828]/60 rounded-lg p-1">
           {(['7d', '30d', '90d'] as TimeRange[]).map((range) => (
             <button
               key={range}
@@ -156,7 +156,7 @@ export function RevenueChart() {
             {platformData.map((platform) => (
               <div
                 key={platform.name}
-                className="bg-[#0C1425]/40 rounded-lg p-3 border border-white/5"
+                className="bg-[#0F1828]/40 rounded-lg p-3 border border-white/5"
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-white">{platform.name}</span>
@@ -193,7 +193,7 @@ export function RevenueChart() {
                     {formatCurrency(platform.total)} ({percentage.toFixed(1)}%)
                   </span>
                 </div>
-                <div className="h-2 bg-[#0C1425]/60 rounded-full overflow-hidden">
+                <div className="h-2 bg-[#0F1828]/60 rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all duration-500"
                     style={{
@@ -210,7 +210,7 @@ export function RevenueChart() {
 
       {/* View Mode Toggle */}
       <div className="flex justify-center pt-2">
-        <div className="flex gap-1 bg-[#0C1425]/60 rounded-lg p-1">
+        <div className="flex gap-1 bg-[#0F1828]/60 rounded-lg p-1">
           {(['combined', 'split'] as ViewMode[]).map((mode) => (
             <button
               key={mode}

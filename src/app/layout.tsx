@@ -21,8 +21,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Thallo – Get Financially Fit",
-  description: "The only budget app with streaks, levels & challenges. Gamified budgeting powered by AI. Track spending, crush debt, build wealth – and actually have fun doing it.",
+  title: "Thallo – Your Financial Health, Simplified",
+  description: "AI-powered budgeting, smart debt payoff, and a financial health score that actually measures your progress. Take control of your money — on your terms.",
   viewport: {
     width: "device-width",
     initialScale: 1,

@@ -225,7 +225,7 @@ function PillarBars() {
               {visible ? p.score : 0}/{p.max}
             </span>
           </div>
-          <div className="h-2.5 rounded-full bg-[#1A2844] overflow-hidden">
+          <div className="h-2.5 rounded-full bg-[#1C2A4A] overflow-hidden">
             <div
               className="h-full rounded-full transition-all ease-out"
               style={{
@@ -312,7 +312,7 @@ function ProductShowcase() {
     <div>
       {/* Tab bar */}
       <div className="flex justify-center mb-8">
-        <div className="inline-flex gap-1 p-1 rounded-xl bg-[#0C1425] border border-border">
+        <div className="inline-flex gap-1 p-1 rounded-xl bg-[#0F1828] border border-border">
           {SHOWCASE_TABS.map((tab) => (
             <button
               key={tab.id}
@@ -320,7 +320,7 @@ function ProductShowcase() {
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 activeTab === tab.id
                   ? 'bg-[#3D6B52] text-white shadow-lg shadow-[#3D6B52]/25'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-[#1A2844]'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-[#1C2A4A]'
               }`}
             >
               <tab.icon className="w-4 h-4" />
@@ -333,14 +333,14 @@ function ProductShowcase() {
       {/* Device frame */}
       <div className="relative max-w-4xl mx-auto">
         {/* Browser chrome */}
-        <div className="rounded-t-2xl bg-[#0A1120] border border-border border-b-0 px-4 py-3 flex items-center gap-3">
+        <div className="rounded-t-2xl bg-[#0D1522] border border-border border-b-0 px-4 py-3 flex items-center gap-3">
           <div className="flex gap-1.5">
             <div className="w-3 h-3 rounded-full bg-[#1E2D4A]" />
             <div className="w-3 h-3 rounded-full bg-[#1E2D4A]" />
             <div className="w-3 h-3 rounded-full bg-[#1E2D4A]" />
           </div>
           <div className="flex-1 flex justify-center">
-            <div className="px-4 py-1 rounded-md bg-[#0C1425] border border-border text-xs text-muted-foreground flex items-center gap-2">
+            <div className="px-4 py-1 rounded-md bg-[#0F1828] border border-border text-xs text-muted-foreground flex items-center gap-2">
               <Lock className="w-3 h-3 text-[#3D6B52]" />
               usethallo.com
             </div>
@@ -348,7 +348,7 @@ function ProductShowcase() {
         </div>
 
         {/* Screen content */}
-        <div className="rounded-b-2xl border border-border border-t-0 bg-[#0C1425] overflow-hidden" style={{ minHeight: '480px' }}>
+        <div className="rounded-b-2xl border border-border border-t-0 bg-[#0F1828] overflow-hidden" style={{ minHeight: '480px' }}>
           <div className="p-6 md:p-8">
             {activeTab === 'dashboard' && <MockDashboard />}
             {activeTab === 'budgets' && <MockBudgets />}
@@ -394,7 +394,7 @@ function MockDashboard() {
             <p className="text-xl font-display font-bold text-emerald-400">$2,753</p>
           </div>
         </div>
-        <div className="mt-4 h-2.5 rounded-full bg-[#1A2844] overflow-hidden">
+        <div className="mt-4 h-2.5 rounded-full bg-[#1C2A4A] overflow-hidden">
           <div className="h-full w-[51%] rounded-full bg-gradient-to-r from-[#3D6B52] to-[#4E8A66]" />
         </div>
         <p className="text-xs text-muted-foreground mt-2">51% of budget used — 18 days left</p>
@@ -412,7 +412,7 @@ function MockDashboard() {
             { icon: Zap, color: 'text-emerald-400', bg: 'bg-emerald-400/10', text: 'Found 2 subscriptions to review ($34/mo)' },
             { icon: Target, color: 'text-blue-400', bg: 'bg-blue-400/10', text: "You'll hit your food budget in ~8 days at this pace" },
           ].map((insight, i) => (
-            <div key={i} className="flex items-start gap-3 p-2.5 rounded-lg bg-[#0C1425] border border-border">
+            <div key={i} className="flex items-start gap-3 p-2.5 rounded-lg bg-[#0F1828] border border-border">
               <div className={`w-7 h-7 rounded-md ${insight.bg} flex items-center justify-center shrink-0`}>
                 <insight.icon className={`w-3.5 h-3.5 ${insight.color}`} />
               </div>
@@ -490,7 +490,7 @@ function MockBudgets() {
                   <span className="text-xs text-muted-foreground"> / ${b.budget}</span>
                 </div>
               </div>
-              <div className="h-2 rounded-full bg-[#1A2844] overflow-hidden">
+              <div className="h-2 rounded-full bg-[#1C2A4A] overflow-hidden">
                 <div
                   className={`h-full rounded-full ${over ? 'bg-red-500' : ''}`}
                   style={{
@@ -524,7 +524,7 @@ function MockAITools() {
         </div>
         <div className="flex gap-4">
           {/* Product image placeholder */}
-          <div className="w-20 h-20 rounded-xl bg-[#1A2844] border border-border flex flex-col items-center justify-center shrink-0">
+          <div className="w-20 h-20 rounded-xl bg-[#1C2A4A] border border-border flex flex-col items-center justify-center shrink-0">
             <ShoppingBag className="w-6 h-6 text-muted-foreground mb-1" />
             <p className="text-[10px] text-muted-foreground">Photo</p>
           </div>
@@ -579,7 +579,7 @@ function MockDebts() {
         </div>
         <div className="flex gap-2">
           <div className="px-3 py-1.5 rounded-lg bg-[#3D6B52] text-xs text-white font-medium">Avalanche</div>
-          <div className="px-3 py-1.5 rounded-lg bg-[#1A2844] border border-border text-xs text-muted-foreground">Snowball</div>
+          <div className="px-3 py-1.5 rounded-lg bg-[#1C2A4A] border border-border text-xs text-muted-foreground">Snowball</div>
         </div>
       </div>
 
@@ -595,7 +595,7 @@ function MockDebts() {
             <p className="text-lg font-display font-bold text-emerald-400">~18 months</p>
           </div>
         </div>
-        <div className="h-2.5 rounded-full bg-[#1A2844] overflow-hidden">
+        <div className="h-2.5 rounded-full bg-[#1C2A4A] overflow-hidden">
           <div className="h-full w-[32%] rounded-full bg-gradient-to-r from-emerald-500 to-[#3D6B52]" />
         </div>
         <p className="text-xs text-muted-foreground mt-2">32% paid off — $11,783 eliminated so far</p>
@@ -683,7 +683,7 @@ function MockScore() {
               <span className="text-muted-foreground">{f.name}</span>
               <span className="font-mono">{f.score}/{f.max}</span>
             </div>
-            <div className="h-1.5 rounded-full bg-[#1A2844] overflow-hidden">
+            <div className="h-1.5 rounded-full bg-[#1C2A4A] overflow-hidden">
               <div
                 className="h-full rounded-full bg-[#3D6B52]"
                 style={{ width: `${(f.score / f.max) * 100}%` }}
@@ -768,7 +768,7 @@ export default function Home() {
             <FadeIn>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-sm mb-8">
                 <Sparkles className="w-4 h-4 text-[#3D6B52]" />
-                <span className="text-muted-foreground">Your money deserves better than FICO</span>
+                <span className="text-muted-foreground">Your money deserves clarity</span>
               </div>
             </FadeIn>
 
@@ -843,7 +843,7 @@ export default function Home() {
       {/* ============================================================
           SOCIAL PROOF BAR
           ============================================================ */}
-      <section className="relative z-10 border-y border-border bg-[#0A1120]">
+      <section className="relative z-10 border-y border-border bg-[#0D1522]">
         <div className="max-w-6xl mx-auto px-6 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <FadeIn>
@@ -988,7 +988,7 @@ export default function Home() {
       {/* ============================================================
           THREE PILLARS — How the score works
           ============================================================ */}
-      <section className="relative z-10 bg-[#0A1120] border-y border-border">
+      <section className="relative z-10 bg-[#0D1522] border-y border-border">
         <div className="max-w-6xl mx-auto px-6 py-24">
           <FadeIn>
             <div className="text-center mb-16">
@@ -1044,7 +1044,7 @@ export default function Home() {
                   <div>
                     <h3 className="font-semibold mb-1">Behavior <span className="text-muted-foreground font-normal text-sm">— 350 pts</span></h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Good habits compound. Payment consistency and budget discipline — the daily choices that build wealth.
+                      Good habits compound. Payment consistency and budget discipline — the daily choices that build your future.
                     </p>
                   </div>
                 </div>
@@ -1107,7 +1107,7 @@ export default function Home() {
             {
               icon: Target,
               title: 'Challenges & Streaks',
-              desc: 'No-spend weekends, lunch packing weeks, subscription audits. Gamified goals that actually save you money.',
+              desc: 'No-spend weekends, lunch packing weeks, subscription audits. Practical challenges that help you save.',
               color: '#eab308',
             },
             {
@@ -1142,7 +1142,7 @@ export default function Home() {
       {/* ============================================================
           DEBT WEIGHTING — Unique differentiator
           ============================================================ */}
-      <section className="relative z-10 bg-[#0A1120] border-y border-border">
+      <section className="relative z-10 bg-[#0D1522] border-y border-border">
         <div className="max-w-6xl mx-auto px-6 py-24">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <FadeIn>
@@ -1184,15 +1184,15 @@ export default function Home() {
               <div className="glass-card rounded-2xl p-8 text-center">
                 <p className="text-sm text-muted-foreground mb-4">Multipliers informed by public data from</p>
                 <div className="grid grid-cols-3 gap-4 text-xs text-muted-foreground">
-                  <div className="p-3 rounded-lg bg-[#1A2844]">
+                  <div className="p-3 rounded-lg bg-[#1C2A4A]">
                     <p className="font-medium text-foreground mb-1">NY Fed</p>
                     <p>Delinquency rates by loan type</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-[#1A2844]">
+                  <div className="p-3 rounded-lg bg-[#1C2A4A]">
                     <p className="font-medium text-foreground mb-1">CFPB</p>
                     <p>Consumer debt risk research</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-[#1A2844]">
+                  <div className="p-3 rounded-lg bg-[#1C2A4A]">
                     <p className="font-medium text-foreground mb-1">Fannie Mae</p>
                     <p>Collateral &amp; underwriting guidelines</p>
                   </div>
@@ -1237,7 +1237,7 @@ export default function Home() {
                   { icon: Eye, label: 'No data selling', detail: 'Ever. Period.' },
                   { icon: Star, label: 'SOC 2 certified hosts', detail: 'Supabase + Vercel' },
                 ].map((item) => (
-                  <div key={item.label} className="p-4 rounded-xl bg-[#0C1425] border border-border">
+                  <div key={item.label} className="p-4 rounded-xl bg-[#0F1828] border border-border">
                     <item.icon className="w-5 h-5 text-[#3D6B52] mb-2" />
                     <p className="text-sm font-medium">{item.label}</p>
                     <p className="text-xs text-muted-foreground">{item.detail}</p>
@@ -1267,7 +1267,7 @@ export default function Home() {
             />
             <FAQ
               question="How is this different from Mint, YNAB, or other budget apps?"
-              answer="Most budget apps just track where your money went. Thallo gives you a comprehensive financial health score that actually measures your progress, AI that works for you, and gamification that makes budgeting something you want to do — not a chore."
+              answer="Most budget apps just track where your money went. Thallo gives you a comprehensive financial health score that actually measures your progress, AI that works for you, and built-in tools designed to keep you motivated — not bored."
             />
             <FAQ
               question="Do I need to connect my bank?"

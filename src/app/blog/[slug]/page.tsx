@@ -113,7 +113,7 @@ function TryThalloCTA() {
         Ready to take control of your finances?
       </h3>
       <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-        Thallo helps you budget smarter, crush debt faster, and build real wealth — with AI-powered tools and a financial health score that actually matters.
+        Thallo helps you budget smarter, pay off debt faster, and grow your savings — with AI-powered tools and a financial health score that actually matters.
       </p>
       <Link href="/signup">
         <button className="shimmer-btn px-8 py-3 rounded-lg text-base font-semibold">
@@ -198,15 +198,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const faqs = [
     {
       question: 'How does Thallo help with budgeting?',
-      answer: 'Thallo uses AI to analyze your spending patterns, auto-generate budgets, and provide real-time insights. Our gamified approach with streaks and challenges makes budgeting actually engaging.',
+      answer: 'Thallo uses AI to analyze your spending patterns, auto-generate budgets, and provide real-time insights. Our built-in progress tracking with streaks and challenges keeps you motivated and on track.',
     },
     {
       question: 'What makes Thallo different from other budget apps?',
-      answer: 'Thallo is the only budget app with a comprehensive Financial Health Score (0-1,000) that measures what actually matters: your wealth building rate, debt payoff velocity, and financial habits — not just your appeal to lenders like FICO.',
+      answer: 'Thallo is the only budget app with a comprehensive Financial Health Score (0-1,000) that measures what actually matters: your savings rate, debt payoff velocity, and financial habits — not just your appeal to lenders like FICO.',
     },
     {
       question: 'Is Thallo free to use?',
-      answer: 'Yes! Thallo offers a generous free tier with core budgeting features, transaction tracking, and basic AI tools. Our Pro plan unlocks advanced AI features, unlimited categories, and priority support.',
+      answer: 'Yes! Thallo offers a generous free tier with core budgeting features, transaction tracking, and basic progress tools. Our Pro plan unlocks advanced AI features, unlimited categories, and priority support.',
     },
   ];
 
