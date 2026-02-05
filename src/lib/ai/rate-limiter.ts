@@ -1,4 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export type AIFeature = 'insights' | 'auto_budget' | 'afford_check' | 'product_scan' | 'receipt_scan' | 'coaching' | 'payoff_plan' | 'statement_import';
 export type SubscriptionTier = 'free' | 'basic' | 'plus' | 'pro';
@@ -94,9 +95,9 @@ export async function checkRateLimit(
 
   const periodKey = getPeriodKey(config.period);
 
-  // Get current count
+  // Get current count via admin client (authoritative, not user-spoofable)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data } = await (supabase.from as any)('ai_usage_counts')
+  const { data } = await (supabaseAdmin.from as any)('ai_usage_counts')
     .select('count')
     .eq('user_id', userId)
     .eq('feature', feature)
@@ -121,10 +122,12 @@ export async function checkRateLimit(
 }
 
 /**
- * Increment usage count after successful AI call
+ * Increment usage count after successful AI call.
+ * Uses the admin (service role) client to bypass RLS — users cannot
+ * manipulate their own usage counts since RLS blocks user writes.
  */
 export async function incrementUsage(
-  supabase: SupabaseClient,
+  _supabase: SupabaseClient,
   userId: string,
   feature: AIFeature
 ): Promise<void> {
@@ -133,9 +136,9 @@ export async function incrementUsage(
   const config = RATE_LIMITS.plus[feature];
   const periodKey = getPeriodKey(config.period);
 
-  // Upsert: increment if exists, create if not
+  // Use admin client (bypasses RLS) — users cannot write to ai_usage_counts
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: existing } = await (supabase.from as any)('ai_usage_counts')
+  const { data: existing } = await (supabaseAdmin.from as any)('ai_usage_counts')
     .select('id, count')
     .eq('user_id', userId)
     .eq('feature', feature)
@@ -144,21 +147,23 @@ export async function incrementUsage(
 
   if (existing) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase.from as any)('ai_usage_counts')
+    await (supabaseAdmin.from as any)('ai_usage_counts')
       .update({ count: existing.count + 1 })
       .eq('id', existing.id);
   } else {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase.from as any)('ai_usage_counts')
+    await (supabaseAdmin.from as any)('ai_usage_counts')
       .insert({ user_id: userId, feature, period: periodKey, count: 1 });
   }
 }
 
 /**
- * Get user's tier from profiles table
+ * Get user's tier from profiles table.
+ * Uses admin client to read the authoritative tier value — prevents
+ * scenarios where a modified RLS policy could return spoofed data.
  */
-export async function getUserTier(supabase: SupabaseClient, userId: string): Promise<{ tier: SubscriptionTier }> {
-  const { data } = await supabase
+export async function getUserTier(_supabase: SupabaseClient, userId: string): Promise<{ tier: SubscriptionTier }> {
+  const { data } = await (supabaseAdmin as any)
     .from('profiles')
     .select('subscription_tier, subscription_status')
     .eq('id', userId)
