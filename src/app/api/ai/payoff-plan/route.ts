@@ -76,9 +76,6 @@ export async function POST() {
         plan: null,
         raw: response.content,
         error: 'Failed to parse AI response as JSON',
-        model: response.model,
-        usage: response.usage,
-        estimatedCost: response.estimatedCost,
         generated_at: new Date().toISOString(),
       });
     }
@@ -97,9 +94,6 @@ export async function POST() {
 
     return NextResponse.json({
       plan,
-      model: response.model,
-      usage: response.usage,
-      estimatedCost: response.estimatedCost,
       generated_at: new Date().toISOString(),
     });
   } catch (error) {

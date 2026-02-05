@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { apiGuard } from '@/lib/api-guard';
 import { logTransactionHistory } from '@/lib/transaction-history';
+import { verifyAccountOwnership, verifyCategoryExists, validateTransactionDate } from '@/lib/ownership';
 
 export async function GET(
   request: NextRequest,
@@ -58,6 +59,33 @@ export async function PATCH(
 
     if (Object.keys(updates).length === 0) {
       return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
+    }
+
+    // Validate foreign keys if being updated
+    if (updates.account_id) {
+      const accountOwned = await verifyAccountOwnership(supabase, updates.account_id, user.id);
+      if (!accountOwned) {
+        return NextResponse.json({ error: 'Account not found or access denied' }, { status: 403 });
+      }
+    }
+    if (updates.category_id) {
+      const categoryExists = await verifyCategoryExists(supabase, updates.category_id);
+      if (!categoryExists) {
+        return NextResponse.json({ error: 'Invalid category' }, { status: 400 });
+      }
+    }
+    if (updates.date) {
+      const dateCheck = validateTransactionDate(updates.date);
+      if (!dateCheck.valid) {
+        return NextResponse.json({ error: dateCheck.error }, { status: 400 });
+      }
+    }
+    if (updates.amount !== undefined) {
+      const amt = Number(updates.amount);
+      if (isNaN(amt) || !isFinite(amt) || Math.abs(amt) > 1000000) {
+        return NextResponse.json({ error: 'Invalid amount' }, { status: 400 });
+      }
+      updates.amount = amt;
     }
 
     // Log the previous state to history

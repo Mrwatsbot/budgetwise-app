@@ -93,9 +93,6 @@ Rules:
       return NextResponse.json({
         error: 'Could not identify product',
         raw: result.content,
-        model: result.model,
-        usage: result.usage,
-        estimatedCost: result.estimatedCost,
       }, { status: 422 });
     }
 
@@ -114,9 +111,6 @@ Rules:
     return NextResponse.json({
       success: true,
       data: extracted,
-      model: result.model,
-      usage: result.usage,
-      estimatedCost: result.estimatedCost,
     });
   } catch (error) {
     console.error('Product scan error:', error);

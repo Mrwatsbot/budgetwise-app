@@ -137,8 +137,6 @@ export async function POST(request: NextRequest) {
       insights,
       generated_at: new Date().toISOString(),
       stale: false,
-      model: response.model,
-      estimatedCost: response.estimatedCost,
     });
   } catch (error) {
     console.error('AI insights POST error:', error);

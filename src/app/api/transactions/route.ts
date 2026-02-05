@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { apiGuard } from '@/lib/api-guard';
+import { verifyAccountOwnership, verifyCategoryExists, validateTransactionDate } from '@/lib/ownership';
 
 export async function GET(request: NextRequest) {
   const guard = await apiGuard(60);
@@ -98,6 +99,26 @@ export async function POST(request: NextRequest) {
     }
     if (memo && memo.length > 500) {
       return NextResponse.json({ error: 'Memo too long (max 500 characters)' }, { status: 400 });
+    }
+
+    // Validate date is not in the future
+    const dateCheck = validateTransactionDate(date);
+    if (!dateCheck.valid) {
+      return NextResponse.json({ error: dateCheck.error }, { status: 400 });
+    }
+
+    // Verify account belongs to user
+    const accountOwned = await verifyAccountOwnership(supabase, account_id, user.id);
+    if (!accountOwned) {
+      return NextResponse.json({ error: 'Account not found or access denied' }, { status: 403 });
+    }
+
+    // Verify category exists (if provided)
+    if (category_id) {
+      const categoryExists = await verifyCategoryExists(supabase, category_id);
+      if (!categoryExists) {
+        return NextResponse.json({ error: 'Invalid category' }, { status: 400 });
+      }
     }
 
     const { data, error } = await (supabase.from as any)('transactions')

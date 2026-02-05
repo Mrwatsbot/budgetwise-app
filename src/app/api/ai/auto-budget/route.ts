@@ -202,12 +202,6 @@ ${savings.length > 0 ? `SAVINGS GOALS: The user has ${savings.length} savings go
     return NextResponse.json({
       result,
       generated_at: new Date().toISOString(),
-      usage: {
-        model: modelUsed,
-        tokens_input: inputTokens,
-        tokens_output: outputTokens,
-        estimated_cost_usd: costUsd,
-      },
     });
   } catch (error) {
     console.error('Auto budget error:', error);
@@ -384,7 +378,6 @@ export async function PUT(request: Request) {
       budgets: results,
       skipped: skipped.length > 0 ? skipped : undefined,
       errors: errors.length > 0 ? errors : undefined,
-      debug,
       month,
     });
   } catch (error) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { apiGuard } from '@/lib/api-guard';
+import { verifyCategoryExists } from '@/lib/ownership';
 
 interface SplitItem {
   category_id: string;
@@ -64,6 +65,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate all split category_ids exist
+    for (const split of splits) {
+      if (!split.category_id) {
+        return NextResponse.json({ error: 'Each split must have a category_id' }, { status: 400 });
+      }
+      if (split.amount === undefined || split.amount <= 0) {
+        return NextResponse.json({ error: 'Each split must have a positive amount' }, { status: 400 });
+      }
+      const categoryExists = await verifyCategoryExists(supabase, split.category_id);
+      if (!categoryExists) {
+        return NextResponse.json({ error: `Invalid category: ${split.category_id}` }, { status: 400 });
+      }
+    }
+
     // Validate split amounts sum equals original transaction amount
     const totalSplitAmount = splits.reduce((sum, split) => sum + split.amount, 0);
     const originalAmount = Math.abs(parentTransaction.amount);
@@ -118,7 +133,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Split transaction error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to split transaction' },
+      { error: 'Failed to split transaction' },
       { status: 500 }
     );
   }

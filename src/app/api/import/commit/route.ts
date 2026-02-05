@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { apiGuard } from '@/lib/api-guard';
+import { verifyAccountOwnership, validateTransactionDate } from '@/lib/ownership';
 import Papa from 'papaparse';
+
+const MAX_IMPORT_ROWS = 5000;
 
 interface ColumnMap {
   date?: number;
@@ -56,6 +59,13 @@ export async function POST(request: Request) {
     const rows = parseResult.data as string[][];
     const dataRows = rows.slice(1); // Skip header
 
+    if (dataRows.length > MAX_IMPORT_ROWS) {
+      return NextResponse.json(
+        { error: `Import too large: ${dataRows.length} rows exceeds maximum of ${MAX_IMPORT_ROWS}` },
+        { status: 400 }
+      );
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = supabase.from as any;
 
@@ -64,8 +74,19 @@ export async function POST(request: Request) {
       .select('id, name, type')
       .order('sort_order');
 
-    // Get or create default account
+    // Validate account ownership if provided
     let targetAccountId = accountId;
+    if (targetAccountId) {
+      const accountOwned = await verifyAccountOwnership(supabase, targetAccountId, user.id);
+      if (!accountOwned) {
+        return NextResponse.json(
+          { error: 'Account not found or access denied' },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Get or create default account
     if (!targetAccountId) {
       const { data: accounts } = await db('accounts')
         .select('id')
@@ -140,6 +161,13 @@ export async function POST(request: Request) {
           continue;
         }
 
+        // Validate date is not in the future
+        const dateCheck = validateTransactionDate(date);
+        if (!dateCheck.valid) {
+          errors.push(`Skipped: ${dateCheck.error} (${dateStr})`);
+          continue;
+        }
+
         // Check for duplicates
         const duplicateKey = `${date}|${amount}|${(payee || '').toLowerCase()}`;
         if (existingSet.has(duplicateKey)) {
@@ -186,8 +214,9 @@ export async function POST(request: Request) {
     });
   } catch (error: unknown) {
     console.error('Import commit error:', error);
+    console.error('Import commit error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to import transactions' },
+      { error: 'Failed to import transactions' },
       { status: 500 }
     );
   }

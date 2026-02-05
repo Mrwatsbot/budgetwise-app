@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { apiGuard } from '@/lib/api-guard';
+import { verifyCategoryExists } from '@/lib/ownership';
 
 export async function GET(request: Request) {
   const guard = await apiGuard(60);
@@ -150,6 +151,12 @@ export async function POST(request: Request) {
     }
     if (budgetedAmount < 0 || budgetedAmount > 1000000) {
       return NextResponse.json({ error: 'Budgeted amount out of range' }, { status: 400 });
+    }
+
+    // Verify category exists
+    const categoryExists = await verifyCategoryExists(supabase, category_id);
+    if (!categoryExists) {
+      return NextResponse.json({ error: 'Invalid category' }, { status: 400 });
     }
 
     const { data, error } = await (supabase.from as any)('budgets')

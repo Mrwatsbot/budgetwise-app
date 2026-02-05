@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { apiGuard } from '@/lib/api-guard';
+import { verifyCategoryExists, validateTransactionDate } from '@/lib/ownership';
 
 export async function POST(request: NextRequest) {
   const guard = await apiGuard(30);
@@ -16,6 +17,25 @@ export async function POST(request: NextRequest) {
         { error: 'category_id and non-zero amount are required' },
         { status: 400 }
       );
+    }
+
+    const txAmount = Number(amount);
+    if (isNaN(txAmount) || !isFinite(txAmount) || Math.abs(txAmount) > 1000000) {
+      return NextResponse.json({ error: 'Invalid amount' }, { status: 400 });
+    }
+
+    // Verify category exists
+    const categoryExists = await verifyCategoryExists(supabase, category_id);
+    if (!categoryExists) {
+      return NextResponse.json({ error: 'Invalid category' }, { status: 400 });
+    }
+
+    // Validate date if provided
+    if (date) {
+      const dateCheck = validateTransactionDate(date);
+      if (!dateCheck.valid) {
+        return NextResponse.json({ error: dateCheck.error }, { status: 400 });
+      }
     }
 
     // Get user's first account (or create default if none exists)
@@ -76,7 +96,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Quick transaction error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to create transaction' },
+      { error: 'Failed to create transaction' },
       { status: 500 }
     );
   }
