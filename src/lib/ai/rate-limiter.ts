@@ -1,7 +1,7 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
-export type AIFeature = 'insights' | 'auto_budget' | 'afford_check' | 'product_scan' | 'receipt_scan' | 'coaching' | 'payoff_plan' | 'statement_import';
+export type AIFeature = 'insights' | 'auto_budget' | 'afford_check' | 'product_scan' | 'receipt_scan' | 'coaching' | 'payoff_plan' | 'statement_import' | 'ai_letter';
 export type SubscriptionTier = 'free' | 'basic' | 'plus' | 'pro';
 
 interface RateLimitConfig {
@@ -19,6 +19,7 @@ const RATE_LIMITS: Record<SubscriptionTier, Record<AIFeature, RateLimitConfig>> 
     coaching: { limit: 0, period: 'monthly' },
     payoff_plan: { limit: 0, period: 'monthly' },
     statement_import: { limit: 0, period: 'monthly' },
+    ai_letter: { limit: 3, period: 'monthly' }, // Free users get 3 letters/month
   },
   basic: { // same as free for now
     insights: { limit: 0, period: 'daily' },
@@ -29,6 +30,7 @@ const RATE_LIMITS: Record<SubscriptionTier, Record<AIFeature, RateLimitConfig>> 
     coaching: { limit: 0, period: 'monthly' },
     payoff_plan: { limit: 0, period: 'monthly' },
     statement_import: { limit: 0, period: 'monthly' },
+    ai_letter: { limit: 3, period: 'monthly' },
   },
   plus: {
     insights: { limit: 5, period: 'daily' },
@@ -39,6 +41,7 @@ const RATE_LIMITS: Record<SubscriptionTier, Record<AIFeature, RateLimitConfig>> 
     coaching: { limit: 3, period: 'monthly' },
     payoff_plan: { limit: 1, period: 'monthly' },
     statement_import: { limit: 5, period: 'monthly' },
+    ai_letter: { limit: 15, period: 'monthly' },
   },
   pro: {
     insights: { limit: -1, period: 'daily' },
@@ -49,6 +52,7 @@ const RATE_LIMITS: Record<SubscriptionTier, Record<AIFeature, RateLimitConfig>> 
     coaching: { limit: -1, period: 'monthly' },
     payoff_plan: { limit: -1, period: 'monthly' },
     statement_import: { limit: -1, period: 'monthly' },
+    ai_letter: { limit: -1, period: 'monthly' }, // Unlimited for Pro
   },
 };
 

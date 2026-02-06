@@ -699,3 +699,72 @@ Rules:
     ],
   });
 }
+
+// ============================================================
+// GENERIC OPENROUTER CALL (for custom prompts)
+// ============================================================
+
+interface GenericOpenRouterOptions {
+  model: string;
+  messages: Message[];
+  max_tokens?: number;
+  temperature?: number;
+}
+
+interface GenericOpenRouterResponse {
+  content: string;
+  model: string;
+  usage?: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+}
+
+/**
+ * Generic OpenRouter API call for custom prompts
+ * Use this when you need direct control over the model and prompt
+ */
+export async function callOpenRouter(options: GenericOpenRouterOptions): Promise<GenericOpenRouterResponse> {
+  const { model, messages, max_tokens = 2000, temperature = 0.7 } = options;
+  
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) {
+    throw new Error('OPENROUTER_API_KEY not configured');
+  }
+
+  const response = await fetch(OPENROUTER_API_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://thallo.app',
+      'X-Title': 'Thallo Credit Booster',
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      temperature,
+      max_tokens,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error(`OpenRouter error (${model}):`, error);
+    throw new Error(`OpenRouter API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content;
+
+  if (!content) {
+    throw new Error('No content in OpenRouter response');
+  }
+
+  return {
+    content,
+    model: data.model || model,
+    usage: data.usage,
+  };
+}

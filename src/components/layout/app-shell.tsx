@@ -18,6 +18,7 @@ import {
   Wallet,
   Brain,
   Sparkles,
+  Shield,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -42,6 +43,7 @@ const SWIPEABLE_PATHS = [
   '/budgets',
   '/debts',
   '/savings',
+  '/credit',
   '/review',
   '/coaching',
   '/score',
@@ -68,6 +70,7 @@ const getNavigation = (isDemo: boolean) => [
   { name: 'Budgets', href: isDemo ? '/demo' : '/budgets', icon: Wallet },
   { name: 'Debts', href: isDemo ? '/demo' : '/debts', icon: CreditCard },
   { name: 'Savings', href: isDemo ? '/demo' : '/savings', icon: PiggyBank },
+  { name: 'Credit', href: isDemo ? '/demo' : '/credit', icon: Shield },
   { name: 'Review', href: isDemo ? '/demo' : '/review', icon: Sparkles },
   { name: 'AI Coach', href: isDemo ? '/demo' : '/coaching', icon: Brain },
   { name: 'Score', href: isDemo ? '/demo' : '/score', icon: Trophy },
